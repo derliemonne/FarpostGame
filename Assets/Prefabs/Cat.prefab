@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8376874876226332373}
   - component: {fileID: 3603713612289365300}
-  - component: {fileID: 7957826831554821776}
+  - component: {fileID: 5822044047116805366}
   - component: {fileID: 797944298}
   - component: {fileID: 716921804432128068}
   - component: {fileID: 2623101462168442182}
@@ -114,7 +114,7 @@ Transform:
   m_GameObject: {fileID: 3211699866438472855}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.302, y: -3.3141, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 0.70160866}
+  m_LocalScale: {x: 0.703125, y: 0.703125, z: 0.70160866}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3132579209321421638}
@@ -144,7 +144,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &7957826831554821776
+--- !u!114 &5822044047116805366
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,17 +153,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 3211699866438472855}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45d12359b4234e04397c1fb58e738c23, type: 3}
+  m_Script: {fileID: 11500000, guid: b314069fce3979b46817d2366d431bdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _moveSpeed: 3
-  _jumpSpeed: 5
+  _jumpSpeed: 7
   _groundCheckerSize: {x: 0.61, y: 0.01}
-  _groundCheckerDist: 0
+  _groundCheckerDist: 0.01
   _groundLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 64
   _groundChecker: {fileID: 3132579209321421638}
   _networkAnimator: {fileID: 6567465653196854145}
   _spriteRenderer: {fileID: 8196706247561376691}
@@ -245,7 +245,7 @@ MonoBehaviour:
     RawGuidValue: 95480c69cab49d04f85b45b107c9f689
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 7957826831554821776}
+  - {fileID: 5822044047116805366}
   - {fileID: 716921804432128068}
   - {fileID: 6567465653196854145}
   SimulationBehaviours: []
@@ -414,5 +414,5 @@ MonoBehaviour:
     _value: 0
     _inverse: 0
     _hash: -814817977
-  StateHashes: 000000005dbeea09472fd0e3a0c5ea2dba54d0c793e590258974aacf
+  StateHashes: 000000005dbeea09472fd0e3a0c5ea2dba54d0c793e590258974aacf326d46d028fc7c3a
   TriggerHashes: 00000000

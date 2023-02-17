@@ -1,22 +1,31 @@
+using Newtonsoft.Json.Bson;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-/*
- 1. ser field
- 2. _ private
- 3. camel case
- */
-
 public class CameraScript : MonoBehaviour
 {
     [SerializeField] private Transform _camera;
-    [SerializeField] private Transform _player;
-    [SerializeField] private Rigidbody2D _playerRb;
     [SerializeField] private float _distToMove;
     [SerializeField] private float _distToStop;
     private bool _isMove = false;
+    private Transform _player = null;
+    private Rigidbody2D _playerRb = null;
+
+    private void Update()
+    {
+        if(_player && _playerRb)
+        {
+            MoveCamera();
+        }    
+    }
+
+    public void BindPlayer(Transform player, Rigidbody2D playerRb)
+    {
+        _player = player;
+        _playerRb = playerRb;   
+    }
 
     public void MoveCamera()
     {

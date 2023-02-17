@@ -12,7 +12,7 @@ public class BuffScript : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        switch (collision.tag)
+        /*switch (collision.tag)
         {
             case "Fox":
                 pl_list.fox.TakeEffect(GetRandomEffect(pl_list.fox));
@@ -29,7 +29,7 @@ public class BuffScript : MonoBehaviour
             case "Gull":
                 pl_list.gull.TakeEffect(GetRandomEffect(pl_list.gull));
                 break;
-        }
+        }*/
         Destroy(buff_gm);
     }
 

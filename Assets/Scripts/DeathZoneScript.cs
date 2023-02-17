@@ -1,34 +1,50 @@
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DeathZoneScript : MonoBehaviour
+public class DeathZoneScript : NetworkBehaviour
 {
     [SerializeField] private PlayersList _plList;
-    [SerializeField] private SpriteRenderer _spriteRenderer;
-    [SerializeField] private Transform _deathZoneTr;
+    private Transform _deathZoneTr;
+    private SpriteRenderer _deathZoneRenderer;
 
-    public float speed;
+    [Networked] public float Altitude { get; private set; } = -6;
 
+    public float Speed;
     public bool IsActive { get; private set; } 
 
-    public void Change(bool value)
+    public void SetActive(bool value)
     {
-        if(value)
-        {
-            _spriteRenderer.enabled = true;
-            IsActive = true;
-        }
-        else
-        {
-            _spriteRenderer.enabled = false;
-            IsActive = false;
-        }
+        IsActive = value;
+        Rpc_SetActivateDeathZone(value);
     }
 
-    public void Move()
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+    public void Rpc_SetActivateDeathZone(bool value)
     {
-        _deathZoneTr.Translate(new Vector3(0, speed * Time.deltaTime, 0));
+        _deathZoneRenderer.enabled = value;
+    }
+
+    public void Start()
+    {
+        _deathZoneTr = gameObject.GetComponent<Transform>();
+        _deathZoneRenderer = gameObject.GetComponent<SpriteRenderer>();
+    }
+
+    public override void FixedUpdateNetwork()
+    {
+        Move();
+        _deathZoneTr.position = new Vector3(0, Altitude, 0);
+        Debug.Log(IsActive + " : " + _deathZoneRenderer.enabled + " : " + _deathZoneTr.position.y);
+    }
+
+    private void Move()
+    {
+        if(Runner.IsServer && IsActive)
+        {
+            Altitude += Speed * Time.deltaTime;
+        }
     }
 
     public void OnTriggerEnter2D(Collider2D collision)
@@ -38,19 +54,19 @@ public class DeathZoneScript : MonoBehaviour
             switch (collision.tag)
             {
                 case "Fox":
-                    _plList.fox.TakeDamage();
+                    _plList.Fox.TakeDamage();
                     break;
 
                 case "Cat":
-                    _plList.cat.TakeDamage();
+                    _plList.Cat.TakeDamage();
                     break;
 
                 case "Raccoon":
-                    _plList.raccoon.TakeDamage();
+                    _plList.Raccoon.TakeDamage();
                     break;
 
                 case "Gull":
-                    _plList.gull.TakeDamage();
+                    _plList.Gull.TakeDamage();
                     break;
             }
         }

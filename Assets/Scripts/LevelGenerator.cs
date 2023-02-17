@@ -33,6 +33,16 @@ public class LevelGenerator : MonoBehaviour
     //список с платформами
     private List<GameObject> platforms_list = new List<GameObject>();
 
+    public void AddNewChunk()
+    {
+
+    }
+
+    public void DestroyLastChunk()
+    {
+
+    }
+
     public bool UpdateLevel(UpdateZone update_zone)
     {
         bool some_changes = false;

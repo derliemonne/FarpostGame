@@ -12,7 +12,8 @@ public class Character : NetworkBehaviour
 
     public float Height => transform.position.y;
     public GameObject ResistSphere => _resistSphere;
-    
+    public GameObject PlayerGameObject => _playerGameObject;
+
     private static readonly int _isJumping = Animator.StringToHash("is_jumping");
     private static readonly int _isRunning = Animator.StringToHash("is_running");
     
@@ -27,6 +28,7 @@ public class Character : NetworkBehaviour
     [SerializeField] private LevelGenerator _levelGenerator;
     [SerializeField] private GameObject _resistSphere;
     [SerializeField] private Effect?[] _effects = new Effect?[10];
+    [SerializeField] private GameObject _playerGameObject;
 
     private NetworkRigidbody2D _networkRb;
 
@@ -133,5 +135,10 @@ public class Character : NetworkBehaviour
     private bool GroundCheck()
     {
         return Physics2D.BoxCast(_groundChecker.position, _groundCheckerSize, 0, -transform.up, _groundCheckerDist, _groundLayer);
+    }
+
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log(1);
     }
 }

@@ -30,7 +30,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private NetworkPrefabRef _characterPrefab;
     [SerializeField] private LevelBuilder _levelBuilderPrefab;
     [SerializeField] private Vector2 _startPlayerPos = new(0, 0);
-    
+    [SerializeField] private CameraScript _cs;
+    [SerializeField] private PlayersList _playersList;
+    [SerializeField] private DeathZoneScript _deathZoneScript;
+
     private bool _readyToStartRace;
     private NetworkManager _networkManager;
     private string _inputSessionName;
@@ -170,11 +173,18 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         }
     }
 
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+    public void Rpc_BindCamera([RpcTarget] PlayerRef player, NetworkObject playerGameObject)
+    {
+        _cs.BindPlayer(playerGameObject.transform, playerGameObject.GetComponent<Rigidbody2D>());
+    }
+
     /// <summary>
     /// Executes on host.
     /// </summary>
     private void StartRace()
     {
+        bool notYet = true;
         if (!_networkManager.NetworkRunner.IsServer)
         {
             Debug.LogWarning("Host method executes on client.");
@@ -183,11 +193,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         foreach (Player player in _networkManager.GetActivePlayers())
         {
             player.transform.position = _startPlayerPos;
-            Character character = _networkManager.NetworkRunner
-                .Spawn(_characterPrefab, _startPlayerPos, inputAuthority: player.PlayerRef)
-                .GetComponent<Character>();
-            player.Character = character;
+            _networkManager.NetworkRunner.Spawn(_characterPrefab, _startPlayerPos, inputAuthority: player.PlayerRef);
+            // _characterSpawner.SpawnCharacter(Vector3.zero, Quaternion.identity, player.transform);
         }
+        _deathZoneScript.SetActive(true);
     }
 
     // This GUI should be replaced to normal GUI with assets in future.

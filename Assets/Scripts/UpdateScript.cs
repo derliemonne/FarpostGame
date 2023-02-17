@@ -12,14 +12,9 @@ public class UpdateScript : MonoBehaviour
 
     private void Start()
     {
-        while (level_generator.UpdateLevel(update_zone));
-        death_zone_script.Change(true);
     }
 
     private void Update()
     {
-        level_generator.UpdateLevel(update_zone);
-        camera.MoveCamera();
-        death_zone_script.Move();
     }
 }
