@@ -9,6 +9,8 @@ public class Character : NetworkBehaviour
     private const float HorizontalSpeedConsideredNotMoving = 0.1f;
     public int Health { get; private set; } = 1;
     public bool IsDead { get; private set; }
+
+    public float Height => transform.position.y;
     public GameObject ResistSphere => _resistSphere;
     
     private static readonly int _isJumping = Animator.StringToHash("is_jumping");

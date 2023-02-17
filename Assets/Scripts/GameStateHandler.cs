@@ -28,6 +28,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private NetworkManager _networkManagerPrefab;
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     [SerializeField] private NetworkPrefabRef _characterPrefab;
+    [SerializeField] private LevelBuilder _levelBuilderPrefab;
     [SerializeField] private Vector2 _startPlayerPos = new(0, 0);
     
     private bool _readyToStartRace;
@@ -43,6 +44,12 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             Player player = runner.Spawn(_playerPrefab, inputAuthority: joinedPlayerRef).GetComponent<Player>();
             player.PlayerRef = joinedPlayerRef;
             runner.SetPlayerObject(joinedPlayerRef, player.Object);
+
+            if (_networkManager.IsPlayerHost(joinedPlayerRef.PlayerId))
+            { 
+                LevelBuilder levelBuilder = Instantiate(_levelBuilderPrefab);
+                levelBuilder.SpawnChunkOnTop();
+            }
         }
     }
 
@@ -176,8 +183,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         foreach (Player player in _networkManager.GetActivePlayers())
         {
             player.transform.position = _startPlayerPos;
-            _networkManager.NetworkRunner.Spawn(_characterPrefab, _startPlayerPos, inputAuthority: player.PlayerRef);
-            // _characterSpawner.SpawnCharacter(Vector3.zero, Quaternion.identity, player.transform);
+            Character character = _networkManager.NetworkRunner
+                .Spawn(_characterPrefab, _startPlayerPos, inputAuthority: player.PlayerRef)
+                .GetComponent<Character>();
+            player.Character = character;
         }
     }
 

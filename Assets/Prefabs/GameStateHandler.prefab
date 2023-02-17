@@ -77,5 +77,5 @@ MonoBehaviour:
     RawGuidValue: 9e8a8de876bbb1a40a457a5962b9c26a
   _characterPrefab:
     RawGuidValue: 95480c69cab49d04f85b45b107c9f689
-  _characterSpawnerPrefab: {fileID: 5616347359557759801, guid: fc57388236e8a5e4989c72e21658d738, type: 3}
-  _startPlayerPos: {x: 0, y: 0}
+  _levelBuilderPrefab: {fileID: 4044564526033373743, guid: c6b90f203c9da934eb5010fb1ec6b05b, type: 3}
+  _startPlayerPos: {x: 0, y: 1}
