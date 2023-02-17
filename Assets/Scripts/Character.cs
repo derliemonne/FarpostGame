@@ -139,6 +139,9 @@ public class Character : NetworkBehaviour
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(1);
+        if(collision.CompareTag("DeathZone"))
+        {
+            TakeDamage();
+        }
     }
 }

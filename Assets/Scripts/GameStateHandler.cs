@@ -184,7 +184,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     /// </summary>
     private void StartRace()
     {
-        bool notYet = true;
+        bool notYet = true; //временное решение для теста
         if (!_networkManager.NetworkRunner.IsServer)
         {
             Debug.LogWarning("Host method executes on client.");
@@ -193,7 +193,13 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         foreach (Player player in _networkManager.GetActivePlayers())
         {
             player.transform.position = _startPlayerPos;
-            _networkManager.NetworkRunner.Spawn(_characterPrefab, _startPlayerPos, inputAuthority: player.PlayerRef);
+            NetworkObject networkObject = _networkManager.NetworkRunner.Spawn(_characterPrefab, _startPlayerPos, inputAuthority: player.PlayerRef);
+            Rpc_BindCamera(player.PlayerRef, networkObject);
+            if(notYet)
+            {
+                _playersList.Init(null, networkObject.gameObject.GetComponent<CatScript>(), null, null);
+                notYet = false;
+            }
             // _characterSpawner.SpawnCharacter(Vector3.zero, Quaternion.identity, player.transform);
         }
         _deathZoneScript.SetActive(true);
