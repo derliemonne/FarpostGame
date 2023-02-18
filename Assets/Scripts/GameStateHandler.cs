@@ -29,7 +29,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private NetworkManager _networkManagerPrefab;
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Character _characterPrefab;
-    [SerializeField] private LevelBuilder _levelBuilderPrefab;
+    [SerializeField] private LevelManager _levelManagerPrefab;
     [SerializeField] private Darkness _darknessPrefab;
     [SerializeField] private Vector2 _startCharacterPosition = new(0, 0);
     [SerializeField] private CameraScript _cs;
@@ -55,8 +55,9 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
 
             if (_networkManager.IsPlayerHost(joinedPlayerRef.PlayerId))
             { 
-                LevelBuilder levelBuilder = Instantiate(_levelBuilderPrefab);
-                //levelBuilder.SpawnChunkOnTop();
+                LevelManager levelManager = Instantiate(_levelManagerPrefab);
+                levelManager.SpawnChunkOnTop();
+
             }
         }
     }
