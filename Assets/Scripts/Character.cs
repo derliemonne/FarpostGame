@@ -66,10 +66,6 @@ public class Character : NetworkBehaviour
         {
             Death();
         }
-        else if (_levelGenerator != null)
-        {
-            transform.position = _levelGenerator.GetPlatformToPlace().position;
-        }
     }
 
     public void TakeEffect(Effect effect)
