@@ -214,7 +214,6 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         {
             Debug.LogError($"{nameof(_darknessPrefab)} is invalid.");
         }
-        Darkness.Instance.SetActive(true);
         darkness.SetActive(true);
     }
 
