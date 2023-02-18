@@ -66,6 +66,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         Debug.Log("> OnPlayerLeft");
         if (_networkManager.TryGetPlayerObject(playerRef, out Player player))
         {
+            runner.Despawn(player.Character.Object);
             runner.Despawn(player.Object);
         }
     }
