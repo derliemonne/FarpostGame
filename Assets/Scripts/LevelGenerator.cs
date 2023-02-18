@@ -4,33 +4,33 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    //префаб обычной платформы
+    //РїСЂРµС„Р°Р± РѕР±С‹С‡РЅРѕР№ РїР»Р°С‚С„РѕСЂРјС‹
     public GameObject platform;
 
-    //префаб шаткой платформы
+    //РїСЂРµС„Р°Р± С€Р°С‚РєРѕР№ РїР»Р°С‚С„РѕСЂРјС‹
     public GameObject weak_platform;
 
-    //расстояние между платформами
+    //СЂР°СЃСЃС‚РѕСЏРЅРёРµ РјРµР¶РґСѓ РїР»Р°С‚С„РѕСЂРјР°РјРё
     public float dist_between_platforms = 5;
 
-    //шанс генерации шаткой платформы
+    //С€Р°РЅСЃ РіРµРЅРµСЂР°С†РёРё С€Р°С‚РєРѕР№ РїР»Р°С‚С„РѕСЂРјС‹
     public float weak_platform_chance = 1;
 
-    //координата по x для платформ слева
+    //РєРѕРѕСЂРґРёРЅР°С‚Р° РїРѕ x РґР»СЏ РїР»Р°С‚С„РѕСЂРј СЃР»РµРІР°
     public float left_coord_platform = -3;
 
-    //координата по x для платформ справа
+    //РєРѕРѕСЂРґРёРЅР°С‚Р° РїРѕ x РґР»СЏ РїР»Р°С‚С„РѕСЂРј СЃРїСЂР°РІР°
     public float right_coord_platform = 3;
 
-    //координаты по y следующей обычной платформы
+    //РєРѕРѕСЂРґРёРЅР°С‚С‹ РїРѕ y СЃР»РµРґСѓСЋС‰РµР№ РѕР±С‹С‡РЅРѕР№ РїР»Р°С‚С„РѕСЂРјС‹
     private float next_platform_pos = 1;
 
     private enum platform_orientation { LEFT, RIGHT };
 
-    //расположение следующей обычной платформы(справа или слева)
+    //СЂР°СЃРїРѕР»РѕР¶РµРЅРёРµ СЃР»РµРґСѓСЋС‰РµР№ РѕР±С‹С‡РЅРѕР№ РїР»Р°С‚С„РѕСЂРјС‹(СЃРїСЂР°РІР° РёР»Рё СЃР»РµРІР°)
     private platform_orientation next_platform_orientation = platform_orientation.LEFT;
 
-    //список с платформами
+    //СЃРїРёСЃРѕРє СЃ РїР»Р°С‚С„РѕСЂРјР°РјРё
     private List<GameObject> platforms_list = new List<GameObject>();
 
     public void AddNewChunk()

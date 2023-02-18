@@ -51,7 +51,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             if (_networkManager.IsPlayerHost(joinedPlayerRef.PlayerId))
             { 
                 LevelBuilder levelBuilder = Instantiate(_levelBuilderPrefab);
-                levelBuilder.SpawnChunkOnTop();
+                //levelBuilder.SpawnChunkOnTop();
             }
         }
     }
@@ -69,7 +69,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     {
         input.Set(new NetworkInputData
         {
-            Direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxis("Vertical"))
+            Direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxis("Vertical")),
+            PushedPlatform = Math.Abs(Input.GetAxis("PushPlatform")) > 0.1
         });
     }
     
@@ -184,7 +185,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     /// </summary>
     private void StartRace()
     {
-        bool notYet = true; //временное решение для теста
+        bool notYet = true; //РІСЂРµРјРµРЅРЅРѕРµ СЂРµС€РµРЅРёРµ РґР»СЏ С‚РµСЃС‚Р°
         if (!_networkManager.NetworkRunner.IsServer)
         {
             Debug.LogWarning("Host method executes on client.");
@@ -194,6 +195,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         {
             player.transform.position = _startPlayerPos;
             NetworkObject networkObject = _networkManager.NetworkRunner.Spawn(_characterPrefab, _startPlayerPos, inputAuthority: player.PlayerRef);
+            networkObject.GetComponent<Character>().SetPlayerId(player.PlayerRef.PlayerId);
             Rpc_BindCamera(player.PlayerRef, networkObject);
             if(notYet)
             {

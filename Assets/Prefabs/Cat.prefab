@@ -157,8 +157,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  _PlayerId: -1
   _moveSpeed: 3
   _jumpSpeed: 7
+  _pushPlatformDist: 1
   _groundCheckerSize: {x: 0.61, y: 0.01}
   _groundCheckerDist: 0.01
   _groundLayer:
@@ -169,6 +171,8 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 8196706247561376691}
   _levelGenerator: {fileID: 0}
   _resistSphere: {fileID: 1958569695}
+  _playerGameObject: {fileID: 0}
+  _spriteTransform: {fileID: 6996493771773578522}
 --- !u!61 &797944298
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -182,7 +186,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.00052523613, y: -0.06315291}
+  m_Offset: {x: 0.010197699, y: -0.06315291}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.65, y: 0.5}
@@ -193,7 +197,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.90274596, y: 1.1595442}
+  m_Size: {x: 0.6899514, y: 1.1595442}
   m_EdgeRadius: 0
 --- !u!114 &716921804432128068
 MonoBehaviour:
@@ -356,7 +360,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -1041325541, guid: d3aea77b5e043bb4f844ac8305c9523f, type: 3}
-  m_Color: {r: 0.9150943, g: 0.8050661, b: 0.37467068, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
