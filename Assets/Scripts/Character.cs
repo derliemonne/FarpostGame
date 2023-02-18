@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using Fusion;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(NetworkRigidbody2D))]
 public class Character : NetworkBehaviour
@@ -34,8 +35,10 @@ public class Character : NetworkBehaviour
     [SerializeField] protected Effect?[] _effects = new Effect?[10];
     [SerializeField] protected GameObject _playerGameObject;
     [SerializeField] protected Transform _spriteTransform;
+    [SerializeField] protected Transform _cameraTransform;
 
     private NetworkRigidbody2D _networkRb;
+    private CameraScript _cameraScript;
 
 
     private void Awake()
@@ -49,6 +52,11 @@ public class Character : NetworkBehaviour
         {
             PlayerId = playerId;
         }
+    }
+
+    public void BindCamera(CameraScript cameraScript)
+    {
+        _cameraScript = cameraScript;
     }
 
     public void TakeDamage()
@@ -165,11 +173,35 @@ public class Character : NetworkBehaviour
         return Physics2D.BoxCast(_groundChecker.position, _groundCheckerSize, 0, -transform.up, _groundCheckerDist, _groundLayer);
     }
 
+    [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
+    private void Rpc_TeleportForAllUsers(Vector3 position)
+    {
+        _networkRb.TeleportToPosition(position);
+    }
+
+    private void TeleportTo(Vector3 position)
+    {
+        Rpc_TeleportForAllUsers(position);
+        Vector3 newCameraPos = _cameraScript.transform.position;
+        newCameraPos.y = transform.position.y;
+        _cameraScript.transform.position = newCameraPos;
+    }
+
     public virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("DeathZone"))
         {
             TakeDamage();
+        }
+
+        if (Runner.LocalPlayer.PlayerId == PlayerId)
+        {
+            Teleport teleport = collision.GetComponent<Teleport>();
+
+            if (teleport != null && teleport.IsActive)
+            {
+                TeleportTo(teleport.GetPosition());
+            }
         }
     }
 }
