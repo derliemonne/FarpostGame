@@ -170,6 +170,8 @@ MonoBehaviour:
   _levelGenerator: {fileID: 0}
   _resistSphere: {fileID: 1958569695}
   _playerGameObject: {fileID: 0}
+  _spriteTransform: {fileID: 6996493771773578522}
+  _cameraTransform: {fileID: 0}
 --- !u!61 &797944298
 BoxCollider2D:
   m_ObjectHideFlags: 0

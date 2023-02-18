@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1902388537906683567}
   - component: {fileID: 2586226107918380756}
   - component: {fileID: 7720270525235253184}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bad platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -156,7 +156,7 @@ MonoBehaviour:
     RawGuidValue: 3966d537c1e0ad4439356bc6780ba0da
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 6703815206024890957}
+  - {fileID: 8808432418669542201}
   SimulationBehaviours: []
 --- !u!1 &5775277020447427165
 GameObject:
@@ -168,8 +168,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1647176859546418799}
   - component: {fileID: 7579630044717280067}
-  - component: {fileID: 6703815206024890957}
-  m_Layer: 0
+  - component: {fileID: 8808432418669542201}
+  m_Layer: 6
   m_Name: Bad platform trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -217,7 +217,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &6703815206024890957
+--- !u!114 &8808432418669542201
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -226,10 +226,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5775277020447427165}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2142c4f2286cd7d499e9ab934839d395, type: 3}
+  m_Script: {fileID: 11500000, guid: 4dec5a62ab459ec42b4698836fbeb3a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  _badPlatformCollider: {fileID: 2586226107918380756}
+  _badPlatformCollider: {fileID: 7579630044717280067}
   _badPlatformAnimator: {fileID: 1902388537906683567}
   _badPlatformNetObject: {fileID: 7720270525235253184}

@@ -34,7 +34,7 @@ public class Platform : NetworkBehaviour
     private void _pushPlatform()
     {
         _platformAnim.enabled = true;
-        _platformCollider.enabled = false;
+        //_platformCollider.enabled = false;
         StartCoroutine(DelayToPushBack());
     }
 }

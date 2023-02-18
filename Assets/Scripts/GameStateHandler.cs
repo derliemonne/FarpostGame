@@ -179,9 +179,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     }
 
     [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
-    public void Rpc_BindCamera([RpcTarget] PlayerRef player, NetworkObject playerGameObject)
+    public void Rpc_BindCamera([RpcTarget] PlayerRef player, Character character)
     {
-        _cs.BindPlayer(playerGameObject.transform, playerGameObject.GetComponent<Rigidbody2D>());
+        _cs.BindPlayer(character.transform, character.GetComponent<Rigidbody2D>());
+        character.BindCamera(_cs);
     }
 
     /// <summary>
@@ -199,13 +200,14 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             player.transform.position = _startCharacterPosition;
             Character character = _networkManager.NetworkRunner
                 .Spawn(_characterPrefab, _startCharacterPosition, inputAuthority: player.PlayerRef);
+            character.SetPlayerId(player.PlayerRef.PlayerId);
             if (character == null)
             {
                 Debug.LogError($"{nameof(_characterPrefab)} is invalid.");
             }
             player.Character = character;
             
-            Rpc_BindCamera(player.PlayerRef, character.Object);
+            Rpc_BindCamera(player.PlayerRef, character);
         }
 
         // Darkness darkness = _networkManager.NetworkRunner.Spawn(_darknessPrefab, new Vector3(-100, -100, -100), Quaternion.identity);
