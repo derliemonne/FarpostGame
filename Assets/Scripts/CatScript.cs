@@ -52,7 +52,7 @@ public class CatScript : Character
 
     public void OnTriggerExit2D(Collider2D collision)
     {
-        if (PlayerId != -1 && Runner.LocalPlayer.PlayerId == PlayerId)
+        if (Object != null && PlayerId != -1 && Runner.LocalPlayer.PlayerId == PlayerId)
         {
             if (collision.CompareTag("Crate"))
             {
