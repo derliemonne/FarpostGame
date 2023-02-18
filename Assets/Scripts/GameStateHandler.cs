@@ -52,13 +52,12 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             }
             player.PlayerRef = joinedPlayerRef;
             runner.SetPlayerObject(joinedPlayerRef, player.Object);
-
-            if (_networkManager.IsPlayerHost(joinedPlayerRef.PlayerId))
-            { 
-                LevelManager levelManager = Instantiate(_levelManagerPrefab);
-                levelManager.SpawnChunkOnTop();
-
-            }
+        }
+        
+        if (_networkManager.IsPlayerHost(joinedPlayerRef.PlayerId))
+        { 
+            LevelManager levelManager = Runner.Spawn(_levelManagerPrefab);
+            levelManager.SpawnChunkOnTop();
         }
     }
 
@@ -282,6 +281,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
                     }
                 }
             }
+        }
+        if (LevelManager.Instance != null)
+        {
+            GUILayout.Label($"Chunks count: {LevelManager.Instance.GetChunks().Count()}");
         }
     }
     
