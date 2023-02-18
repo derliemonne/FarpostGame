@@ -10,7 +10,7 @@ using UnityEngine;
 /// <summary>
 /// Server-only gameObject.
 /// </summary>
-public class LevelBuilder : MonoBehaviour
+public class LevelManager : MonoBehaviour
 {
     [SerializeField] private List<Chunk> _chunkPrefabs;
     [SerializeField] private float _firstChunkAltitude = Chunk.ChunkHalfHeight;
