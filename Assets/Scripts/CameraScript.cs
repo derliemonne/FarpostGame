@@ -1,18 +1,39 @@
-using Newtonsoft.Json.Bson;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using IngameDebugConsole;
 using UnityEngine;
 
+[RequireComponent(typeof(Camera))]
 public class CameraScript : MonoBehaviour
 {
-    [SerializeField] private Transform _camera;
-    [SerializeField] private float _distToMove;
-    [SerializeField] private float _distToStop;
-    private bool _isMove = false;
-    private Transform _player = null;
-    private Rigidbody2D _playerRb = null;
+    private const float DefaultCameraSize = 12;
+    
+    [SerializeField] private float _distToMove = 3;
+    [SerializeField] private float _distToStop = 3;
+    
+    private bool _isMove;
+    private Transform _player;
+    private Rigidbody2D _playerRb;
+    private Camera _camera;
 
+    private Camera Camera
+    {
+        get
+        {
+            if (_camera == null) _camera = GetComponent<Camera>();
+            return _camera;
+        }
+    }
+
+    private void Awake()
+    {
+        ResetCameraSize();
+    }
+    
+    public void ResetCameraSize()
+    {
+        Camera.orthographicSize = DefaultCameraSize;
+    }
+    
+    
     private void Update()
     {
         if(_player && _playerRb)
@@ -27,9 +48,10 @@ public class CameraScript : MonoBehaviour
         _playerRb = playerRb;   
     }
 
+    
     public void MoveCamera()
     {
-        float dist = _camera.position.y - _player.position.y;
+        float dist = transform.position.y - _player.position.y;
         if(Mathf.Abs(dist) > _distToMove)
         {
             _isMove = true;
@@ -45,14 +67,25 @@ public class CameraScript : MonoBehaviour
             {
                 Vector3 velocity = new Vector3(0,
                     Mathf.Max(_playerRb.velocity.y, 0), 0);
-                _camera.Translate(velocity * Time.deltaTime);
+                transform.Translate(velocity * Time.deltaTime);
             }
             else
             {
                 Vector3 velocity = new Vector3(0,
                     Mathf.Min(_playerRb.velocity.y, 0), 0);
-                _camera.Translate(velocity * Time.deltaTime);
+                transform.Translate(velocity * Time.deltaTime);
             }
         }
+    }
+    
+    private void OnValidate()
+    {
+        ResetCameraSize();
+    }
+    
+    [ConsoleMethod("setcam", "Resets camera size to fit screen.")]
+    public static void SetCameraSizeCommand()
+    {
+        Camera.main.GetComponent<CameraScript>().ResetCameraSize();
     }
 }
