@@ -9,6 +9,7 @@ TagManager:
   - Gull
   - Raccoon
   - DeathZone
+  - Crate
   layers:
   - Default
   - TransparentFX

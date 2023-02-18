@@ -56,7 +56,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             if (_networkManager.IsPlayerHost(joinedPlayerRef.PlayerId))
             { 
                 LevelBuilder levelBuilder = Instantiate(_levelBuilderPrefab);
-                levelBuilder.SpawnChunkOnTop();
+                //levelBuilder.SpawnChunkOnTop();
             }
         }
     }
@@ -74,7 +74,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     {
         input.Set(new NetworkInputData
         {
-            Direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxis("Vertical"))
+            Direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxis("Vertical")),
+            PushedPlatform = Math.Abs(Input.GetAxis("PushPlatform")) > 0.1
         });
     }
     

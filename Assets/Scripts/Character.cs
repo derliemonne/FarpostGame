@@ -14,21 +14,26 @@ public class Character : NetworkBehaviour
     public GameObject ResistSphere => _resistSphere;
     public GameObject PlayerGameObject => _playerGameObject;
 
+    //id игрока, который владеет персонажем, в будущем можно заменить на объект класса Player
+    [Networked] public int PlayerId { get; private set; } = -1;
+
     private static readonly int _isJumping = Animator.StringToHash("is_jumping");
     private static readonly int _isRunning = Animator.StringToHash("is_running");
     
-    [SerializeField] private float _moveSpeed = 1f;
-    [SerializeField] private float _jumpSpeed = 5f;
-    [SerializeField] private Vector2 _groundCheckerSize;
-    [SerializeField] private float _groundCheckerDist;
-    [SerializeField] private LayerMask _groundLayer;
-    [SerializeField] private Transform _groundChecker;
-    [SerializeField] private NetworkMecanimAnimator _networkAnimator;
-    [SerializeField] private SpriteRenderer _spriteRenderer;
-    [SerializeField] private LevelGenerator _levelGenerator;
-    [SerializeField] private GameObject _resistSphere;
-    [SerializeField] private Effect?[] _effects = new Effect?[10];
-    [SerializeField] private GameObject _playerGameObject;
+    [SerializeField] protected float _moveSpeed = 1f;
+    [SerializeField] protected float _jumpSpeed = 5f;
+    [SerializeField] protected float _pushPlatformDist = 1f;
+    [SerializeField] protected Vector2 _groundCheckerSize;
+    [SerializeField] protected float _groundCheckerDist;
+    [SerializeField] protected LayerMask _groundLayer;
+    [SerializeField] protected Transform _groundChecker;
+    [SerializeField] protected NetworkMecanimAnimator _networkAnimator;
+    [SerializeField] protected SpriteRenderer _spriteRenderer;
+    [SerializeField] protected LevelGenerator _levelGenerator;
+    [SerializeField] protected GameObject _resistSphere;
+    [SerializeField] protected Effect?[] _effects = new Effect?[10];
+    [SerializeField] protected GameObject _playerGameObject;
+    [SerializeField] protected Transform _spriteTransform;
 
     private NetworkRigidbody2D _networkRb;
 
@@ -36,6 +41,14 @@ public class Character : NetworkBehaviour
     private void Awake()
     {
         _networkRb = GetComponent<NetworkRigidbody2D>();
+    }
+
+    public void SetPlayerId(int playerId)
+    {
+        if(PlayerId == -1)
+        {
+            PlayerId = playerId;
+        }
     }
 
     public void TakeDamage()
@@ -77,6 +90,19 @@ public class Character : NetworkBehaviour
         {
             Vector2 input = inputData.Direction.normalized;
             Vector2 velocity = _networkRb.Rigidbody.velocity;
+
+            if(inputData.PushedPlatform)
+            {
+                RaycastHit2D raycastHit = Physics2D.Raycast(transform.position, Vector2.down, _pushPlatformDist, _groundLayer);
+                if(raycastHit.transform != null)
+                {
+                    Platform platformScript = raycastHit.transform.GetComponent<Platform>();
+                    if(platformScript != null)
+                    {
+                        platformScript.PushPlatform();
+                    }
+                }                            
+            }
 
             if(GroundCheck())
             {
@@ -130,6 +156,8 @@ public class Character : NetworkBehaviour
         Gizmos.DrawCube(
             new Vector3(_groundChecker.position.x, _groundChecker.position.y - _groundCheckerDist / 2), 
             new Vector3(_groundCheckerSize.x, _groundCheckerSize.y + _groundCheckerDist, 1));
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _pushPlatformDist);
     }
 
     private bool GroundCheck()
@@ -137,7 +165,7 @@ public class Character : NetworkBehaviour
         return Physics2D.BoxCast(_groundChecker.position, _groundCheckerSize, 0, -transform.up, _groundCheckerDist, _groundLayer);
     }
 
-    public void OnTriggerEnter2D(Collider2D collision)
+    public virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("DeathZone"))
         {
