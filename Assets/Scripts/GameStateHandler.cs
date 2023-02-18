@@ -6,6 +6,7 @@ using Fusion.Sockets;
 using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 
@@ -26,13 +27,12 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     public ConnectionStatus ConnectionStatus { get; private set; } = ConnectionStatus.NotInSession;
     
     [SerializeField] private NetworkManager _networkManagerPrefab;
-    [SerializeField] private NetworkPrefabRef _playerPrefab;
-    [SerializeField] private NetworkPrefabRef _characterPrefab;
+    [SerializeField] private Player _playerPrefab;
+    [SerializeField] private Character _characterPrefab;
     [SerializeField] private LevelBuilder _levelBuilderPrefab;
-    [SerializeField] private Vector2 _startPlayerPos = new(0, 0);
+    [SerializeField] private Darkness _darknessPrefab;
+    [SerializeField] private Vector2 _startCharacterPosition = new(0, 0);
     [SerializeField] private CameraScript _cs;
-    [SerializeField] private PlayersList _playersList;
-    [SerializeField] private DeathZoneScript _deathZoneScript;
 
     private bool _readyToStartRace;
     private NetworkManager _networkManager;
@@ -44,7 +44,12 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         Debug.Log("> OnPlayerJoined");
         if (runner.IsServer)
         {
-            Player player = runner.Spawn(_playerPrefab, inputAuthority: joinedPlayerRef).GetComponent<Player>();
+            Player player = runner.Spawn(_playerPrefab, inputAuthority: joinedPlayerRef);
+            if (player == null)
+            {
+                Debug.LogError($"{nameof(_playerPrefab)} is invalid");
+                return;
+            }
             player.PlayerRef = joinedPlayerRef;
             runner.SetPlayerObject(joinedPlayerRef, player.Object);
 
@@ -184,25 +189,33 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     /// </summary>
     private void StartRace()
     {
-        bool notYet = true; //временное решение для теста
         if (!_networkManager.NetworkRunner.IsServer)
         {
-            Debug.LogWarning("Host method executes on client.");
+            Debug.LogError("Host method executes on client.");
             return;
         }
         foreach (Player player in _networkManager.GetActivePlayers())
         {
-            player.transform.position = _startPlayerPos;
-            NetworkObject networkObject = _networkManager.NetworkRunner.Spawn(_characterPrefab, _startPlayerPos, inputAuthority: player.PlayerRef);
-            Rpc_BindCamera(player.PlayerRef, networkObject);
-            if(notYet)
+            player.transform.position = _startCharacterPosition;
+            Character character = _networkManager.NetworkRunner
+                .Spawn(_characterPrefab, _startCharacterPosition, inputAuthority: player.PlayerRef);
+            if (character == null)
             {
-                _playersList.Init(null, networkObject.gameObject.GetComponent<CatScript>(), null, null);
-                notYet = false;
+                Debug.LogError($"{nameof(_characterPrefab)} is invalid.");
             }
-            // _characterSpawner.SpawnCharacter(Vector3.zero, Quaternion.identity, player.transform);
+            player.Character = character;
+            
+            Rpc_BindCamera(player.PlayerRef, character.Object);
         }
-        _deathZoneScript.SetActive(true);
+
+        // Darkness darkness = _networkManager.NetworkRunner.Spawn(_darknessPrefab, new Vector3(-100, -100, -100), Quaternion.identity);
+        Darkness darkness = _networkManager.NetworkRunner.Spawn(_darknessPrefab);
+        if (darkness == null)
+        {
+            Debug.LogError($"{nameof(_darknessPrefab)} is invalid.");
+        }
+        Darkness.Instance.SetActive(true);
+        darkness.SetActive(true);
     }
 
     // This GUI should be replaced to normal GUI with assets in future.
