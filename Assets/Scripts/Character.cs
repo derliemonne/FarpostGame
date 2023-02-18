@@ -30,7 +30,6 @@ public class Character : NetworkBehaviour
     [SerializeField] protected Transform _groundChecker;
     [SerializeField] protected NetworkMecanimAnimator _networkAnimator;
     [SerializeField] protected SpriteRenderer _spriteRenderer;
-    [SerializeField] protected LevelGenerator _levelGenerator;
     [SerializeField] protected GameObject _resistSphere;
     [SerializeField] protected Effect?[] _effects = new Effect?[10];
     [SerializeField] protected GameObject _playerGameObject;
