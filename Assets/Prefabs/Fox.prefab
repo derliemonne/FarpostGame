@@ -305,7 +305,7 @@ MonoBehaviour:
   _interpolationDataSource: 0
   _PlayerId: -1
   _moveSpeed: 3
-  _jumpSpeed: 7
+  _jumpSpeed: 9.8
   _pushPlatformDist: 1
   _groundCheckerSize: {x: 0.57, y: 0.01}
   _groundCheckerDist: 0.1
