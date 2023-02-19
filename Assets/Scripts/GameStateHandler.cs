@@ -31,10 +31,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     public ReadOnlyCollection<Character> CharacterPrefabs => _characterPrefabs.AsReadOnly(); 
     
     [SerializeField] private NetworkManager _networkManagerPrefab;
-    [SerializeField, NetworkPrefab] private Player _playerPrefab;
-    [SerializeField, NetworkPrefab] private List<Character> _characterPrefabs;
-    [SerializeField, NetworkPrefab] private LevelManager _levelManagerPrefab;
-    [SerializeField, NetworkPrefab] private Darkness _darknessPrefab;
+    [SerializeField] private Player _playerPrefab;
+    [SerializeField] private List<Character> _characterPrefabs;
+    [SerializeField] private LevelManager _levelManagerPrefab;
+    [SerializeField] private Darkness _darknessPrefab;
     [SerializeField] private Vector2 _startCharacterPosition = new(0, 0);
     [SerializeField] private CameraScript _cs;
 
