@@ -4,10 +4,25 @@ using Fusion;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+public enum CharacterType
+{
+    None,
+    Firsik,
+    Pirsik,
+    Marsik,
+    Gull
+}
+
 [RequireComponent(typeof(NetworkRigidbody2D))]
-public class Character : NetworkBehaviour
+public abstract class Character : NetworkBehaviour
 {
     private const float HorizontalSpeedConsideredNotMoving = 0.1f;
+
+    /// <summary>
+    /// Need override in each subclass.
+    /// </summary>
+    public abstract CharacterType CharacterType { get; }
+    public abstract string CharacterName { get; }
     public int Health { get; private set; } = 1;
     public bool IsDead { get; private set; }
 
