@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class CatScript : Character
 {
+    public override CharacterType CharacterType => CharacterType.Pirsik;
+    public override string CharacterName => "Пырсик";
+    
     private IEnumerator DodgeStunAnim(float animSpeed, Color oldColor, float toV, Vector3 oldScale, float toScale)
     {
         float elapsedTime = 0;

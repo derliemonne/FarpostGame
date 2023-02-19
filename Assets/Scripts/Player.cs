@@ -10,5 +10,10 @@ public class Player : NetworkBehaviour
 {
     [Networked] public PlayerRef PlayerRef { get; set; }
     [Networked] public NetworkBool IsReadyToStartRace { get; set; }
+    
+    /// <summary>
+    /// Index in NetworkManager.Instance.CharacterPrefabs list.
+    /// </summary>
+    [Networked] public int ChosenCharacterPrefabIndex { get; set; }
     [Networked] public Character Character { get; set; }
 }
