@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scripts/Editor/CameraScriptEditor.cs.meta
+guid: d930839b2d2e6334b915bdada3a4350f
+========
 guid: dd269f4380979d641857e6a171140b7c
+>>>>>>>> origin/mainnorm:Assets/Scripts/Teleport.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

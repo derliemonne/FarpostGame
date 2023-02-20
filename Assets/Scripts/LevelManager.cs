@@ -13,6 +13,9 @@ public class LevelManager : NetworkBehaviour
 
     public event Action ChunksChanged;
     
+    [Networked]
+    public NetworkBool IsSpawningChunksAutomatically { get; private set; }
+    
     [SerializeField] private List<Chunk> _chunkPrefabs;
     [SerializeField] private float _firstChunkAltitude = Chunk.ChunkHalfHeight;
     
@@ -26,6 +29,9 @@ public class LevelManager : NetworkBehaviour
             Destroy(gameObject);
         }
         Instance = this;
+
+        IsSpawningChunksAutomatically = GameStateHandler.Instance.RaceStarted;
+        GameStateHandler.Instance.RaceStartedChanged += OnRaceStartedChanged;
     }
 
     public void SpawnChunkOnTop()
@@ -83,6 +89,11 @@ public class LevelManager : NetworkBehaviour
         return chunks;
     }
 
+    private void OnRaceStartedChanged(bool raceStarted)
+    {
+        IsSpawningChunksAutomatically = raceStarted;
+    }
+
     private Chunk GetChunk(NetworkBehaviourId networkBehaviourId)
     {
         if (networkBehaviourId == default) return null;
@@ -91,8 +102,12 @@ public class LevelManager : NetworkBehaviour
     
     private void FixedUpdate()
     {
-        if (!Runner.IsServer) return;
-        if (Chunks.Count == 0) return;
+        if (!Runner.IsServer || !IsSpawningChunksAutomatically) return;
+        if (Chunks.Count == 0)
+        {
+            SpawnChunkOnTop();
+            return;
+        }
         Chunk topChunk = GetChunk(Chunks.TopChunk);
         if (topChunk == null) return;
         float? charactersHighestAltitude = GetCharactersHighestAltitude();

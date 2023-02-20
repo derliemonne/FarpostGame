@@ -49,6 +49,7 @@ public abstract class Character : NetworkBehaviour
     [SerializeField] protected Effect?[] _effects = new Effect?[10];
     [SerializeField] protected GameObject _playerGameObject;
     [SerializeField] protected Transform _spriteTransform;
+    [SerializeField] protected Transform _cameraTransform;
 
     private NetworkRigidbody2D _networkRb;
 

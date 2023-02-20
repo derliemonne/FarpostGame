@@ -1,7 +1,11 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Prefabs/liftablePlatform1(3b).prefab.meta
+guid: 067d18985410f9a42aa60473e2bfbf1a
+========
 guid: 48a9baa85f22b0542a57d9f0a15296bd
 labels:
 - FusionPrefab
+>>>>>>>> origin/mainnorm:Assets/Prefabs/Chunks/Chunk2.prefab.meta
 PrefabImporter:
   externalObjects: {}
   userData: 
