@@ -13,24 +13,25 @@ public class BadPlatform : NetworkBehaviour
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        Rpc_BreakPlatform();
-    }
+        Character character = collision.GetComponent<Character>();
 
-    [Rpc(sources: RpcSources.All, targets: RpcTargets.All)]
-    private void Rpc_BreakPlatform()
-    {
-        BreakPlatform();
+        if(Runner.IsServer && character != null)
+        {
+            BreakPlatform();
+        }   
     }
 
     private void BreakPlatform()
     {
+        Rpc_BreakPlatform();
+        StartCoroutine(DelayToDespawn());
+    }
+
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+    private void Rpc_BreakPlatform()
+    {
         _badPlatformAnimator.enabled = true;
         _badPlatformCollider.enabled = false;
-        if(Runner.IsServer)
-        {
-            StartCoroutine(DelayToDespawn());
-        }
-        
     }
 
     private IEnumerator DelayToDespawn()
