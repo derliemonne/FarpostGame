@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1900ae623c029a34aa1b5bae23bf2935
+guid: db28feeb9a753374aaf5295d29a2c642
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -70,7 +70,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 0
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -105,106 +105,85 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: BAD--PlATFORM (2)_0
+      name: BAD--PLATFORM_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 128
         height: 128
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e3d4b65c0db3be04bafba27e22cd9b54
-      internalID: -2072789389
+      spriteID: 0a3d2f06b2a8ed34a899508bc17f656c
+      internalID: 666520157
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BAD--PlATFORM (2)_1
+      name: BAD--PLATFORM_1
       rect:
         serializedVersion: 2
         x: 128
         y: 0
         width: 128
         height: 128
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 44a3445a80528cf41963a8cebc775b42
-      internalID: 1114067314
+      spriteID: 3fd2a4af86aed8548a5ac4a834020ddc
+      internalID: 1041373724
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BAD--PlATFORM (2)_2
+      name: BAD--PLATFORM_2
       rect:
         serializedVersion: 2
         x: 256
         y: 0
         width: 128
         height: 128
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c2aa58d3c59c1ab43a8192f56efbb620
-      internalID: -1122224895
+      spriteID: 4d0c6304906a6f64f951961f6f50a903
+      internalID: -1497169656
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: BAD--PlATFORM (2)_3
+      name: BAD--PLATFORM_3
       rect:
         serializedVersion: 2
         x: 384
         y: 0
         width: 128
         height: 128
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 9
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 66ce47f4102e0ac4cb3ea119adaecdb8
-      internalID: -1819455351
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: BAD--PlATFORM (2)_4
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 0
-        width: 128
-        height: 128
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d9b07afca97bd94469105fb038780486
-      internalID: -1679018146
+      spriteID: 713abc4b07cd3a149b90d70da3adbbfd
+      internalID: -1187075884
       vertices: []
       indices: 
       edges: []
@@ -220,11 +199,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      BAD--PlATFORM (2)_4: -1679018146
-      BAD--PlATFORM (2)_0: -2072789389
-      BAD--PlATFORM (2)_3: -1819455351
-      BAD--PlATFORM (2)_1: 1114067314
-      BAD--PlATFORM (2)_2: -1122224895
+      BAD--PLATFORM_1: 1041373724
+      BAD--PLATFORM_2: -1497169656
+      BAD--PLATFORM_0: 666520157
+      BAD--PLATFORM_3: -1187075884
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
