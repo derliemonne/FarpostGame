@@ -36,6 +36,8 @@ public class CrateSpawner : MonoBehaviour
             return;
         }
 
+        List<Chunk> chunks = levelManager.GetChunks();
+        if (chunks.Count == 0) return;
         Chunk topChunk = levelManager.GetChunks()[^1];
         if (topChunk == null)
         {
