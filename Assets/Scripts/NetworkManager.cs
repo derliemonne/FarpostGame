@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Fusion;
@@ -63,6 +63,16 @@ public class NetworkManager : MonoBehaviour
         return NetworkRunner.ActivePlayers
             .Select(playerRef => GetPlayerObject(playerRef))
             .Where(player => player != null);
+    }
+
+    public void Despawn(NetworkObject networkObject, float seconds, bool allowPredicted=false)
+    {
+        IEnumerator Wait(float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            NetworkRunner.Despawn(networkObject, allowPredicted);  
+        }
+        StartCoroutine(Wait(seconds));
     }
 
     private void OnApplicationQuit()
