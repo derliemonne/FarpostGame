@@ -221,8 +221,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
     public void Rpc_BindCamera([RpcTarget] PlayerRef player, Character character)
     {
-        _cs.BindPlayer(character.transform, character.GetComponent<Rigidbody2D>());
-        character.BindCamera(_cs);
+        _cs.BindPlayer(character.transform, character.GetComponent<Rigidbody2D>(), character);
     }
 
     /// <summary>
