@@ -80,7 +80,6 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         if (_networkManager.IsPlayerHost(joinedPlayerRef.PlayerId))
         { 
             LevelManager levelManager = Runner.Spawn(_levelManagerPrefab);
-            levelManager.SpawnChunkOnTop();
 
             CrateSpawner crateSpawner = Instantiate(_crateSpawnerPrefab);
             if (crateSpawner == null)
