@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 3955090095165167000}
   - component: {fileID: 2638425377569710123}
   - component: {fileID: 2076109371559385898}
-  - component: {fileID: 1686414724}
   m_Layer: 0
   m_Name: Tp
   m_TagString: Untagged
@@ -132,7 +131,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 1682548514126195745}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: d793065680f03ff43889b39772c0e3cd, type: 2}
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -172,35 +171,4 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 2548040344621863890}
-  - {fileID: 1686414724}
   SimulationBehaviours: []
---- !u!114 &1686414724
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1682548514126195745}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 506319458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
-  Animator: {fileID: 3955090095165167000}
-  TotalWords: 0
-  SyncSettings: 79
-  FloatAccuracy:
-    _value: 0
-    _inverse: 0
-    _hash: -814817977
-  TimeAccuracy:
-    _value: 0
-    _inverse: 0
-    _hash: 1061325578
-  WeightAccuracy:
-    _value: 0
-    _inverse: 0
-    _hash: -814817977
-  StateHashes: 0000000093fb0bcf36e596e0
-  TriggerHashes: 00000000

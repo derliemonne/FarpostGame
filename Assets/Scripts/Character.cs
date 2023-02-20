@@ -52,8 +52,6 @@ public abstract class Character : NetworkBehaviour
     [SerializeField] protected Transform _cameraTransform;
 
     private NetworkRigidbody2D _networkRb;
-    private CameraScript _cameraScript;
-
 
     private void Awake()
     {
@@ -66,11 +64,6 @@ public abstract class Character : NetworkBehaviour
         {
             PlayerId = playerId;
         }
-    }
-
-    public void BindCamera(CameraScript cameraScript)
-    {
-        _cameraScript = cameraScript;
     }
 
     public void TakeDamage()
@@ -178,23 +171,14 @@ public abstract class Character : NetworkBehaviour
         Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _pushPlatformDist);
     }
 
-    private bool GroundCheck()
+    public bool GroundCheck()
     {
         return Physics2D.BoxCast(_groundChecker.position, _groundCheckerSize, 0, -transform.up, _groundCheckerDist, _groundLayer);
     }
 
-    [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
-    private void Rpc_TeleportForAllUsers(Vector3 position)
-    {
-        _networkRb.TeleportToPosition(position);
-    }
-
     private void TeleportTo(Vector3 position)
     {
-        Rpc_TeleportForAllUsers(position);
-        Vector3 newCameraPos = _cameraScript.transform.position;
-        newCameraPos.y = transform.position.y;
-        _cameraScript.transform.position = newCameraPos;
+        _networkRb.TeleportToPosition(position);
     }
 
     public virtual void OnTriggerEnter2D(Collider2D collision)
@@ -204,7 +188,7 @@ public abstract class Character : NetworkBehaviour
             TakeDamage();
         }
 
-        if (Runner.LocalPlayer.PlayerId == PlayerId)
+        if (Runner.IsServer)
         {
             Teleport teleport = collision.GetComponent<Teleport>();
 
