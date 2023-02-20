@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Fusion;
 using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LevelManager : NetworkBehaviour
@@ -12,6 +10,8 @@ public class LevelManager : NetworkBehaviour
     private const int MaxChunksInNetworkList = 16;
     
     public static LevelManager Instance { get; private set; }
+
+    public event Action ChunksChanged;
     
     [SerializeField] private List<Chunk> _chunkPrefabs;
     [SerializeField] private float _firstChunkAltitude = Chunk.ChunkHalfHeight;
@@ -51,6 +51,7 @@ public class LevelManager : NetworkBehaviour
             return;
         }
         Chunks.AddChunkToTop(chunk);
+        ChunksChanged?.Invoke();
     }
 
     public void DespawnChunkFromBottom()
@@ -65,6 +66,7 @@ public class LevelManager : NetworkBehaviour
         if (bottomChunk == null) return;
         NetworkManager.Instance.NetworkRunner.Despawn(bottomChunk.Object);
         Chunks.RemoveBottomChunk();
+        ChunksChanged?.Invoke();
     }
 
     /// <summary>
