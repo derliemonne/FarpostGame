@@ -34,7 +34,7 @@ public abstract class Character : NetworkBehaviour
     [Networked] public int PlayerId { get; private set; } = -1;
 
     private static readonly int _isJumping = Animator.StringToHash("is_jumping");
-    private static readonly int _isRunning = Animator.StringToHash("is_running");
+    private static readonly int _isRunning = Animator.StringToHash("is_moving");
     
     [SerializeField] protected float _moveSpeed = 1f;
     [SerializeField] protected float _jumpSpeed = 5f;
@@ -49,7 +49,6 @@ public abstract class Character : NetworkBehaviour
     [SerializeField] protected Effect?[] _effects = new Effect?[10];
     [SerializeField] protected GameObject _playerGameObject;
     [SerializeField] protected Transform _spriteTransform;
-    [SerializeField] protected Transform _cameraTransform;
 
     private NetworkRigidbody2D _networkRb;
 
