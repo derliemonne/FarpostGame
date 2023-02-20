@@ -24,9 +24,22 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     private const float GuiScaleForPhones = 3.5f;
 
     public static GameStateHandler Instance { get; private set; }
+
+    public event Action<ConnectionStatus> ConnectionStatusChanged;
+    public event Action<bool> RaceStartedChanged;
     
-    [Networked] public NetworkBool RaceStarted { get; private set; }
-    public ConnectionStatus ConnectionStatus { get; private set; } = ConnectionStatus.NotInSession;
+    [Networked(OnChanged = nameof(OnRaceStartedChanged))] 
+    public NetworkBool RaceStarted { get; private set; }
+    
+    public ConnectionStatus ConnectionStatus
+    {
+        get => _connectionStatus;
+        private set
+        {
+            _connectionStatus = value;
+            ConnectionStatusChanged?.Invoke(value);
+        }
+    }
 
     public ReadOnlyCollection<Character> CharacterPrefabs => _characterPrefabs.AsReadOnly(); 
     
@@ -35,14 +48,20 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private List<Character> _characterPrefabs;
     [SerializeField] private LevelManager _levelManagerPrefab;
     [SerializeField] private Darkness _darknessPrefab;
+    [SerializeField] private CrateSpawner _crateSpawnerPrefab;
     [SerializeField] private Vector2 _startCharacterPosition = new(0, 0);
     [SerializeField] private CameraScript _cs;
 
     private bool _readyToStartRace;
     private NetworkManager _networkManager;
     private string _inputSessionName;
+    private ConnectionStatus _connectionStatus = ConnectionStatus.NotInSession;
 
-
+    public static void OnRaceStartedChanged(Changed<GameStateHandler> changed)
+    {
+        changed.Behaviour.RaceStartedChanged?.Invoke(changed.Behaviour.RaceStarted);
+    }
+    
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef joinedPlayerRef)
     {
         Debug.Log("> OnPlayerJoined");
@@ -62,6 +81,12 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         { 
             LevelManager levelManager = Runner.Spawn(_levelManagerPrefab);
             levelManager.SpawnChunkOnTop();
+
+            CrateSpawner crateSpawner = Instantiate(_crateSpawnerPrefab);
+            if (crateSpawner == null)
+            {
+                Debug.LogError($"{nameof(_crateSpawnerPrefab)} is invalid.");
+            }
         }
     }
 

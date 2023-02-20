@@ -53,6 +53,12 @@ TagManager:
   - name: Character
     uniqueID: 2070341091
     locked: 0
+  - name: Crate
+    uniqueID: 3795811423
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 503369391
     locked: 0
