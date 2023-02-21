@@ -46,7 +46,7 @@ public class CatScript : Character
         base.OnTriggerEnter2D(collision);
         if(PlayerId != -1 && Runner.LocalPlayer.PlayerId == PlayerId)
         {
-            if (collision.CompareTag("Crate"))
+            if (collision.TryGetComponent(out Crate crate))
             {
                 Rpc_StartDodgeStun();
             }
@@ -57,7 +57,7 @@ public class CatScript : Character
     {
         if (Object != null && PlayerId != -1 && Runner.LocalPlayer.PlayerId == PlayerId)
         {
-            if (collision.CompareTag("Crate"))
+            if (collision.TryGetComponent(out Crate crate))
             {
                 Rpc_EndDodgeStun();
             }

@@ -47,4 +47,5 @@ MonoBehaviour:
   _altitudeShiftAboveTopChunk: 19.2
   _cratesPerSecond: 0.4
   _cratePrefabs:
+  - {fileID: 1483061654991374791, guid: 8097a3b8954f6c946ae4e2a6db2312e1, type: 3}
   - {fileID: 1975277987504233460, guid: 6c0135674e2a30c4b970905eb74dde98, type: 3}
