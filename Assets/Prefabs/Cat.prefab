@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1958569696}
   - component: {fileID: 1958569697}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ResistSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 797944298}
   - component: {fileID: 716921804432128068}
   - component: {fileID: 2623101462168442182}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cat
   m_TagString: Cat
   m_Icon: {fileID: 0}
@@ -166,13 +166,21 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  _groundChecker: {fileID: 3132579209321421638}
+  _crateTopLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  _crateLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  _groundChecker: {fileID: 2606867656976354824}
   _networkAnimator: {fileID: 6567465653196854145}
   _spriteRenderer: {fileID: 8196706247561376691}
   _resistSphere: {fileID: 1958569695}
   _playerGameObject: {fileID: 0}
   _spriteTransform: {fileID: 6996493771773578522}
-  _cameraTransform: {fileID: 0}
+  _crateTopLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!61 &797944298
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -262,7 +270,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3132579209321421638}
-  m_Layer: 0
+  - component: {fileID: 2606867656976354824}
+  - component: {fileID: 2063285780189378710}
+  m_Layer: 7
   m_Name: GroundChecker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -276,14 +286,52 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7365325007537100849}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.656, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8376874876226332373}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &2606867656976354824
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7365325007537100849}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.007780373, y: -0.6419821}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5620767, y: 0.09063697}
+  m_EdgeRadius: 0
+--- !u!114 &2063285780189378710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7365325007537100849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de33bbac14030594f9b1834478fdefc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7557896148289429169
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,7 +344,7 @@ GameObject:
   - component: {fileID: 8196706247561376691}
   - component: {fileID: 4620989002751195667}
   - component: {fileID: 6567465653196854145}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

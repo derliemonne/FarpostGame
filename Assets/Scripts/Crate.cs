@@ -21,15 +21,14 @@ public class Crate : NetworkBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        bool isServer = NetworkManager.Instance.NetworkRunner.IsServer;
-        if (isServer && other.TryGetComponent(out Darkness darkness))
+        if (Runner == null) return;
+        if (Runner.IsServer && other.TryGetComponent(out Darkness darkness))
         {
             NetworkManager.Instance.NetworkRunner.Despawn(Object);
         }
-        else if (other.TryGetComponent(out Character character))
+        else if (other.TryGetComponent(out Character character) && character is not CatScript)
         {
-            if (character is CatScript) return;
-            if (isServer)
+            if (Runner.IsServer)
             {
                 NetworkManager.Instance.Despawn(Object, _destructionAnimationSeconds);
             }
