@@ -49,7 +49,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _isMoving: 1
-  _speed: 0.768
+  _speed: 1.536
   _travelDistance: 7.68
   _secondsPlatformNotMoving: 1
 --- !u!212 &1322997023088334989
