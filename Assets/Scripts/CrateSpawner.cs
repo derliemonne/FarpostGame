@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Fusion;
-using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,23 +6,24 @@ using Random = UnityEngine.Random;
 /// Need to be only on host machine.
 /// </summary>
 public class CrateSpawner : MonoBehaviour
-{
-    public bool IsSpawningBoxes { get; private set; }
-
+{ 
     private float Altitude { get; set; }
 
     /// <summary>
     /// How many units above the topChunk the boxes will be spawned.
     /// </summary>
     [SerializeField] private float _altitudeShiftAboveTopChunk = Chunk.ChunkHalfHeight;
-    [SerializeField] private float _cratesPerSecond = 0.4f;
+    [SerializeField] private float _cratesSpawnInterval = 4f;
     [SerializeField] private List<Crate> _cratePrefabs;
+    
+    private bool _isSpawningCrates;
+    private float _lastTimeCrateSpawned;
 
     private void Awake()
     {
         GameStateHandler.Instance.RaceStartedChanged += OnRaceStartedChanged;
     }
-
+    
     private void UpdateAltitude()
     {
         LevelManager levelManager = LevelManager.Instance;
@@ -50,7 +47,7 @@ public class CrateSpawner : MonoBehaviour
 
     private void OnRaceStartedChanged(bool raceStarted)
     {
-        IsSpawningBoxes = raceStarted;
+        _isSpawningCrates = raceStarted;
         LevelManager levelManager = LevelManager.Instance;
         if (raceStarted)
         {
@@ -72,16 +69,17 @@ public class CrateSpawner : MonoBehaviour
     {
         UpdateAltitude();
     }
-
+    
     private void FixedUpdate()
     {
-        if (!IsSpawningBoxes) return;
-        float boxesPerTick = _cratesPerSecond * Time.fixedDeltaTime;
-        if (Random.value <= boxesPerTick)
+        if (!_isSpawningCrates) return;
+        float timeNow = Time.time;
+        if (timeNow - _lastTimeCrateSpawned > _cratesSpawnInterval)
         {
             Vector3 cratePos = new(Random.Range(-Chunk.ChunkHalfWidth, Chunk.ChunkHalfWidth), Altitude, 0);
             Crate cratePrefab = _cratePrefabs[Random.Range(0, _cratePrefabs.Count)];
             NetworkManager.Instance.NetworkRunner.Spawn(cratePrefab, cratePos);
+            _lastTimeCrateSpawned = timeNow;
         }
     }
 
