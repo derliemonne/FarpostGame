@@ -8,6 +8,7 @@ public class BadPlatform : NetworkBehaviour
     [SerializeField] private BoxCollider2D _badPlatformCollider;
     [SerializeField] private Animator _badPlatformAnimator;
     [SerializeField] private NetworkObject _badPlatformNetObject;
+    [SerializeField] private float _stunDuration;
 
     private static readonly float _animDuration = 0.5f;
 
@@ -18,6 +19,7 @@ public class BadPlatform : NetworkBehaviour
         if(Runner.IsServer && character != null)
         {
             BreakPlatform();
+            character.Stun(_stunDuration);
         }   
     }
 

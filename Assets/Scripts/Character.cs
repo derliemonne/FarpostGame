@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.Windows;
 
 public enum CharacterType
 {
@@ -37,9 +38,9 @@ public abstract class Character : NetworkBehaviour
     //id игрока, который владеет персонажем, в будущем можно заменить на объект класса Player
     [Networked] public int PlayerId { get; private set; } = -1;
 
-    private static readonly int _isJumping = Animator.StringToHash("is_jumping");
-    private static readonly int _isRunning = Animator.StringToHash("is_moving");
-    private static readonly int _isStunnedAnim = Animator.StringToHash("is_stunned");
+    protected static readonly int _isJumping = Animator.StringToHash("is_jumping");
+    protected static readonly int _isRunning = Animator.StringToHash("is_moving");
+    protected static readonly int _isStunnedAnim = Animator.StringToHash("is_stunned");
 
     [SerializeField] protected float _moveSpeed = 1f;
     [SerializeField] protected float _moveSpeedInAir = 0.8f;
@@ -56,8 +57,10 @@ public abstract class Character : NetworkBehaviour
     [SerializeField] protected IceBoots _iceBoots;
     [SerializeField] protected ResistSphere _resistSphere;
 
-    private NetworkRigidbody2D _networkRb;
-    private float inputInter = 0;
+    protected NetworkRigidbody2D _networkRb;
+    protected float inputInter = 0;
+    [Networked] protected bool _canJump { get; set; } = true;
+    [SerializeField] protected float _jumpCoolDown = 0.5f;
 
     private void Awake()
     {
@@ -81,13 +84,18 @@ public abstract class Character : NetworkBehaviour
         }
     }
 
-    public virtual void Stun(float duration)
+    public void Stun(float duration)
     {
         Rpc_SetActiveStun(true);
         StartCoroutine(StunDuration(duration));
     }
 
-    [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.All)]
+    protected virtual void CrateStun(float duration)
+    {
+        Stun(duration);
+    }
+
+    [Rpc(sources: RpcSources.All, targets: RpcTargets.All)]
     private void Rpc_SetActiveStun(bool value)
     {
         IsStunned = value;
@@ -104,9 +112,6 @@ public abstract class Character : NetworkBehaviour
     {
         if (GetInput(out NetworkInputData inputData))
         {
-            List<Platform> standOnPlatforms;
-            bool isGrounded = _groundChecker.GetGroundPlatforms(out standOnPlatforms);
-
             Vector2 input = inputData.Direction.normalized;
             Vector2 velocity = _networkRb.Rigidbody.velocity;
 
@@ -115,60 +120,91 @@ public abstract class Character : NetworkBehaviour
                 input = Vector3.zero;
             }
 
-            if(inputData.PushedPlatform)
+            if(inputData.PushedPlatform && !IsStunned)
             {
-                RaycastHit2D raycastHit = Physics2D.Raycast(transform.position, Vector2.down, _pushPlatformDist, _groundLayer);
-                if(raycastHit.transform != null)
-                {
-                    Platform platformScript = raycastHit.transform.GetComponent<Platform>();
-                    if(platformScript != null)
-                    {
-                        platformScript.PushPlatform();
-                    }
-                }                            
+                PushPlatform();              
             }
 
-            if(isGrounded)
-            {
-                if(input.y > 0.1)
-                {
-                    velocity.y = _jumpSpeed;
-                }
-                _networkAnimator.Animator.SetBool(_isJumping, false);
-            }
-            else
-            {
-                _networkAnimator.Animator.SetBool(_isJumping, true);
-            }
-
-            _networkAnimator.Animator.SetBool(_isRunning, Math.Abs(input.x) > HorizontalSpeedConsideredNotMoving);
-
-            Platform firstFrozenPlatform = null;
-            foreach(Platform platform in standOnPlatforms)
-            {
-                if(platform.IsFrozen)
-                {
-                    firstFrozenPlatform = platform;
-                    break;
-                }
-            }
-
-            if(firstFrozenPlatform != null && firstFrozenPlatform.IsFrozen && !IceBoots.IsActive)
-            {
-                inputInter += input.x * firstFrozenPlatform.SkiCoefficient;
-                inputInter -= 0.1f * firstFrozenPlatform.SkiCoefficient * Math.Sign(inputInter);
-                inputInter = Math.Min(1, inputInter);
-                inputInter = Math.Max(-1, inputInter);
-            }
-            else
-            {
-                inputInter = input.x;
-            }
-
-            velocity.x = inputInter * (isGrounded ? _moveSpeed : _moveSpeedInAir);
-
-            _networkRb.Rigidbody.velocity = velocity;
+            Move(input, velocity);
         }
+    }
+
+    private void PushPlatform()
+    {
+        RaycastHit2D raycastHit = Physics2D.Raycast(transform.position, Vector2.down, _pushPlatformDist, _groundLayer);
+        if(raycastHit.transform != null)
+        {
+            Platform platformScript = raycastHit.transform.GetComponent<Platform>();
+            if(platformScript != null)
+            {
+                platformScript.PushPlatform();
+            }
+        }  
+    }
+
+    protected virtual void Move(Vector3 input, Vector3 velocity)
+    {
+        List<Platform> standOnPlatforms;
+        bool isGrounded = _groundChecker.GetGroundPlatforms(out standOnPlatforms);
+
+        Jump(input.y, ref velocity, isGrounded);
+
+        _networkAnimator.Animator.SetBool(_isRunning, Math.Abs(input.x) > HorizontalSpeedConsideredNotMoving);
+
+        Platform firstFrozenPlatform = null;
+        foreach (Platform platform in standOnPlatforms)
+        {
+            if (platform.IsFrozen)
+            {
+                firstFrozenPlatform = platform;
+                break;
+            }
+        }
+
+        if (firstFrozenPlatform != null && firstFrozenPlatform.IsFrozen && !IceBoots.IsActive)
+        {
+            inputInter += input.x * firstFrozenPlatform.SkiCoefficient;
+            inputInter -= 0.1f * firstFrozenPlatform.SkiCoefficient * Math.Sign(inputInter);
+            inputInter = Math.Min(1, inputInter);
+            inputInter = Math.Max(-1, inputInter);
+        }
+        else
+        {
+            inputInter = input.x;
+        }
+
+        velocity.x = inputInter * (isGrounded ? _moveSpeed : _moveSpeedInAir);
+
+        _networkRb.Rigidbody.velocity = velocity;
+    }
+
+    protected virtual void Jump(float inputY, ref Vector3 velocity, bool isGrounded)
+    {
+        if (isGrounded)
+        {
+            if (inputY > 0.1 && _canJump)
+            {
+                velocity.y = _jumpSpeed;
+                ResetJump(_jumpCoolDown);
+            }
+            _networkAnimator.Animator.SetBool(_isJumping, false);
+        }
+        else
+        {
+            _networkAnimator.Animator.SetBool(_isJumping, true);
+        }
+    }
+
+    protected void ResetJump(float duration)
+    {
+        _canJump = false;
+        StartCoroutine(ResetJumpDelay(duration));
+    }
+
+    private IEnumerator ResetJumpDelay(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        _canJump = true;
     }
 
     private void Update()
@@ -226,7 +262,7 @@ public abstract class Character : NetworkBehaviour
 
             if (collision.TryGetComponent(out Crate crate) && !_groundChecker.LandOnTopOfCrate() && !_resistSphere.IsActive)
             {
-                Stun(5);
+                CrateStun(5);
             }
         }  
     }

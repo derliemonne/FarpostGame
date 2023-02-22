@@ -36,7 +36,7 @@ public class CatScript : Character
         StartCoroutine(DodgeStunAnim(0.3f, _spriteRenderer.color, 1f, _spriteTransform.localScale, 1f));
     }
 
-    public override void Stun(float duration) { }
+    protected override void CrateStun(float duration) { }
 
     protected override void OnTriggerEnter2D(Collider2D collision)
     {

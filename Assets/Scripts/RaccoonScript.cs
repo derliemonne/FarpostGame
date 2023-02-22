@@ -7,23 +7,19 @@ public class RaccoonScript : Character
     public override CharacterType CharacterType => CharacterType.Marsik;
     public override string CharacterName => "Марсик";
 
-    protected override void OnTriggerEnter2D(Collider2D collision)
+    [SerializeField] private Collider2DEventSender eventSender;
+    [SerializeField] private float _raccoonStunDuration = 2f;
+
+    private void Start()
     {
-        base.OnTriggerEnter2D(collision);
-        if (Runner.IsServer)
+        eventSender.TriggerEnter2D += RaccoonStun;
+    }
+
+    private void RaccoonStun(Collider2D collider)
+    {
+        if(Runner.IsServer && collider.gameObject.TryGetComponent(out Character character) && !character.ResistSphere.IsActive)
         {
-            Crate crate = collision.GetComponent<Crate>();
-            Character character = collision.GetComponent<Character>();
-
-            if (crate != null && !_resistSphere.IsActive)
-            {
-                Stun(5);
-            }
-
-            if(character != null && !character.ResistSphere.IsActive)
-            {
-                character.Stun(2);
-            }
+            if(!character.ResistSphere.IsActive) character.Stun(_raccoonStunDuration);
         }
     }
 }

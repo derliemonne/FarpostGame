@@ -233,3 +233,4 @@ MonoBehaviour:
   _badPlatformCollider: {fileID: 3425001699863183951}
   _badPlatformAnimator: {fileID: 1398433377691082990}
   _badPlatformNetObject: {fileID: 1996033869690756013}
+  _stunDuration: 1

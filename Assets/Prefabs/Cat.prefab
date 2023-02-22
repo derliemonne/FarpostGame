@@ -191,6 +191,7 @@ MonoBehaviour:
   _effectManager: {fileID: 4091216202324084813}
   _iceBoots: {fileID: 6740442872462743836}
   _resistSphere: {fileID: 3234555987660047667}
+  _jumpCoolDown: 0.8
 --- !u!114 &716921804432128068
 MonoBehaviour:
   m_ObjectHideFlags: 0
