@@ -4,12 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Fusion;
 using Fusion.Sockets;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
-
 
 public enum ConnectionStatus {
     NotInSession,
@@ -25,7 +22,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
 
     public static GameStateHandler Instance { get; private set; }
 
-    public event Action<ConnectionStatus> ConnectionStatusChanged;
+    /// <summary>
+    /// Previous ConnectionStatus and new ConnectionStatus.
+    /// </summary>
+    public event Action<ConnectionStatus, ConnectionStatus> ConnectionStatusChanged;
     public event Action<bool> RaceStartedChanged;
     
     [Networked(OnChanged = nameof(OnRaceStartedChanged))] 
@@ -36,8 +36,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         get => _connectionStatus;
         private set
         {
+            ConnectionStatusChanged?.Invoke(_connectionStatus, value);
             _connectionStatus = value;
-            ConnectionStatusChanged?.Invoke(value);
         }
     }
 
@@ -51,12 +51,31 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private CrateSpawner _crateSpawnerPrefab;
     [SerializeField] private Vector2 _startCharacterPosition = new(0, 0);
     [SerializeField] private CameraScript _cs;
+    [SerializeField] private Gui _gui;
+    [SerializeField] private bool _drawDebugGui;
 
     private bool _readyToStartRace;
     private NetworkManager _networkManager;
     private string _inputSessionName;
     private ConnectionStatus _connectionStatus = ConnectionStatus.NotInSession;
 
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+        }
+        Instance = this;
+
+        if (_gui == null)
+        {
+            Debug.LogError("Gui is null");
+            return;
+        }
+        _gui.ConnectToRoomWithId += OnGuiConnectToRoom;
+        _gui.StartHost += OnGuiStartHost;
+    }
+    
     public static void OnRaceStartedChanged(Changed<GameStateHandler> changed)
     {
         changed.Behaviour.RaceStartedChanged?.Invoke(changed.Behaviour.RaceStarted);
@@ -154,15 +173,6 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     public void OnSceneLoadStart(NetworkRunner runner)
     {
         Debug.Log("> OnSceneLoadStart");
-    }
-
-    private void Awake()
-    {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-        }
-        Instance = this;
     }
 
     private async void ConnectToRoom(GameMode mode, string sessionName="TestRoom")
@@ -263,9 +273,21 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         darkness.SetActive(true);
     }
 
+    private void OnGuiConnectToRoom(int roomId)
+    {
+        ConnectToRoom(GameMode.Client, _inputSessionName);
+    }
+
+    private void OnGuiStartHost()
+    {
+        string sessionName = Random.Range(0, 100).ToString();
+        ConnectToRoom(GameMode.Host, sessionName);
+    }
+
     // This GUI should be replaced to normal GUI with assets in future.
     private void OnGUI()
     {
+        if (!_drawDebugGui) return;
         // Scale GUI that it is not too small on phones.
         GUI.matrix = Matrix4x4.TRS(
             Vector3.zero, Quaternion.identity,new Vector3(GuiScaleForPhones, GuiScaleForPhones, 1));
@@ -348,7 +370,17 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             GUILayout.Label($"Chunks count: {LevelManager.Instance.GetChunks().Count}");
         }
     }
-    
+
+    private void OnDestroy()
+    {
+        if (_gui == null)
+        {
+            return;
+        }
+        _gui.ConnectToRoomWithId -= OnGuiConnectToRoom;
+        _gui.StartHost -= OnGuiStartHost;
+    }
+
     private void OnApplicationQuit()
     {
         Instance = null;
