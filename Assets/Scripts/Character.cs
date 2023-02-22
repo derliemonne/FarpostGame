@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Fusion;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -31,6 +32,7 @@ public abstract class Character : NetworkBehaviour
     public ResistSphere ResistSphere => _resistSphere;
     public GameObject PlayerGameObject => _playerGameObject;
     public IceBoots IceBoots => _iceBoots;
+    public GroundChecker GroundChecker => _groundChecker;
 
     //id игрока, который владеет персонажем, в будущем можно заменить на объект класса Player
     [Networked] public int PlayerId { get; private set; } = -1;
@@ -43,12 +45,8 @@ public abstract class Character : NetworkBehaviour
     [SerializeField] protected float _moveSpeedInAir = 0.8f;
     [SerializeField] protected float _jumpSpeed = 5f;
     [SerializeField] protected float _pushPlatformDist = 1f;
-    [SerializeField] protected Vector2 _groundCheckerSize;
-    [SerializeField] protected float _groundCheckerDist;
-    [SerializeField] protected LayerMask _groundLayer;
-    [SerializeField] protected LayerMask _crateTopLayer;
-    [SerializeField] protected LayerMask _crateLayer;
-    [SerializeField] protected Collider2D _groundChecker;
+    [SerializeField] private LayerMask _groundLayer;
+    [SerializeField] protected GroundChecker _groundChecker;
     [SerializeField] protected NetworkMecanimAnimator _networkAnimator;
     [SerializeField] protected SpriteRenderer _spriteRenderer;
     [SerializeField] protected GameObject _playerGameObject;
@@ -83,7 +81,7 @@ public abstract class Character : NetworkBehaviour
         }
     }
 
-    public void Stun(float duration)
+    public virtual void Stun(float duration)
     {
         Rpc_SetActiveStun(true);
         StartCoroutine(StunDuration(duration));
@@ -104,16 +102,10 @@ public abstract class Character : NetworkBehaviour
 
     public override void FixedUpdateNetwork()
     {
-        //переписать стан
         if (GetInput(out NetworkInputData inputData))
         {
-            RaycastHit2D raycastInfo = GroundCheck();
-            Platform standOnPlatform = null;
-
-            if (raycastInfo.transform != null)
-            {
-                standOnPlatform = raycastInfo.transform.GetComponent<Platform>();
-            }
+            List<Platform> standOnPlatforms;
+            bool isGrounded = _groundChecker.GetGroundPlatforms(out standOnPlatforms);
 
             Vector2 input = inputData.Direction.normalized;
             Vector2 velocity = _networkRb.Rigidbody.velocity;
@@ -136,7 +128,7 @@ public abstract class Character : NetworkBehaviour
                 }                            
             }
 
-            if(raycastInfo)
+            if(isGrounded)
             {
                 if(input.y > 0.1)
                 {
@@ -151,10 +143,20 @@ public abstract class Character : NetworkBehaviour
 
             _networkAnimator.Animator.SetBool(_isRunning, Math.Abs(input.x) > HorizontalSpeedConsideredNotMoving);
 
-            if(standOnPlatform != null && standOnPlatform.IsFrozen && !IceBoots.IsActive)
+            Platform firstFrozenPlatform = null;
+            foreach(Platform platform in standOnPlatforms)
             {
-                inputInter += input.x * standOnPlatform.SkiCoefficient;
-                inputInter -= 0.1f * standOnPlatform.SkiCoefficient * Math.Sign(inputInter);
+                if(platform.IsFrozen)
+                {
+                    firstFrozenPlatform = platform;
+                    break;
+                }
+            }
+
+            if(firstFrozenPlatform != null && firstFrozenPlatform.IsFrozen && !IceBoots.IsActive)
+            {
+                inputInter += input.x * firstFrozenPlatform.SkiCoefficient;
+                inputInter -= 0.1f * firstFrozenPlatform.SkiCoefficient * Math.Sign(inputInter);
                 inputInter = Math.Min(1, inputInter);
                 inputInter = Math.Max(-1, inputInter);
             }
@@ -163,11 +165,7 @@ public abstract class Character : NetworkBehaviour
                 inputInter = input.x;
             }
 
-            velocity.x = inputInter * _moveSpeed;
-
-            
-
-            //velocity.x = direction.x * (groundCheck ? _moveSpeed : _moveSpeedInAir);
+            velocity.x = inputInter * (isGrounded ? _moveSpeed : _moveSpeedInAir);
 
             _networkRb.Rigidbody.velocity = velocity;
         }
@@ -188,40 +186,10 @@ public abstract class Character : NetworkBehaviour
         IsDead = true;
     }
 
-    protected virtual void Stun()
-    {
-        Debug.Log("STUN!");
-    }
-
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _pushPlatformDist);
-    }
-
-    /* public RaycastHit2D GroundCheck()
-     {
-         if (_groundChecker == null)
-         {
-             Debug.LogError("Ground checker is null.");
-             return false;
-         }
-         return _groundChecker.IsTouchingLayers(_groundLayer);
-     }*/
-
-    public RaycastHit2D GroundCheck()
-    {
-        return new RaycastHit2D();
-    }
-
-    private bool LandOnTopOfCrate()
-    {
-        if (_groundChecker == null)
-        {
-            Debug.LogError("Ground checker is null.");
-            return false;
-        }
-        return _groundChecker.IsTouchingLayers(_crateTopLayer);
     }
 
     private void TeleportTo(Vector3 position)
@@ -236,19 +204,9 @@ public abstract class Character : NetworkBehaviour
             TakeDamage();
         }
 
-
-        //trygetcomponent
         if (Runner.IsServer)
         {
-            Teleport teleport = collision.GetComponent<Teleport>();
-            BuffScript buffScript = collision.GetComponent<BuffScript>();
-
-            if (teleport != null && teleport.IsActive && !_resistSphere.IsActive)
-            {
-                TeleportTo(teleport.GetPosition());
-            }
-
-            if (buffScript != null)
+            if (collision.TryGetComponent(out BuffScript buffScript))
             {
                 Effect buff = buffScript.GetBuff(_effectManager);
                 if(buff is InstantEffect)
@@ -260,6 +218,16 @@ public abstract class Character : NetworkBehaviour
                     _effectManager.Apply((ContinuousEffect)buff);
                 }
             }
-        }
+
+            if (collision.TryGetComponent(out Teleport teleport) && teleport.IsActive && !_resistSphere.IsActive)
+            {
+                TeleportTo(teleport.GetPosition());
+            }
+
+            if (collision.TryGetComponent(out Crate crate) && !_groundChecker.LandOnTopOfCrate() && !_resistSphere.IsActive)
+            {
+                Stun(5);
+            }
+        }  
     }
 }

@@ -7,8 +7,6 @@ public class CatScript : Character
 {
     public override CharacterType CharacterType => CharacterType.Pirsik;
     public override string CharacterName => "Пырсик";
-
-    [SerializeField] private LayerMask _crateTopLayerMask;
     
     private IEnumerator DodgeStunAnim(float animSpeed, Color oldColor, float toV, Vector3 oldScale, float toScale)
     {
@@ -38,17 +36,13 @@ public class CatScript : Character
         StartCoroutine(DodgeStunAnim(0.3f, _spriteRenderer.color, 1f, _spriteTransform.localScale, 1f));
     }
 
-    private bool CheckFootsOnCrateTop()
-    {
-        return _groundChecker.IsTouchingLayers(_crateTopLayerMask);
-    }
+    public override void Stun(float duration) { }
 
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
         base.OnTriggerEnter2D(collision);
-        if (CheckFootsOnCrateTop()) print(CheckFootsOnCrateTop());
         if (Runner != null && Runner.IsServer &&
-            collision.TryGetComponent(out Crate crate) && !CheckFootsOnCrateTop())
+            collision.TryGetComponent(out Crate crate) && !_groundChecker.LandOnTopOfCrate())
         {
             Rpc_StartDodgeStun();
         }
