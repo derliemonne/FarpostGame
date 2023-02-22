@@ -127,10 +127,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
+  SkiCoefficient: 0.01
   _idlePlatform: {fileID: 21300000, guid: 04d787a40d1fb064db8d8bbd0ef27bba, type: 3}
   _platformAnim: {fileID: 1045318849}
   _platformRenderer: {fileID: 6876782247040831169}
   _platformCollider: {fileID: 6975357707453317260}
+  _frozenPlatformSprite: {fileID: 21300000, guid: c0bec066772aaea44aa018892f88968b, type: 3}
 --- !u!95 &1045318849
 Animator:
   serializedVersion: 4

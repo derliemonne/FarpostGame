@@ -2,24 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResistEffect : Effect
+public class ResistEffect : ContinuousEffect
 {
     public override string EffectName => "Resist";
-    public override float Duration => 5;
-    public override bool IsInstant => false;
+    public override int EffectId => 2;
+    public override float Duration => 10;
 
-    public ResistEffect(PlayersList playersList, Character character) : base(playersList, character)
+    public ResistEffect(EffectManager effectManager) : base(effectManager)
     {
-        
+
     }
 
-    public override void GiveEffect()
+    public override void Apply()
     {
-        effectedPlayer.ResistSphere.SetActive(true);
+        effectManager.Character.ResistSphere.SetActive(true);
     }
 
-    public override void TakeOffEffect()
+    public override void Remove()
     {
-        effectedPlayer.ResistSphere.SetActive(false);
+        effectManager.Character.ResistSphere.SetActive(false);
     }
 }

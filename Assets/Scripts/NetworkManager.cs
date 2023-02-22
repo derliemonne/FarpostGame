@@ -65,6 +65,32 @@ public class NetworkManager : MonoBehaviour
             .Where(player => player != null);
     }
 
+    public Player GetRandomActivePlayer()
+    {
+        List<Player> activePlayers = GetActivePlayers().ToList();
+        int randomPlayerInd = Random.Range(0, activePlayers.Count());
+        return activePlayers[randomPlayerInd];
+    }
+
+    public Player GetRandomActivePlayerWithException(int playerIdExcpet)
+    {
+        List<Player> activePlayers = NetworkRunner.ActivePlayers
+            .Select(playerRef => GetPlayerObject(playerRef))
+            .Where(player => player != null)
+            .Where(player => player.Character.PlayerId != playerIdExcpet)
+            .ToList();
+        if(activePlayers.Count == 0)
+        {
+            Debug.LogError("Except player was the only player");
+            return null;
+        }
+        else
+        {
+            int randomPlayerInd = Random.Range(0, activePlayers.Count());
+            return activePlayers[randomPlayerInd];
+        }
+    }
+
     public void Despawn(NetworkObject networkObject, float seconds, bool allowPredicted=false)
     {
         IEnumerator Wait(float seconds)

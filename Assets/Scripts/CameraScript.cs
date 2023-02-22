@@ -79,7 +79,7 @@ public class CameraScript : MonoBehaviour
 
             if(_isMove)
             {
-                if(_character.GroundCheck())
+                if(_character.GroundChecker.IsGrounded)
                 {
                     Vector3 adjustVector = new Vector3(0, Mathf.Sign(dist) * _cameraAdjustSpeed);
                     transform.Translate(adjustVector * Time.deltaTime);

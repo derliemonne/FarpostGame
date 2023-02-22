@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6461666706285497659}
-  - component: {fileID: 596761803}
   - component: {fileID: 1322997023088334989}
   - component: {fileID: -7643850972899509422}
-  - component: {fileID: 596761802}
+  - component: {fileID: 2076899161}
+  - component: {fileID: 2076899160}
   m_Layer: 6
   m_Name: LiftablePlatform6b
   m_TagString: Untagged
@@ -35,24 +35,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &596761803
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3358841281800027916}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15d7830f7a9399649b2ee535ae445dad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
-  _isMoving: 1
-  _speed: 3
-  _travelDistance: 7.68
-  _secondsPlatformNotMoving: 1
-  _inverseMovement: 0
 --- !u!212 &1322997023088334989
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -114,7 +96,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 3358841281800027916}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: d793065680f03ff43889b39772c0e3cd, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
@@ -131,7 +113,25 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.2800006, y: 0.3190271}
   m_EdgeRadius: 0
---- !u!114 &596761802
+--- !u!114 &2076899161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3358841281800027916}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15d7830f7a9399649b2ee535ae445dad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  _isMoving: 1
+  _speed: 3
+  _travelDistance: 7.68
+  _secondsPlatformNotMoving: 1
+  _inverseMovement: 0
+--- !u!114 &2076899160
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,5 +153,5 @@ MonoBehaviour:
     RawGuidValue: aa7a1a8a96f0f2749824c9af43b69a6c
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 596761803}
+  - {fileID: 2076899161}
   SimulationBehaviours: []
