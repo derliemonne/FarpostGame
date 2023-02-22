@@ -160,7 +160,7 @@ MonoBehaviour:
   _PlayerId: -1
   _moveSpeed: 3
   _moveSpeedInAir: 2
-  _jumpSpeed: 9.8
+  _jumpSpeed: 9.5
   _pushPlatformDist: 1
   _groundCheckerSize: {x: 0.61, y: 0.01}
   _groundCheckerDist: 0.01
