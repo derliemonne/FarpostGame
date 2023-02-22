@@ -49,9 +49,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _isMoving: 1
-  _speed: 0.768
+  _speed: 3
   _travelDistance: 3.84
   _secondsPlatformNotMoving: 1
+  _inverseMovement: 0
 --- !u!212 &-1262587700329594010
 SpriteRenderer:
   m_ObjectHideFlags: 0

@@ -7,6 +7,8 @@ public class CatScript : Character
 {
     public override CharacterType CharacterType => CharacterType.Pirsik;
     public override string CharacterName => "Пырсик";
+
+    [SerializeField] private LayerMask _crateTopLayerMask;
     
     private IEnumerator DodgeStunAnim(float animSpeed, Color oldColor, float toV, Vector3 oldScale, float toScale)
     {
@@ -24,43 +26,39 @@ public class CatScript : Character
         _spriteTransform.localScale = newScale;
     }
 
-    [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.All)]
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
     private void Rpc_StartDodgeStun()
     {
         StartCoroutine(DodgeStunAnim(0.3f, _spriteRenderer.color, 0.6f, _spriteTransform.localScale, 0.8f));
     }
 
-    [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.All)]
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
     private void Rpc_EndDodgeStun()
     {
         StartCoroutine(DodgeStunAnim(0.3f, _spriteRenderer.color, 1f, _spriteTransform.localScale, 1f));
     }
 
-    public override void FixedUpdateNetwork()
+    private bool CheckFootsOnCrateTop()
     {
-        base.FixedUpdateNetwork();
+        return _groundChecker.IsTouchingLayers(_crateTopLayerMask);
     }
 
-    public override void OnTriggerEnter2D(Collider2D collision)
+    protected override void OnTriggerEnter2D(Collider2D collision)
     {
         base.OnTriggerEnter2D(collision);
-        if(PlayerId != -1 && Runner.LocalPlayer.PlayerId == PlayerId)
+        if (CheckFootsOnCrateTop()) print(CheckFootsOnCrateTop());
+        if (Runner != null && Runner.IsServer &&
+            collision.TryGetComponent(out Crate crate) && !CheckFootsOnCrateTop())
         {
-            if (collision.TryGetComponent(out Crate crate))
-            {
-                Rpc_StartDodgeStun();
-            }
+            Rpc_StartDodgeStun();
         }
     }
 
-    public void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        if (Object != null && PlayerId != -1 && Runner.LocalPlayer.PlayerId == PlayerId)
+        if (Runner != null && Runner.IsServer && collision.TryGetComponent(out Crate crate))
         {
-            if (collision.TryGetComponent(out Crate crate))
-            {
-                Rpc_EndDodgeStun();
-            }
+            Rpc_EndDodgeStun();
         }
     }
 }

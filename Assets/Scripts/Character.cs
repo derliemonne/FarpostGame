@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using Fusion;
 using UnityEngine;
-using UnityEngine.Analytics;
 using UnityEngine.UIElements;
 
 public enum CharacterType
@@ -41,12 +40,15 @@ public abstract class Character : NetworkBehaviour
     private static readonly int _isStunnedAnim = Animator.StringToHash("is_stunned");
 
     [SerializeField] protected float _moveSpeed = 1f;
+    [SerializeField] protected float _moveSpeedInAir = 0.8f;
     [SerializeField] protected float _jumpSpeed = 5f;
     [SerializeField] protected float _pushPlatformDist = 1f;
     [SerializeField] protected Vector2 _groundCheckerSize;
     [SerializeField] protected float _groundCheckerDist;
     [SerializeField] protected LayerMask _groundLayer;
-    [SerializeField] protected Transform _groundChecker;
+    [SerializeField] protected LayerMask _crateTopLayer;
+    [SerializeField] protected LayerMask _crateLayer;
+    [SerializeField] protected Collider2D _groundChecker;
     [SerializeField] protected NetworkMecanimAnimator _networkAnimator;
     [SerializeField] protected SpriteRenderer _spriteRenderer;
     [SerializeField] protected GameObject _playerGameObject;
@@ -163,6 +165,8 @@ public abstract class Character : NetworkBehaviour
 
             velocity.x = inputInter * _moveSpeed;
 
+            //velocity.x = direction.x * (groundCheck ? _moveSpeed : _moveSpeedInAir);
+
             _networkRb.Rigidbody.velocity = velocity;
         }
     }
@@ -182,19 +186,35 @@ public abstract class Character : NetworkBehaviour
         IsDead = true;
     }
 
+    protected virtual void Stun()
+    {
+        Debug.Log("STUN!");
+    }
+
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawCube(
-            new Vector3(_groundChecker.position.x, _groundChecker.position.y - _groundCheckerDist / 2), 
-            new Vector3(_groundCheckerSize.x, _groundCheckerSize.y + _groundCheckerDist, 1));
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _pushPlatformDist);
     }
 
     public RaycastHit2D GroundCheck()
     {
-        return Physics2D.BoxCast(_groundChecker.position, _groundCheckerSize, 0, -transform.up, _groundCheckerDist, _groundLayer);
+        if (_groundChecker == null)
+        {
+            Debug.LogError("Ground checker is null.");
+            return false;
+        }
+        return _groundChecker.IsTouchingLayers(_groundLayer);
+    }
+
+    private bool LandOnTopOfCrate()
+    {
+        if (_groundChecker == null)
+        {
+            Debug.LogError("Ground checker is null.");
+            return false;
+        }
+        return _groundChecker.IsTouchingLayers(_crateTopLayer);
     }
 
     private void TeleportTo(Vector3 position)
@@ -202,13 +222,15 @@ public abstract class Character : NetworkBehaviour
         _networkRb.TeleportToPosition(position);
     }
 
-    public virtual void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("DeathZone"))
         {
             TakeDamage();
         }
 
+
+        //trygetcomponent
         if (Runner.IsServer)
         {
             Teleport teleport = collision.GetComponent<Teleport>();

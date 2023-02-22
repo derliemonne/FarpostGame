@@ -1,12 +1,13 @@
 using Fusion;
 using UnityEngine;
 
-public class VerticalPlatform : NetworkBehaviour
+public class LiftablePlatform : NetworkBehaviour
 {
     [SerializeField] private bool _isMoving = true;
     [SerializeField] private float _speed = 1f;
     [SerializeField] private float _travelDistance = 128f / 100f * 3;
     [SerializeField] private float _secondsPlatformNotMoving = 1f;
+    [SerializeField] private bool _inverseMovement;
 
     private Vector2 _startPosition;
 
@@ -27,6 +28,10 @@ public class VerticalPlatform : NetworkBehaviour
         float t2 = _travelDistance / _speed;
         float fullCycleTime = (t1 + t2) * 2;
         float t = absoluteTime % fullCycleTime;
+        if (_inverseMovement)
+        {
+            t = (t + t1 + t2) % fullCycleTime;
+        }
         float deltaY;
         // Not move.
         if (t < t1)

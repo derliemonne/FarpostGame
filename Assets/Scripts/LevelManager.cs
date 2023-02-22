@@ -103,7 +103,7 @@ public class LevelManager : NetworkBehaviour
     private void FixedUpdate()
     {
         if (!Runner.IsServer || !IsSpawningChunksAutomatically) return;
-        if (Chunks.Count == 0)
+        if (Chunks.Count == 0 && (Darkness.Instance == null || Darkness.Instance.Altitude < Chunk.ChunkHeight))
         {
             SpawnChunkOnTop();
             return;
@@ -112,7 +112,7 @@ public class LevelManager : NetworkBehaviour
         if (topChunk == null) return;
         float? charactersHighestAltitude = GetCharactersHighestAltitude();
         if (!charactersHighestAltitude.HasValue) return;
-        if (topChunk.IsAltitudeFitsInChunk(charactersHighestAltitude.Value))
+        if (topChunk.IsAltitudeFitsInChunk(charactersHighestAltitude.Value) && !DarknessAbsorbedChunk(topChunk))
         {
             SpawnChunkOnTop();
         }
@@ -121,9 +121,7 @@ public class LevelManager : NetworkBehaviour
         {
             Chunk bottomChunk = GetChunk(Chunks.BottomChunk);
             if (bottomChunk == null) return;
-            float darknessAltitude = Darkness.Instance.Altitude;
-            bool darknessAbsorbedChunk = bottomChunk.Altitude + Chunk.ChunkHeight < darknessAltitude;
-            if (darknessAbsorbedChunk)
+            if (DarknessAbsorbedChunk(bottomChunk))
             {
                 DespawnChunkFromBottom();
             }
@@ -132,6 +130,15 @@ public class LevelManager : NetworkBehaviour
                 break;
             }
         }
+    }
+
+    private static bool DarknessAbsorbedChunk(Chunk chunk)
+    {
+        if (Darkness.Instance == null)
+        {
+            Debug.LogError("Darkness instance is null.");
+        }
+        return chunk.Altitude + Chunk.ChunkHeight < Darkness.Instance.Altitude;
     }
 
     [Pure]

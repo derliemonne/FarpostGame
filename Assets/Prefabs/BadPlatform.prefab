@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3425001699863183951}
   - component: {fileID: 1398433377691082990}
   - component: {fileID: 1996033869690756013}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: BadPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
