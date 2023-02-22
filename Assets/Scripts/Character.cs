@@ -36,6 +36,7 @@ public abstract class Character : NetworkBehaviour
     private static readonly int _isRunning = Animator.StringToHash("is_running");
     
     [SerializeField] protected float _moveSpeed = 1f;
+    [SerializeField] protected float _moveSpeedInAir = 0.8f;
     [SerializeField] protected float _jumpSpeed = 5f;
     [SerializeField] protected float _pushPlatformDist = 1f;
     [SerializeField] protected Vector2 _groundCheckerSize;
@@ -97,42 +98,30 @@ public abstract class Character : NetworkBehaviour
     
     public override void FixedUpdateNetwork()
     {
-        if (GetInput(out NetworkInputData inputData))
+        if (!GetInput(out NetworkInputData inputData)) return;
+        
+        Vector2 direction = inputData.Direction.normalized;
+        Vector2 velocity = _networkRb.Rigidbody.velocity;
+
+        if(inputData.PushedPlatform)
         {
-            Vector2 input = inputData.Direction.normalized;
-            Vector2 velocity = _networkRb.Rigidbody.velocity;
-
-            if(inputData.PushedPlatform)
+            RaycastHit2D raycastHit = Physics2D.Raycast(transform.position, Vector2.down, _pushPlatformDist, _groundLayer);
+            if(raycastHit.transform != null && raycastHit.transform.TryGetComponent(out Platform platform))
             {
-                RaycastHit2D raycastHit = Physics2D.Raycast(transform.position, Vector2.down, _pushPlatformDist, _groundLayer);
-                if(raycastHit.transform != null)
-                {
-                    Platform platformScript = raycastHit.transform.GetComponent<Platform>();
-                    if(platformScript != null)
-                    {
-                        platformScript.PushPlatform();
-                    }
-                }                            
-            }
-
-            if(GroundCheck())
-            {
-                if(input.y > 0.1)
-                {
-                    velocity.y = _jumpSpeed;
-                }
-                _networkAnimator.Animator.SetBool(_isJumping, false);
-            }
-            else
-            {
-                _networkAnimator.Animator.SetBool(_isJumping, true);
-            }
-
-            _networkAnimator.Animator.SetBool(_isRunning, Math.Abs(input.x) > HorizontalSpeedConsideredNotMoving);
-            velocity.x = input.x * _moveSpeed;
-
-            _networkRb.Rigidbody.velocity = velocity;
+                platform.PushPlatform();
+            }                            
         }
+
+        bool groundCheck = GroundCheck();
+        if (groundCheck && direction.y > 0.1)
+        {
+            velocity.y = _jumpSpeed;
+        }
+        _networkAnimator.Animator.SetBool(_isJumping, !groundCheck);
+        _networkAnimator.Animator.SetBool(_isRunning, Math.Abs(direction.x) > HorizontalSpeedConsideredNotMoving);
+        velocity.x = direction.x * (groundCheck ? _moveSpeed : _moveSpeedInAir);
+
+        _networkRb.Rigidbody.velocity = velocity;
     }
 
     private void Update()
