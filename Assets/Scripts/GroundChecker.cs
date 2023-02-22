@@ -19,7 +19,7 @@ public class GroundChecker : MonoBehaviour
 
     public bool GetGroundColliders(out List<Collider2D> collidersList)
     {
-        collidersList = null;
+        collidersList = new List<Collider2D>();
         if (_groundChecker == null)
         {
             Debug.LogError("Ground checker is null.");
@@ -28,12 +28,14 @@ public class GroundChecker : MonoBehaviour
         else
         {
             ContactFilter2D filter = new ContactFilter2D();
-            filter.layerMask = _groundLayer;
+            filter.SetLayerMask(_groundLayer);
             _groundChecker.OverlapCollider(filter, collidersList);
             return collidersList.Count > 0;
         }    
     }
 
+    //method will return true if there id intersect with colliders from layer ground, 
+    //platform script isnt necessary
     public bool GetGroundPlatforms(out List<Platform> platformsList)
     {
         List<Collider2D> collidersList;
@@ -42,12 +44,12 @@ public class GroundChecker : MonoBehaviour
         foreach(var collider in collidersList)
         {
             Platform platform;
-            if(TryGetComponent(out platform))
+            if(collider.TryGetComponent(out platform))
             {
                 platformsList.Add(platform);
             }
         }
-        return platformsList.Count > 0;
+        return collidersList.Count > 0;
     }
 
     public bool LandOnTopOfCrate()
