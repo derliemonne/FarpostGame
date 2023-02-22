@@ -7,7 +7,7 @@ public class RaccoonScript : Character
     public override CharacterType CharacterType => CharacterType.Marsik;
     public override string CharacterName => "Марсик";
 
-    public override void OnTriggerEnter2D(Collider2D collision)
+    protected override void OnTriggerEnter2D(Collider2D collision)
     {
         base.OnTriggerEnter2D(collision);
         if (Runner.IsServer)

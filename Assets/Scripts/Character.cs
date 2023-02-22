@@ -165,6 +165,8 @@ public abstract class Character : NetworkBehaviour
 
             velocity.x = inputInter * _moveSpeed;
 
+            
+
             //velocity.x = direction.x * (groundCheck ? _moveSpeed : _moveSpeedInAir);
 
             _networkRb.Rigidbody.velocity = velocity;
@@ -197,14 +199,19 @@ public abstract class Character : NetworkBehaviour
         Gizmos.DrawLine(transform.position, transform.position + Vector3.down * _pushPlatformDist);
     }
 
+    /* public RaycastHit2D GroundCheck()
+     {
+         if (_groundChecker == null)
+         {
+             Debug.LogError("Ground checker is null.");
+             return false;
+         }
+         return _groundChecker.IsTouchingLayers(_groundLayer);
+     }*/
+
     public RaycastHit2D GroundCheck()
     {
-        if (_groundChecker == null)
-        {
-            Debug.LogError("Ground checker is null.");
-            return false;
-        }
-        return _groundChecker.IsTouchingLayers(_groundLayer);
+        return new RaycastHit2D();
     }
 
     private bool LandOnTopOfCrate()
