@@ -1,7 +1,7 @@
 using Fusion;
 using UnityEngine;
 
-public class VerticalPlatform : NetworkBehaviour
+public class LiftablePlatform : NetworkBehaviour
 {
     [SerializeField] private bool _isMoving = true;
     [SerializeField] private float _speed = 1f;
