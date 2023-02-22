@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5604320746320237474}
   - component: {fileID: 805276349311086753}
+  - component: {fileID: 7504253040304481061}
   m_Layer: 7
   m_Name: GroundChecker
   m_TagString: Untagged
@@ -58,6 +59,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.2597693, y: 0.0638932}
   m_EdgeRadius: 0
+--- !u!114 &7504253040304481061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 38632600409559253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a30230bcd3afbc419882306f312d934, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _crateTopLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &3449911026789150383
 GameObject:
   m_ObjectHideFlags: 0
@@ -479,18 +498,10 @@ MonoBehaviour:
   _moveSpeedInAir: 2
   _jumpSpeed: 9.5
   _pushPlatformDist: 1
-  _groundCheckerSize: {x: 0.57, y: 0.01}
-  _groundCheckerDist: 0.1
   _groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  _crateTopLayer:
-    serializedVersion: 2
-    m_Bits: 512
-  _crateLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  _groundChecker: {fileID: 805276349311086753}
+  _groundChecker: {fileID: 7504253040304481061}
   _networkAnimator: {fileID: 3449911026789150380}
   _spriteRenderer: {fileID: 3449911026789150370}
   _playerGameObject: {fileID: 0}
