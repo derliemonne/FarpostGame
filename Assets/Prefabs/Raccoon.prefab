@@ -181,6 +181,7 @@ GameObject:
   - component: {fileID: 4562896380938131405}
   - component: {fileID: 1099358051354092053}
   - component: {fileID: 134776451122057649}
+  - component: {fileID: 5831630722998564441}
   m_Layer: 0
   m_Name: Raccoon
   m_TagString: Raccoon
@@ -335,3 +336,17 @@ MonoBehaviour:
   _playerGameObject: {fileID: 0}
   _spriteTransform: {fileID: 350916066817613827}
   _cameraTransform: {fileID: 0}
+  _effectManager: {fileID: 5831630722998564441}
+--- !u!114 &5831630722998564441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6208068650471249273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d48ef646a27dde4481dd65dd78d4a9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _character: {fileID: 134776451122057649}

@@ -2,21 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TpEffect : Effect
+public class TpEffect : InstantEffect
 {
-    private Transform anotherTp;
+    private Character first;
+    private Character second;
 
     public override string EffectName => "Tp";
-    public override float Duration => -1;
-    public override bool IsInstant => true;
+    public override int EffectId => 0;
 
-    public TpEffect(PlayersList playersList, Character character, Transform anotherTp) : base(playersList, character)
+    public TpEffect(EffectManager effectManager, Character first, Character second) : base(effectManager)
     {
-        this.anotherTp = anotherTp;
+        this.first = first; 
+        this.second = second;
     }
 
-    public override void GiveEffect()
+    public override void Apply()
     {
-        effectedPlayer.transform.position = anotherTp.position;
+        Vector3 firstPosition = first.transform.position;
+        first.transform.position = second.transform.position;
+        second.transform.position = firstPosition;
     }
 }
