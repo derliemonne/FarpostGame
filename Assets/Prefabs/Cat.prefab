@@ -179,29 +179,18 @@ MonoBehaviour:
   _moveSpeedInAir: 2
   _jumpSpeed: 9.5
   _pushPlatformDist: 1
-  _groundCheckerSize: {x: 0.61, y: 0.01}
-  _groundCheckerDist: 0.01
   _groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  _crateTopLayer:
-    serializedVersion: 2
-    m_Bits: 512
-  _crateLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  _groundChecker: {fileID: 2606867656976354824}
+  _groundChecker: {fileID: 4955360251828526031}
   _networkAnimator: {fileID: 6567465653196854145}
   _spriteRenderer: {fileID: 8196706247561376691}
   _playerGameObject: {fileID: 0}
   _spriteTransform: {fileID: 6996493771773578522}
   _cameraTransform: {fileID: 0}
   _effectManager: {fileID: 4091216202324084813}
-  _iceBoots: {fileID: 0}
-  _resistSphere: {fileID: 1958569695}
-  _crateTopLayerMask:
-    serializedVersion: 2
-    m_Bits: 512
+  _iceBoots: {fileID: 6740442872462743836}
+  _resistSphere: {fileID: 3234555987660047667}
 --- !u!114 &716921804432128068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -425,6 +414,7 @@ GameObject:
   - component: {fileID: 3132579209321421638}
   - component: {fileID: 2606867656976354824}
   - component: {fileID: 2063285780189378710}
+  - component: {fileID: 4955360251828526031}
   m_Layer: 7
   m_Name: GroundChecker
   m_TagString: Untagged
@@ -485,6 +475,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de33bbac14030594f9b1834478fdefc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4955360251828526031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7365325007537100849}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a30230bcd3afbc419882306f312d934, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _crateTopLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &7557896148289429169
 GameObject:
   m_ObjectHideFlags: 0
