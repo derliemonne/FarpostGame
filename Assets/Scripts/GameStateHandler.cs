@@ -95,12 +95,22 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         List<Record> records = new();
         foreach (Player player in NetworkManager.Instance.GetActivePlayers())
         {
+            if (player.Character == null)
+            {
+                Debug.LogError("player.Character is null");
+            }
             records.Add(new Record
             {
                 Name = player.ChosenCharacter.ToString(),
-                Place = -1,
-                MaxAltitude = -1
+                MaxAltitude = player.Character == null ? 0 : (int)player.Character.AltitudeRecord
             });
+        }
+        records.Sort();
+        for (int i = 0; i < records.Count; i++)
+        {
+            Record record = records[i];
+            record.Place = records.Count - i;
+            records[i] = record;
         }
         changed.Behaviour.RaceFinished?.Invoke(records);
     }
@@ -297,6 +307,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
                 Debug.LogError($"Character prefab is invalid.");
             }
             player.Character = character;
+            character.Died += OnCharacterDied;
             
             Rpc_BindCamera(player.PlayerRef, character);
         }
@@ -308,6 +319,20 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             Debug.LogError($"{nameof(_darknessPrefab)} is invalid.");
         }
         darkness.SetActive(true);
+    }
+
+    /// <summary>
+    /// Server-only.
+    /// </summary>
+    private void OnCharacterDied(Character characterDied, float altitudeRecord)
+    {
+        if (!NetworkManager.Instance.NetworkRunner.IsServer) return;
+        if (NetworkManager.Instance.GetActivePlayers()
+            .Select(player => player.Character)
+            .All(character => character != null && character.IsDead))
+        {
+            IsRaceFinished = true;
+        }
     }
 
     private void OnGuiConnectToRoom(int roomId)

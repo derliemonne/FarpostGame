@@ -227,7 +227,7 @@ public class Gui : MonoBehaviour
     {
         ShowMenu(_leadersMenu);
         records.Sort();
-        for (int i = 0; i < _guiRecords.Count; i++)
+        for (int i = 0; i < records.Count; i++)
         {
             _guiRecords[i].Record = records[i];
         }

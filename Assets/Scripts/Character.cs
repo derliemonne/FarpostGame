@@ -21,22 +21,37 @@ public abstract class Character : NetworkBehaviour
     private const float HorizontalSpeedConsideredNotMoving = 0.1f;
 
     /// <summary>
+    /// Returns this character and altitude record.
+    /// </summary>
+    public event Action<Character, float> Died;
+    
+    /// <summary>
     /// Need override in each subclass.
     /// </summary>
     public abstract CharacterType CharacterType { get; }
     public abstract string CharacterName { get; }
     public int Health { get; protected set; } = 1;
-    public bool IsDead { get; private set; }
+
+    public bool IsDead
+    {
+        get => _isDead;
+        set
+        {
+            _isDead = value;
+            if (_isDead) Died?.Invoke(this, AltitudeRecord);
+            Debug.Log("AltitudeRecord: " + AltitudeRecord);
+        }
+    }
     public bool IsStunned { get; private set; }
 
-    public float Height => transform.position.y;
+    public float Altitude => transform.position.y;
     public ResistSphere ResistSphere => _resistSphere;
-    public GameObject PlayerGameObject => _playerGameObject;
     public IceBoots IceBoots => _iceBoots;
     public GroundChecker GroundChecker => _groundChecker;
 
     //id игрока, который владеет персонажем, в будущем можно заменить на объект класса Player
     [Networked] public int PlayerId { get; private set; } = -1;
+    [Networked] public float AltitudeRecord { get; protected set; }
 
     protected static readonly int _isJumping = Animator.StringToHash("is_jumping");
     protected static readonly int _isRunning = Animator.StringToHash("is_moving");
@@ -53,15 +68,15 @@ public abstract class Character : NetworkBehaviour
     [SerializeField] protected GroundChecker _groundChecker;
     [SerializeField] protected NetworkMecanimAnimator _networkAnimator;
     [SerializeField] protected SpriteRenderer _spriteRenderer;
-    [SerializeField] protected GameObject _playerGameObject;
     [SerializeField] protected Transform _spriteTransform;
-    [SerializeField] protected Transform _cameraTransform;
     [SerializeField] protected EffectManager _effectManager;
     [SerializeField] protected IceBoots _iceBoots;
     [SerializeField] protected ResistSphere _resistSphere;
 
     protected NetworkRigidbody2D _networkRb;
     protected float inputInter = 0;
+    protected bool _isDead;
+
     [Networked] protected bool _canJump { get; set; } = true;
     [Networked] protected bool _canPushPlatform { get; set; } = true;
 
@@ -78,12 +93,21 @@ public abstract class Character : NetworkBehaviour
         }
     }
 
-    public virtual void TakeDamage()
+    /// <summary>
+    /// Server-only.
+    /// </summary>
+    protected virtual void TakeDamage()
     {
+        if (!Runner.IsServer)
+        {
+            Debug.LogError("Server-only method on client.");
+            return;
+        }
+        
         Health--;
         if(Health <= 0)
         {
-            Death();
+            Rpc_Death();
         }
     }
 
@@ -108,6 +132,13 @@ public abstract class Character : NetworkBehaviour
     {
         IsStunned = value;
         _networkAnimator.Animator.SetBool(_isStunnedAnim, value);
+    }
+    
+    [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+    private void Rpc_Death()
+    {
+        gameObject.SetActive(false);
+        IsDead = true;
     }
 
     private IEnumerator StunDuration(float duration)
@@ -139,6 +170,7 @@ public abstract class Character : NetworkBehaviour
             }
 
             Move(input, velocity, jump);
+            AltitudeRecord = Mathf.Max(AltitudeRecord, Altitude);
         }
     }
 
@@ -232,12 +264,6 @@ public abstract class Character : NetworkBehaviour
         {
             _spriteRenderer.flipX = _networkRb.Rigidbody.velocity.x < 0;
         }
-    }
-
-    private void Death()
-    {
-        gameObject.SetActive(false);
-        IsDead = true;
     }
 
     private void OnDrawGizmos()

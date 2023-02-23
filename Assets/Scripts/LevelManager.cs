@@ -163,7 +163,7 @@ public class LevelManager : NetworkBehaviour
         foreach (float altitude in NetworkManager.Instance.GetActivePlayers()
                      .Select(player => player.Character)
                      .Where(character => character != null)
-                     .Select(character => character.Height))
+                     .Select(character => character.Altitude))
         {
             if (!maxAltitude.HasValue || altitude > maxAltitude)
             {

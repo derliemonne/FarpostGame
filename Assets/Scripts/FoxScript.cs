@@ -15,7 +15,7 @@ public class FoxScript : Character
         Health = 2;
     }
 
-    public override void TakeDamage()
+    protected override void TakeDamage()
     {
         base.TakeDamage();
         if(Health > 0)
