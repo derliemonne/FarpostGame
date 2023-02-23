@@ -125,7 +125,7 @@ public abstract class Character : NetworkBehaviour
                 PushPlatform();              
             }
 
-            Move(input, velocity);
+            Move(input, velocity, inputData.Jumped);
         }
     }
 
@@ -142,12 +142,12 @@ public abstract class Character : NetworkBehaviour
         }  
     }
 
-    protected virtual void Move(Vector3 input, Vector3 velocity)
+    protected virtual void Move(Vector3 input, Vector3 velocity, bool jump)
     {
         List<Platform> standOnPlatforms;
         bool isGrounded = _groundChecker.GetGroundPlatforms(out standOnPlatforms);
 
-        Jump(input.y, ref velocity, isGrounded);
+        Jump(jump, ref velocity, isGrounded);
 
         _networkAnimator.Animator.SetBool(_isRunning, Math.Abs(input.x) > HorizontalSpeedConsideredNotMoving);
 
@@ -178,11 +178,11 @@ public abstract class Character : NetworkBehaviour
         _networkRb.Rigidbody.velocity = velocity;
     }
 
-    protected virtual void Jump(float inputY, ref Vector3 velocity, bool isGrounded)
+    protected virtual void Jump(bool jump, ref Vector3 velocity, bool isGrounded)
     {
         if (isGrounded)
         {
-            if (inputY > 0.1 && _canJump)
+            if (jump && _canJump)
             {
                 velocity.y = _jumpSpeed;
                 ResetJump(_jumpCoolDown);

@@ -57,6 +57,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     private string _inputSessionName;
     private ConnectionStatus _connectionStatus = ConnectionStatus.NotInSession;
 
+    private bool jumpPressed = false;
+
     public static void OnRaceStartedChanged(Changed<GameStateHandler> changed)
     {
         changed.Behaviour.RaceStartedChanged?.Invoke(changed.Behaviour.RaceStarted);
@@ -104,8 +106,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         input.Set(new NetworkInputData
         {
             Direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxis("Vertical")),
+            Jumped = jumpPressed,
             PushedPlatform = Math.Abs(Input.GetAxis("PushPlatform")) > 0.1
         });
+        jumpPressed = false;
     }
     
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
@@ -163,6 +167,11 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             Destroy(gameObject);
         }
         Instance = this;
+    }
+
+    private void Update()
+    {
+        jumpPressed |= Input.GetButtonDown("Jump");
     }
 
     private async void ConnectToRoom(GameMode mode, string sessionName="TestRoom")
