@@ -7,18 +7,18 @@ public class FoxScript : Character
     public override CharacterType CharacterType => CharacterType.Firsik;
     public override string CharacterName => "Фырсик";
 
-    private static readonly float _distanceFromDarknessRespawn = 30f;
+    private static readonly float _distanceFromDarknessRespawn = 40f;
 
     protected override void Awake()
     {
         base.Awake();
         Health = 2;
     }
-
+    
     protected override void TakeDamage()
     {
         base.TakeDamage();
-        if(Health > 0)
+        if (Health > 0)
         {
             if(Runner.IsServer)
             {
