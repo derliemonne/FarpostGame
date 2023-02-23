@@ -102,8 +102,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 2070341091
+  m_SortingLayer: -3
   m_SortingOrder: 0
   m_Sprite: {fileID: 326080102, guid: 5e283a8fcad210c42a14db0c4ded385b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -647,6 +647,9 @@ MonoBehaviour:
   _moveSpeedInAir: 2.6
   _jumpSpeed: 9.6
   _pushPlatformDist: 1
+  _pushPlatformCooldown: 5
+  _jumpCoolDown: 0.5
+  _crateStunDuration: 5
   _groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -659,7 +662,6 @@ MonoBehaviour:
   _effectManager: {fileID: 5831630722998564441}
   _iceBoots: {fileID: 2110004824411326676}
   _resistSphere: {fileID: 6061032707126683485}
-  _jumpCoolDown: 0.5
   eventSender: {fileID: 4104241819352756431}
   _raccoonStunDuration: 2
 --- !u!114 &5831630722998564441

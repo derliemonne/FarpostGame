@@ -315,7 +315,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 2083626905
-  m_SortingLayer: -4
+  m_SortingLayer: -5
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 8d9f9e67fcda2204e8816cf90035361f, type: 3}
   m_Color: {r: 0.5686275, g: 0.5686275, b: 0.5686275, a: 1}
@@ -399,7 +399,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 2083626905
-  m_SortingLayer: -4
+  m_SortingLayer: -5
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 8d9f9e67fcda2204e8816cf90035361f, type: 3}
   m_Color: {r: 0.5660378, g: 0.5660378, b: 0.5660378, a: 1}
@@ -554,7 +554,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  _unsortedSpawnPoints: []
+  _unsortedSpawnPoints:
+  - {fileID: 382018597841461520}
 --- !u!114 &555435761133576735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1982,6 +1983,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3473996083322712618}
     m_Modifications:
+    - target: {fileID: -7779835798245370558, guid: fe2cc129a0afd8c4a9362a8d116a7481, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: d793065680f03ff43889b39772c0e3cd, type: 2}
     - target: {fileID: 2631697567756837667, guid: fe2cc129a0afd8c4a9362a8d116a7481, type: 3}
       propertyPath: m_RootOrder
       value: 62
@@ -3312,6 +3317,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7bef282a5835a3a40a678f47d7d5e7e8, type: 3}
+--- !u!114 &382018597841461520 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4616213340169624156, guid: 7bef282a5835a3a40a678f47d7d5e7e8, type: 3}
+  m_PrefabInstance: {fileID: 4998193454964292428}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8724ebb66b77e714f80b1ae3916dab0c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3214319631227836840 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7621965080542995172, guid: 7bef282a5835a3a40a678f47d7d5e7e8, type: 3}
@@ -4793,6 +4809,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3473996083322712618}
     m_Modifications:
+    - target: {fileID: -7779835798245370558, guid: fe2cc129a0afd8c4a9362a8d116a7481, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: d793065680f03ff43889b39772c0e3cd, type: 2}
     - target: {fileID: 2631697567756837667, guid: fe2cc129a0afd8c4a9362a8d116a7481, type: 3}
       propertyPath: m_RootOrder
       value: 61

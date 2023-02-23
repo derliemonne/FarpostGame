@@ -4,12 +4,15 @@ using System.Linq;
 using Fusion;
 using JetBrains.Annotations;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class LevelManager : NetworkBehaviour
 {
     private const int MaxChunksInNetworkList = 16;
     
     public static LevelManager Instance { get; private set; }
+
+    public int ChunksCount => _chunkPrefabs.Count;
 
     public event Action ChunksChanged;
     
@@ -50,7 +53,7 @@ public class LevelManager : NetworkBehaviour
         float newChunkAltitude = topChunk == null ? _firstChunkAltitude : topChunk.Altitude + Chunk.ChunkHeight;
         Vector3 newChunkPosition = new(0, newChunkAltitude, 0);
         Debug.Log($"SpawnChunk at altitude {newChunkPosition.y}");
-        Chunk chunk = NetworkManager.Instance.NetworkRunner.Spawn(_chunkPrefabs[0], newChunkPosition);
+        Chunk chunk = NetworkManager.Instance.NetworkRunner.Spawn(_chunkPrefabs[Random.Range(0, ChunksCount)], newChunkPosition);
         if (chunk == null)
         {
             Debug.LogError("Chunk prefab is invalid.");
