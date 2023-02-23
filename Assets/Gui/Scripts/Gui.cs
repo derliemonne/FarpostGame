@@ -98,6 +98,7 @@ public class Gui : MonoBehaviour
         }
         gameStateHandler.ConnectionStatusChanged += OnConnectionStatusChanged;
         gameStateHandler.RaceStartedChanged += OnRaceStartedChanged;
+        gameStateHandler.RaceFinished += OnRaceFinished;
     }
     
     private void Update()

@@ -27,9 +27,13 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     /// </summary>
     public event Action<ConnectionStatus, ConnectionStatus> ConnectionStatusChanged;
     public event Action<bool> RaceStartedChanged;
+    public event Action<List<Record>> RaceFinished;
     
     [Networked(OnChanged = nameof(OnRaceStartedChanged))] 
     public NetworkBool RaceStarted { get; private set; }
+    
+    [Networked(OnChanged = nameof(OnRaceFinishedChanged))]
+    public NetworkBool IsRaceFinished { get; private set; }
     
     public ConnectionStatus ConnectionStatus
     {
@@ -84,6 +88,21 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     public static void OnRaceStartedChanged(Changed<GameStateHandler> changed)
     {
         changed.Behaviour.RaceStartedChanged?.Invoke(changed.Behaviour.RaceStarted);
+    }
+
+    public static void OnRaceFinishedChanged(Changed<GameStateHandler> changed)
+    {
+        List<Record> records = new();
+        foreach (Player player in NetworkManager.Instance.GetActivePlayers())
+        {
+            records.Add(new Record
+            {
+                Name = player.ChosenCharacter.ToString(),
+                Place = -1,
+                MaxAltitude = -1
+            });
+        }
+        changed.Behaviour.RaceFinished?.Invoke(records);
     }
     
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef joinedPlayerRef)
