@@ -644,7 +644,7 @@ MonoBehaviour:
   _interpolationDataSource: 0
   _PlayerId: -1
   _moveSpeed: 3
-  _moveSpeedInAir: 2
+  _moveSpeedInAir: 2.6
   _jumpSpeed: 9.6
   _pushPlatformDist: 1
   _groundLayer:
