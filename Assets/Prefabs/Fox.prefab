@@ -495,8 +495,8 @@ MonoBehaviour:
   _interpolationDataSource: 0
   _PlayerId: -1
   _moveSpeed: 3
-  _moveSpeedInAir: 2
-  _jumpSpeed: 9.5
+  _moveSpeedInAir: 2.6
+  _jumpSpeed: 9.6
   _pushPlatformDist: 1
   _groundLayer:
     serializedVersion: 2
@@ -510,6 +510,7 @@ MonoBehaviour:
   _effectManager: {fileID: 3359650623361282684}
   _iceBoots: {fileID: 2184237730639455262}
   _resistSphere: {fileID: 2420789418854854280}
+  _jumpCoolDown: 0.5
 --- !u!50 &6106127211538603472
 Rigidbody2D:
   serializedVersion: 4
