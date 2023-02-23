@@ -25,7 +25,7 @@ public abstract class Character : NetworkBehaviour
     /// </summary>
     public abstract CharacterType CharacterType { get; }
     public abstract string CharacterName { get; }
-    public int Health { get; private set; } = 1;
+    public int Health { get; protected set; } = 1;
     public bool IsDead { get; private set; }
     public bool IsStunned { get; private set; }
 
@@ -62,7 +62,7 @@ public abstract class Character : NetworkBehaviour
     [Networked] protected bool _canJump { get; set; } = true;
     [SerializeField] protected float _jumpCoolDown = 0.5f;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         _networkRb = GetComponent<NetworkRigidbody2D>();
     }
@@ -75,7 +75,7 @@ public abstract class Character : NetworkBehaviour
         }
     }
 
-    public void TakeDamage()
+    public virtual void TakeDamage()
     {
         Health--;
         if(Health <= 0)

@@ -89,6 +89,18 @@ public class LevelManager : NetworkBehaviour
         return chunks;
     }
 
+    public List<SpawnPoint> GetAllSpawnPoints()
+    {
+        List<SpawnPoint> spawnPointsList = new List<SpawnPoint>();
+
+        foreach(Chunk chunk in GetChunks())
+        {
+            spawnPointsList.AddRange(chunk.SortedSpawnPoints);
+        }
+
+        return spawnPointsList;
+    }
+
     private void OnRaceStartedChanged(bool raceStarted)
     {
         IsSpawningChunksAutomatically = raceStarted;
