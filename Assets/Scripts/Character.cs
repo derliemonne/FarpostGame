@@ -82,8 +82,7 @@ public abstract class Character : NetworkBehaviour
 
     protected virtual void Awake()
     {
-        _networkRb = GetComponent<NetworkRigidbody2D>();
-        Died += ObserverScript.Instance.StartObserv;
+        _networkRb = GetComponent<NetworkRigidbody2D>();  
     }
 
     public void SetPlayerId(int playerId)

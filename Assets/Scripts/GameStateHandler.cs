@@ -302,6 +302,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             Character character = _networkManager.NetworkRunner
                 .Spawn(chosenPrefab, _startCharacterPosition, inputAuthority: player.PlayerRef);
             character.SetPlayerId(player.PlayerRef.PlayerId);
+            if(Runner.LocalPlayer.PlayerId == player.PlayerRef.PlayerId)
+            {
+                character.Died += ObserverScript.Instance.StartObserv;
+            }           
             if (character == null)
             {
                 Debug.LogError($"Character prefab is invalid.");

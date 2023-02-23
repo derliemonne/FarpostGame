@@ -32,6 +32,7 @@ public class ObserverScript : MonoBehaviour
 
     public void StartObserv(Character character, float altitude)
     {
+        Debug.Log(NetworkManager.Instance.GetAlivePlayers().Count());
         if (NetworkManager.Instance.GetAlivePlayers().Count() > 0)
         {
             //print(NetworkManager.Instance.GetActivePlayers().Count());
