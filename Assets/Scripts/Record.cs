@@ -1,9 +1,9 @@
 using System;
 
-public struct Record : IComparable<Record>
+public struct Record
 {
     public string Name;
     public int Place;
     public int MaxAltitude;
-    public int CompareTo(Record obj) => Place.CompareTo(obj.Place);
+    // public int CompareTo(Record obj) => Place.CompareTo(obj.MaxAltitude); : IComparable<Record>
 }

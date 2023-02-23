@@ -226,7 +226,7 @@ public class Gui : MonoBehaviour
     private void OnRaceFinished(List<Record> records)
     {
         ShowMenu(_leadersMenu);
-        records.Sort();
+        records.Sort((r1, r2) => r1.Place.CompareTo(r2.Place));
         for (int i = 0; i < records.Count; i++)
         {
             _guiRecords[i].Record = records[i];

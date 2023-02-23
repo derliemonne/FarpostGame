@@ -20,6 +20,14 @@ public abstract class Character : NetworkBehaviour
 {
     private const float HorizontalSpeedConsideredNotMoving = 0.1f;
 
+    public static Dictionary<CharacterType, string> CharacterNames = new()
+    {
+        { CharacterType.Pirsik, "Пырсик" },
+        { CharacterType.Firsik, "Фырсик" },
+        { CharacterType.Marsik, "Марсик" },
+        { CharacterType.Gull, "Чайка" }
+    };
+
     /// <summary>
     /// Returns this character and altitude record.
     /// </summary>
