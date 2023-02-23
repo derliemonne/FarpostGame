@@ -11,7 +11,7 @@ public class GullScript : Character
     [Networked] private bool _canDoubleJump { get; set; } = true;
     private float _doubleJumpCoolDown = 5f;
 
-    protected override void Jump(float inputY, ref Vector3 velocity, bool isGrounded)
+    protected override void Jump(bool jump, ref Vector3 velocity, bool isGrounded)
     {
         if (isGrounded)
         {
@@ -22,7 +22,7 @@ public class GullScript : Character
             _networkAnimator.Animator.SetBool(_isJumping, true);
         }
 
-        if (inputY > 0.1 && _canJump)
+        if (jump && _canJump)
         {
             if(isGrounded)
             {
