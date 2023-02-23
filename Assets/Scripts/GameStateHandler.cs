@@ -189,6 +189,11 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         pushPlatformPressed |= Input.GetButtonDown("PushPlatform");
     }
 
+    private void Update()
+    {
+        jumpPressed |= Input.GetButtonDown("Jump");
+    }
+
     private async void ConnectToRoom(GameMode mode, string sessionName="TestRoom")
     {
         ConnectionStatus = ConnectionStatus.ConnectingToSession;
