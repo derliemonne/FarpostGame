@@ -20,6 +20,7 @@ public class Gui : MonoBehaviour
     [SerializeField] private RectTransform _mainMenu;
     [SerializeField] private RectTransform _connectMenu;
     [SerializeField] private RectTransform _roomMenu;
+    [SerializeField] private RectTransform _leadersMenu;
     [Header("Buttons in main menu")] 
     [SerializeField] private Button _mainMenuButtonExit;
     [SerializeField] private Button _mainMenuButtonHost;
@@ -41,6 +42,11 @@ public class Gui : MonoBehaviour
     [SerializeField] private ChooseCharacterButton _chooseMarsikButton;
     [SerializeField] private ChooseCharacterButton _chooseGullButton;
     [SerializeField] private Button _readyButton;
+    [Header("Leaders menu")] 
+    [SerializeField] private GuiRecord _record1st;
+    [SerializeField] private GuiRecord _record2nd;
+    [SerializeField] private GuiRecord _record3rd;
+    [SerializeField] private GuiRecord _record4th;
     [Header("MessageBoxes")]
     [SerializeField] private MessageBox _connectingMessageBox;
     [SerializeField] private MessageBox _badInputMessageBox;
@@ -48,6 +54,7 @@ public class Gui : MonoBehaviour
 
     private List<RectTransform> _menus;
     private Dictionary<CharacterType, Animator> _characterAnimators;
+    private List<GuiRecord> _guiRecords;
     private int _connectedPlayersCount;
     
     private void Awake()
@@ -59,7 +66,7 @@ public class Gui : MonoBehaviour
         }
         Instance = this;
         
-        _menus = new List<RectTransform> { _mainMenu, _connectMenu, _roomMenu };
+        _menus = new List<RectTransform> { _mainMenu, _connectMenu, _roomMenu, _leadersMenu };
         _characterAnimators = new Dictionary<CharacterType, Animator>
         {
             { CharacterType.Pirsik, _pirsikAnimator },
@@ -67,6 +74,7 @@ public class Gui : MonoBehaviour
             { CharacterType.Marsik, _marsikAnimator },
             { CharacterType.Gull, _gullAnimator }
         };
+        _guiRecords = new List<GuiRecord> { _record1st, _record2nd, _record3rd, _record4th };
         
         _mainMenuButtonExit.onClick.AddListener(OnMainMenuButtonExitClicked);
         _mainMenuButtonHost.onClick.AddListener(OnMainMenuButtonHostClicked);
@@ -212,6 +220,16 @@ public class Gui : MonoBehaviour
     private void OnRaceStartedChanged(bool raceStarted)
     {
         if (raceStarted) ShowMenu(null);
+    }
+
+    private void OnRaceFinished(List<Record> records)
+    {
+        ShowMenu(_leadersMenu);
+        records.Sort();
+        for (int i = 0; i < _guiRecords.Count; i++)
+        {
+            _guiRecords[i].Record = records[i];
+        }
     }
 
     private void OnDestroy()
