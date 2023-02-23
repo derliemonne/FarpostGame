@@ -14,6 +14,6 @@ public class Player : NetworkBehaviour
     /// <summary>
     /// Index in NetworkManager.Instance.CharacterPrefabs list.
     /// </summary>
-    [Networked] public int ChosenCharacterPrefabIndex { get; set; }
+    [Networked] public CharacterType ChosenCharacter { get; set; }
     [Networked] public Character Character { get; set; }
 }

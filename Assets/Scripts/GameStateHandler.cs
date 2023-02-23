@@ -4,8 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Fusion;
 using Fusion.Sockets;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public enum ConnectionStatus {
@@ -41,11 +43,11 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         }
     }
 
-    public ReadOnlyCollection<Character> CharacterPrefabs => _characterPrefabs.AsReadOnly(); 
+    public ReadOnlyCollection<Character> CharacterPrefabs => _characterPrefabs.Values.ToList().AsReadOnly(); 
     
     [SerializeField] private NetworkManager _networkManagerPrefab;
     [SerializeField] private Player _playerPrefab;
-    [SerializeField] private List<Character> _characterPrefabs;
+    [SerializeField] private SerializableDictionary<CharacterType, Character> _characterPrefabs;
     [SerializeField] private LevelManager _levelManagerPrefab;
     [SerializeField] private Darkness _darknessPrefab;
     [SerializeField] private CrateSpawner _crateSpawnerPrefab;
@@ -74,6 +76,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         }
         _gui.ConnectToRoomWithId += OnGuiConnectToRoom;
         _gui.StartHost += OnGuiStartHost;
+        _gui.CharacterChosenAction += OnGuiChosenCharacter;
+        _gui.ReadyToStartRaceChanged += OnGuiChangedReadyToStartRace;
     }
     
     public static void OnRaceStartedChanged(Changed<GameStateHandler> changed)
@@ -219,11 +223,11 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     }
 
     [Rpc(RpcSources.All, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
-    public void RPC_OnPlayerChooseCharacter(int characterPrefabIndex, RpcInfo rpcInfo=default)
+    public void RPC_OnPlayerChooseCharacter(CharacterType characterType, RpcInfo rpcInfo=default)
     {
         if (NetworkManager.Instance.TryGetPlayerObject(rpcInfo.Source, out Player player))
         {
-            player.ChosenCharacterPrefabIndex = characterPrefabIndex;
+            player.ChosenCharacter = characterType;
         }
     }
 
@@ -246,8 +250,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         foreach (Player player in _networkManager.GetActivePlayers())
         {
             player.transform.position = _startCharacterPosition;
-            Character chosenPrefab = _characterPrefabs[player.ChosenCharacterPrefabIndex];
-            if (chosenPrefab == null)
+            if (!_characterPrefabs.TryGetValue(player.ChosenCharacter, out Character chosenPrefab))
             {
                 Debug.LogError("Race started without player chose character.");
                 continue;
@@ -282,6 +285,17 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     {
         string sessionName = Random.Range(0, 100).ToString();
         ConnectToRoom(GameMode.Host, sessionName);
+    }
+
+    private void OnGuiChosenCharacter(CharacterType characterType)
+    {
+        RPC_OnPlayerChooseCharacter(characterType);
+    }
+
+    private void OnGuiChangedReadyToStartRace(bool readyToStartRace)
+    {
+        _readyToStartRace = readyToStartRace;
+        Rpc_OnPlayerChangedReadyToStartRace(readyToStartRace);
     }
 
     // This GUI should be replaced to normal GUI with assets in future.
@@ -335,12 +349,12 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
                     Rpc_OnPlayerChangedReadyToStartRace(_readyToStartRace);
                 }
 
-                for (int i = 0; i < _characterPrefabs.Count; i++)
+                foreach (CharacterType characterType in _characterPrefabs.Keys)
                 {
-                    Character prefab = _characterPrefabs[i];
+                    Character prefab = _characterPrefabs[characterType];
                     if (GUILayout.Button(prefab.CharacterName))
                     {
-                        RPC_OnPlayerChooseCharacter(i);
+                        RPC_OnPlayerChooseCharacter(characterType);
                     }
                 }
 
@@ -355,10 +369,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
                         GUILayout.BeginHorizontal();
                         GUILayout.Label(player.PlayerRef.PlayerId.ToString());
                         GUILayout.Label(player.IsReadyToStartRace ? "Ready" : "Not Ready");
-                        Character chosenCharacterPrefab = _characterPrefabs[player.ChosenCharacterPrefabIndex];
-                        string chooseText = chosenCharacterPrefab == null
-                            ? "Chose character"
-                            : chosenCharacterPrefab.CharacterName;
+                        string chooseText = player.ChosenCharacter.ToString();
                         GUILayout.Label(chooseText);
                         GUILayout.EndHorizontal();
                     }
@@ -379,6 +390,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         }
         _gui.ConnectToRoomWithId -= OnGuiConnectToRoom;
         _gui.StartHost -= OnGuiStartHost;
+        _gui.CharacterChosenAction -= OnGuiChosenCharacter;
+        _gui.ReadyToStartRaceChanged -= OnGuiChangedReadyToStartRace;
     }
 
     private void OnApplicationQuit()

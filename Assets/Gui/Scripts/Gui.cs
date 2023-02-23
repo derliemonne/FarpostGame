@@ -12,6 +12,10 @@ public class Gui : MonoBehaviour
     
     public event Action<int> ConnectToRoomWithId;
     public event Action StartHost;
+    public event Action<bool> ReadyToStartRaceChanged;
+    public event Action<CharacterType> CharacterChosenAction;
+
+    public CharacterType ChosenCharacter { get; private set; }
 
     [Header("Menus")]
     [SerializeField] private RectTransform _mainMenu;
@@ -29,12 +33,22 @@ public class Gui : MonoBehaviour
     [Header("Room menu")] 
     [SerializeField] private TMP_Text _roomIdText;
     [SerializeField] private TMP_Text _playersConnectedCountText;
+    [SerializeField] private Animator _firsikAnimator;
+    [SerializeField] private Animator _pirsikAnimator;
+    [SerializeField] private Animator _marsikAnimator;
+    [SerializeField] private Animator _gullAnimator;
+    [SerializeField] private ChooseCharacterButton _chooseFirsikButton;
+    [SerializeField] private ChooseCharacterButton _choosePirsikButton;
+    [SerializeField] private ChooseCharacterButton _chooseMarsikButton;
+    [SerializeField] private ChooseCharacterButton _chooseGullButton;
+    [SerializeField] private Button _readyButton;
     [Header("MessageBoxes")]
     [SerializeField] private MessageBox _connectingMessageBox;
     [SerializeField] private MessageBox _badInputMessageBox;
     
 
     private List<RectTransform> _menus;
+    private Dictionary<CharacterType, Animator> _characterAnimators;
     private int _connectedPlayersCount;
     
     private void Awake()
@@ -47,12 +61,23 @@ public class Gui : MonoBehaviour
         Instance = this;
         
         _menus = new List<RectTransform> { _mainMenu, _connectMenu, _roomMenu };
+        _characterAnimators = new Dictionary<CharacterType, Animator>
+        {
+            { CharacterType.Pirsik, _pirsikAnimator },
+            { CharacterType.Firsik, _firsikAnimator },
+            { CharacterType.Marsik, _marsikAnimator },
+            { CharacterType.Gull, _gullAnimator }
+        };
         
         _mainMenuButtonExit.onClick.AddListener(OnMainMenuButtonExitClicked);
         _mainMenuButtonHost.onClick.AddListener(OnMainMenuButtonHostClicked);
         _mainMenuButtonConnect.onClick.AddListener(OnMainMenuButtonConnectClicked);
-        
         _connectMenuButtonConnect.onClick.AddListener(OnConnectMenuButtonConnectClicked);
+        _chooseFirsikButton.Button.onClick.AddListener(OnChooseFirsikButtonClicked);
+        _choosePirsikButton.Button.onClick.AddListener(OnChoosePirsikButtonClicked);
+        _chooseMarsikButton.Button.onClick.AddListener(OnChooseMarsikButtonClicked);
+        _chooseGullButton.Button.onClick.AddListener(OnChooseGullButtonClicked);
+        _readyButton.onClick.AddListener(OnReadyButtonClicked);
         
         foreach (Button button in _buttonsToOpenMenu)
         {
@@ -67,7 +92,7 @@ public class Gui : MonoBehaviour
         gameStateHandler.ConnectionStatusChanged += OnConnectionStatusChanged;
         gameStateHandler.RaceStartedChanged += OnRaceStartedChanged;
     }
-
+    
     private void Update()
     {
         GameStateHandler gameStateHandler = GameStateHandler.Instance;
@@ -84,11 +109,6 @@ public class Gui : MonoBehaviour
             _connectedPlayersCount = connectedPlayersCount;
         }
     }
-
-    public void A()
-    {
-        print("A");
-    }
     
     /// <summary>
     /// Pass null if you want to close all menus.
@@ -102,10 +122,21 @@ public class Gui : MonoBehaviour
         if (menuToShow != null) menuToShow.gameObject.SetActive(true);
     }
 
+    private void SpotlightCharacter(CharacterType character)
+    {
+        foreach (Animator characterAnimator in _characterAnimators.Values)
+        {
+            characterAnimator.enabled = false;
+        }
+        if (_characterAnimators.TryGetValue(character, out Animator animator))
+        {
+            animator.enabled = true;
+        }
+    }
+
     private void OnMainMenuButtonHostClicked()
     {
         StartHost?.Invoke();
-        ShowMenu(_roomMenu);
     }
     
     private void OnMainMenuButtonConnectClicked() => ShowMenu(_connectMenu);
@@ -117,7 +148,6 @@ public class Gui : MonoBehaviour
         if (int.TryParse(_inputRoomId.text, out int roomId))
         {
             ConnectToRoomWithId?.Invoke(roomId);
-            _connectingMessageBox.SetActive(true);
         }
         else
         {
@@ -126,6 +156,35 @@ public class Gui : MonoBehaviour
     }
 
     private void OnButtonToOpenMainMenuClicked() => ShowMenu(_mainMenu);
+    
+    private void OnChoosePirsikButtonClicked()
+    {
+        CharacterChosenAction?.Invoke(CharacterType.Pirsik);
+        SpotlightCharacter(CharacterType.Pirsik);
+    }
+
+    private void OnChooseGullButtonClicked()
+    {
+        CharacterChosenAction?.Invoke(CharacterType.Gull);
+        SpotlightCharacter(CharacterType.Gull);
+    }
+
+    private void OnChooseMarsikButtonClicked()
+    {
+        CharacterChosenAction?.Invoke(CharacterType.Marsik);
+        SpotlightCharacter(CharacterType.Marsik);
+    }
+
+    private void OnChooseFirsikButtonClicked()
+    {
+        CharacterChosenAction?.Invoke(CharacterType.Firsik);
+        SpotlightCharacter(CharacterType.Firsik);
+    }
+
+    private void OnReadyButtonClicked()
+    {
+        ReadyToStartRaceChanged?.Invoke(true);
+    }
 
     private void OnConnectionStatusChanged(ConnectionStatus previousStatus, ConnectionStatus newStatus)
     {
@@ -140,6 +199,15 @@ public class Gui : MonoBehaviour
                 return;
             }
             _roomIdText.text = $"Номер комнаты: {NetworkManager.Instance.NetworkRunner.SessionInfo.Name}";
+            OnChoosePirsikButtonClicked();
+        }
+        if (newStatus == ConnectionStatus.ConnectingToSession)
+        {
+            _connectingMessageBox.SetActive(true);
+        }
+        if (previousStatus == ConnectionStatus.ConnectingToSession && newStatus != ConnectionStatus.ConnectingToSession)
+        {
+            _connectingMessageBox.SetActive(false);   
         }
     }
 
