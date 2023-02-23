@@ -29,7 +29,6 @@ public class FoxScript : Character
 
     private Vector3 FindPlaceToRespawn()
     {
-        Debug.Log("1");
         List<SpawnPoint> spawnPointsList = LevelManager.Instance.GetAllSpawnPoints();
         Vector3 spawnPointPosition = Vector3.zero;
 

@@ -9,6 +9,9 @@ public class CrateSpawner : MonoBehaviour
 { 
     private float Altitude { get; set; }
 
+    public static readonly float CrateSize = 1.28f;
+    public static readonly float CrateHalfSize = CrateSize / 2;
+
     /// <summary>
     /// How many units above the topChunk the boxes will be spawned.
     /// </summary>
@@ -76,7 +79,7 @@ public class CrateSpawner : MonoBehaviour
         float timeNow = Time.time;
         if (timeNow - _lastTimeCrateSpawned > _cratesSpawnInterval)
         {
-            Vector3 cratePos = new(Random.Range(-Chunk.ChunkHalfWidth, Chunk.ChunkHalfWidth), Altitude, 0);
+            Vector3 cratePos = new(Random.Range(-Chunk.ChunkHalfWidth + CrateHalfSize, Chunk.ChunkHalfWidth - CrateHalfSize), Altitude, 0);
             Crate cratePrefab = _cratePrefabs[Random.Range(0, _cratePrefabs.Count)];
             NetworkManager.Instance.NetworkRunner.Spawn(cratePrefab, cratePos);
             _lastTimeCrateSpawned = timeNow;

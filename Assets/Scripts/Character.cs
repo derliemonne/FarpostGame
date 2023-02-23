@@ -46,6 +46,9 @@ public abstract class Character : NetworkBehaviour
     [SerializeField] protected float _moveSpeedInAir = 0.8f;
     [SerializeField] protected float _jumpSpeed = 5f;
     [SerializeField] protected float _pushPlatformDist = 1f;
+    [SerializeField] protected float _pushPlatformCooldown = 5f;
+    [SerializeField] protected float _jumpCoolDown = 0.5f;
+    [SerializeField] protected float _crateStunDuration = 5f;
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] protected GroundChecker _groundChecker;
     [SerializeField] protected NetworkMecanimAnimator _networkAnimator;
@@ -60,7 +63,7 @@ public abstract class Character : NetworkBehaviour
     protected NetworkRigidbody2D _networkRb;
     protected float inputInter = 0;
     [Networked] protected bool _canJump { get; set; } = true;
-    [SerializeField] protected float _jumpCoolDown = 0.5f;
+    [Networked] protected bool _canPushPlatform { get; set; } = true;
 
     protected virtual void Awake()
     {
@@ -90,6 +93,11 @@ public abstract class Character : NetworkBehaviour
         StartCoroutine(StunDuration(duration));
     }
 
+    public void PermanentStun()
+    {
+        Rpc_SetActiveStun(true);
+    }
+
     protected virtual void CrateStun(float duration)
     {
         Stun(duration);
@@ -113,22 +121,32 @@ public abstract class Character : NetworkBehaviour
         if (GetInput(out NetworkInputData inputData))
         {
             Vector2 input = inputData.Direction.normalized;
+            bool jump = inputData.Jumped;
+            bool pushPlatform = inputData.PushedPlatform;
             Vector2 velocity = _networkRb.Rigidbody.velocity;
 
             if(IsStunned)
             {
                 input = Vector3.zero;
+                jump = false;
             }
 
-            if(inputData.PushedPlatform && !IsStunned)
+            if(inputData.PushedPlatform && !IsStunned && _canPushPlatform)
             {
-                PushPlatform();              
+                PushPlatform();
+                _canPushPlatform = false;
+                StartCoroutine(CooldownPushPlatform());
             }
 
-            Move(input, velocity, inputData.Jumped);
+            Move(input, velocity, jump);
         }
     }
 
+    private IEnumerator CooldownPushPlatform()
+    {
+        yield return new WaitForSeconds(_pushPlatformCooldown);
+        _canPushPlatform = true;
+    } 
     private void PushPlatform()
     {
         RaycastHit2D raycastHit = Physics2D.Raycast(transform.position, Vector2.down, _pushPlatformDist, _groundLayer);
@@ -235,13 +253,13 @@ public abstract class Character : NetworkBehaviour
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("DeathZone"))
-        {
-            TakeDamage();
-        }
-
         if (Runner.IsServer)
         {
+            if(collision.TryGetComponent(out Darkness darkness))
+            {
+                TakeDamage();
+            }
+
             if (collision.TryGetComponent(out BuffScript buffScript))
             {
                 Effect buff = buffScript.GetBuff(_effectManager);
@@ -262,7 +280,12 @@ public abstract class Character : NetworkBehaviour
 
             if (collision.TryGetComponent(out Crate crate) && !_groundChecker.LandOnTopOfCrate() && !_resistSphere.IsActive)
             {
-                CrateStun(5);
+                CrateStun(_crateStunDuration);
+            }
+
+            if (collision.TryGetComponent(out DeleteZone deleteZone))
+            {
+                gameObject.SetActive(false);
             }
         }  
     }

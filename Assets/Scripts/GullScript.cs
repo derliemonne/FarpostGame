@@ -22,17 +22,19 @@ public class GullScript : Character
             _networkAnimator.Animator.SetBool(_isJumping, true);
         }
 
-        if (jump && _canJump)
+        if(isGrounded)
         {
-            if(isGrounded)
+            if (jump && _canJump)
             {
                 velocity.y = _jumpSpeed;
                 ResetJump(_jumpCoolDown);
             }
-            else if(_canDoubleJump)
+        }
+        else
+        {
+            if (jump && _canDoubleJump)
             {
                 velocity.y = _jumpSpeed;
-                ResetJump(_jumpCoolDown);
                 ResetDoubleJump(_doubleJumpCoolDown);
             }
         }

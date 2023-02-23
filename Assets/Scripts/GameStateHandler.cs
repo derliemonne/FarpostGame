@@ -60,6 +60,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     private ConnectionStatus _connectionStatus = ConnectionStatus.NotInSession;
 
     private bool jumpPressed = false;
+    private bool pushPlatformPressed = false;
 
     private void Awake()
     {
@@ -128,9 +129,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         {
             Direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxis("Vertical")),
             Jumped = jumpPressed,
-            PushedPlatform = Math.Abs(Input.GetAxis("PushPlatform")) > 0.1
+            PushedPlatform = pushPlatformPressed
         });
         jumpPressed = false;
+        pushPlatformPressed = false;
     }
     
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
@@ -181,18 +183,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         Debug.Log("> OnSceneLoadStart");
     }
 
-    private void Awake()
-    {
-        if (Instance != null)
-        {
-            Destroy(gameObject);
-        }
-        Instance = this;
-    }
-
     private void Update()
     {
         jumpPressed |= Input.GetButtonDown("Jump");
+        pushPlatformPressed |= Input.GetButtonDown("PushPlatform");
     }
 
     private async void ConnectToRoom(GameMode mode, string sessionName="TestRoom")

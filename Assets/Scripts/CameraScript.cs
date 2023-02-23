@@ -4,12 +4,13 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class CameraScript : MonoBehaviour
 {
-    private const float DefaultCameraSize = 12;
+    private const float DefaultCameraSize = 9.6f;
     
     [SerializeField] private float _distToMove = 3;
     [SerializeField] private float _distToStop = 3;
     [SerializeField] private float _distToTpCamera = 3;
     [SerializeField] private float _cameraAdjustSpeed = 0.3f;
+    [SerializeField] private float _chunkWidth = 10.8f;
 
     private bool _isMove;
     private Transform _player;
@@ -34,6 +35,8 @@ public class CameraScript : MonoBehaviour
     
     public void ResetCameraSize()
     {
+        //float ratio = (float)Screen.width / Screen.height;
+        //Camera.orthographicSize = _chunkWidth / (ratio * 2);
         Camera.orthographicSize = DefaultCameraSize;
     }
     
