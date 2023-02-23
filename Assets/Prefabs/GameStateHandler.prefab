@@ -75,10 +75,19 @@ MonoBehaviour:
   _networkManagerPrefab: {fileID: 4250659297839280982, guid: e3d50e1cf0b756346bcce47fbce67e51, type: 3}
   _playerPrefab: {fileID: 8964825870254139747, guid: 9e8a8de876bbb1a40a457a5962b9c26a, type: 3}
   _characterPrefabs:
-  - {fileID: 5822044047116805366, guid: 95480c69cab49d04f85b45b107c9f689, type: 3}
-  - {fileID: 2949492891557814049, guid: aed4e2936d60e9441a2d1d577ae9f2df, type: 3}
+    _items:
+    - Key: 1
+      Value: {fileID: 2949492891557814049, guid: aed4e2936d60e9441a2d1d577ae9f2df, type: 3}
+    - Key: 2
+      Value: {fileID: 5822044047116805366, guid: 95480c69cab49d04f85b45b107c9f689, type: 3}
+    - Key: 3
+      Value: {fileID: 134776451122057649, guid: 06a3a9fd1251bfd4c9b3c2c3817639a2, type: 3}
+    - Key: 4
+      Value: {fileID: 4158929382406899115, guid: 21abde1ffd8dc9c44982c5ce1fe5d23b, type: 3}
   _levelManagerPrefab: {fileID: 6655799028415939627, guid: c6b90f203c9da934eb5010fb1ec6b05b, type: 3}
   _darknessPrefab: {fileID: 7684343275789999073, guid: dc3a60117aee3aa4bac285b6259927a7, type: 3}
   _crateSpawnerPrefab: {fileID: 7392630106753805379, guid: 31f8ac3bf24bf7343b8f1d95a463a9ae, type: 3}
-  _startCharacterPosition: {x: 0, y: 0}
+  _startCharacterPosition: {x: 3, y: 5}
   _cs: {fileID: 0}
+  _gui: {fileID: 0}
+  _drawDebugGui: 0

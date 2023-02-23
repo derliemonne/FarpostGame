@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using TMPro.EditorUtilities;
-
+    
 public class Gui : MonoBehaviour
 {
     public static Gui Instance { get; private set; }
@@ -97,7 +96,7 @@ public class Gui : MonoBehaviour
     {
         GameStateHandler gameStateHandler = GameStateHandler.Instance;
         NetworkManager networkManager = NetworkManager.Instance;
-        if (networkManager != null && gameStateHandler != null &&
+        if (networkManager != null && gameStateHandler != null && gameStateHandler.Object != null && 
             gameStateHandler.ConnectionStatus == ConnectionStatus.InSession && !gameStateHandler.RaceStarted)
         {
             int connectedPlayersCount = networkManager.NetworkRunner.SessionInfo.PlayerCount;

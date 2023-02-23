@@ -289,7 +289,10 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
 
     private void OnGuiChosenCharacter(CharacterType characterType)
     {
-        RPC_OnPlayerChooseCharacter(characterType);
+        if (Object != null)
+        {
+            RPC_OnPlayerChooseCharacter(characterType);
+        }
     }
 
     private void OnGuiChangedReadyToStartRace(bool readyToStartRace)
