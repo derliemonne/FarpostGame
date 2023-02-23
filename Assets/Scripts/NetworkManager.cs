@@ -91,6 +91,14 @@ public class NetworkManager : MonoBehaviour
         }
     }
 
+    public IEnumerable<Player> GetAlivePlayers()
+    {
+        return NetworkRunner.ActivePlayers
+            .Select(playerRef => GetPlayerObject(playerRef))
+            .Where(player => player != null)
+            .Where(player => player.Character.IsDead != true);
+    }
+
     public void Despawn(NetworkObject networkObject, float seconds, bool allowPredicted=false)
     {
         IEnumerator Wait(float seconds)

@@ -56,6 +56,9 @@ TagManager:
   - name: Crate
     uniqueID: 3795811423
     locked: 0
+  - name: Darkness
+    uniqueID: 1385123107
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

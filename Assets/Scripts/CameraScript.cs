@@ -5,6 +5,8 @@ using UnityEngine;
 public class CameraScript : MonoBehaviour
 {
     private const float DefaultCameraSize = 9.6f;
+
+    public Character Character => _character;
     
     [SerializeField] private float _distToMove = 3;
     [SerializeField] private float _distToStop = 3;

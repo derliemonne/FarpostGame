@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -225,6 +226,19 @@ MonoBehaviour:
   _distToTpCamera: 4.43
   _cameraAdjustSpeed: 2
   _chunkWidth: 10.8
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1613c5aa05b0a6943b69c00aa914f35e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _changePlayerDuration: 10
 --- !u!114 &1374901262 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7868396664546450953, guid: d2b9f11a09e34014da92a58baa55ea08, type: 3}
@@ -913,6 +927,14 @@ PrefabInstance:
     - target: {fileID: 81788013609405193, guid: 29dbf9c6b6b5dd743bc0a1b49f40011b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 81788013609405206, guid: 29dbf9c6b6b5dd743bc0a1b49f40011b, type: 3}
+      propertyPath: m_SortingLayer
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 81788013609405206, guid: 29dbf9c6b6b5dd743bc0a1b49f40011b, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1982507293
       objectReference: {fileID: 0}
     - target: {fileID: 81788013609405207, guid: 29dbf9c6b6b5dd743bc0a1b49f40011b, type: 3}
       propertyPath: m_Name
