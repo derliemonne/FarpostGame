@@ -276,6 +276,12 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         _cs.BindPlayer(character.transform, character.GetComponent<Rigidbody2D>(), character);
     }
 
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+    public void Rpc_MakePlayerObserver([RpcTarget] PlayerRef player, Character character)
+    {
+        ObserverScript.Instance.BindToCharacter(character);
+    }
+
     /// <summary>
     /// Executes on host.
     /// </summary>
@@ -302,10 +308,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             Character character = _networkManager.NetworkRunner
                 .Spawn(chosenPrefab, _startCharacterPosition, inputAuthority: player.PlayerRef);
             character.SetPlayerId(player.PlayerRef.PlayerId);
-            if(Runner.LocalPlayer.PlayerId == player.PlayerRef.PlayerId)
-            {
-                character.Died += ObserverScript.Instance.StartObserv;
-            }           
+            Rpc_MakePlayerObserver(player.PlayerRef.PlayerId, character);         
             if (character == null)
             {
                 Debug.LogError($"Character prefab is invalid.");

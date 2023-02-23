@@ -30,6 +30,11 @@ public class ObserverScript : MonoBehaviour
         GameStateHandler.Instance.RaceFinished += EndObserv;
     }
 
+    public void BindToCharacter(Character character)
+    {
+        character.Died += StartObserv;
+    }
+
     public void StartObserv(Character character, float altitude)
     {
         Debug.Log(NetworkManager.Instance.GetAlivePlayers().Count());

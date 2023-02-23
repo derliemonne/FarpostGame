@@ -56,6 +56,9 @@ public class CameraScript : MonoBehaviour
         _playerRb = playerRb;
         _character = character;
         _playerLastYCoord = _player.position.y;
+        Vector3 newCameraPos = transform.position;
+        newCameraPos.y = _player.transform.position.y;
+        transform.position = newCameraPos;
     }
 
     
