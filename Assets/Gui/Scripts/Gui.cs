@@ -198,7 +198,6 @@ public class Gui : MonoBehaviour
                 return;
             }
             _roomIdText.text = $"Номер комнаты: {NetworkManager.Instance.NetworkRunner.SessionInfo.Name}";
-            OnChoosePirsikButtonClicked();
         }
         if (newStatus == ConnectionStatus.ConnectingToSession)
         {

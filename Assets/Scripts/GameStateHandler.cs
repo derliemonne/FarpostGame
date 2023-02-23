@@ -4,10 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Fusion;
 using Fusion.Sockets;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public enum ConnectionStatus {
@@ -253,7 +251,12 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             if (!_characterPrefabs.TryGetValue(player.ChosenCharacter, out Character chosenPrefab))
             {
                 Debug.LogError("Race started without player chose character.");
-                continue;
+                chosenPrefab = _characterPrefabs.Values.ToList()[0];
+            }
+            if (chosenPrefab == null)
+            {
+                Debug.LogError("Character prefab is invalid.");
+                return;
             }
             Character character = _networkManager.NetworkRunner
                 .Spawn(chosenPrefab, _startCharacterPosition, inputAuthority: player.PlayerRef);
