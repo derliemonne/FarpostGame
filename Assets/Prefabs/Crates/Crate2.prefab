@@ -52,11 +52,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  _fallingSpeed: 2
+  _fallingSpeed: 3
   _fallingSpeedMaxDeviation: 0.8
   _destructionAnimationSeconds: 0.3
   _animator: {fileID: 7625137589161477341}
-  _crateTop: {fileID: 6913023321283117407}
 --- !u!61 &1975277987504233461
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -386,14 +385,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2944266033336209307, guid: 641931c12c62feb4bb731d1ad51e65af, type: 3}
   m_PrefabInstance: {fileID: 2105611110292897761}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6913023321283117407 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4816419702304538302, guid: 641931c12c62feb4bb731d1ad51e65af, type: 3}
-  m_PrefabInstance: {fileID: 2105611110292897761}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: de33bbac14030594f9b1834478fdefc7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
