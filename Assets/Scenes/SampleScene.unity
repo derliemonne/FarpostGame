@@ -854,7 +854,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 25435178886880799, guid: 4544d69e097b9044ab89db57dd667e9c, type: 3}
       propertyPath: _drawDebugGui
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 25435178886880799, guid: 4544d69e097b9044ab89db57dd667e9c, type: 3}
       propertyPath: _deathZoneScript
