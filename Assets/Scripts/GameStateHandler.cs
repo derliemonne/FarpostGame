@@ -101,15 +101,18 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             }
             records.Add(new Record
             {
-                Name = player.ChosenCharacter.ToString(),
+                Name = Character.CharacterNames.TryGetValue(player.ChosenCharacter, out string name) 
+                    ? name 
+                    : "анон",
                 MaxAltitude = player.Character == null ? 0 : (int)player.Character.AltitudeRecord
             });
         }
-        records.Sort();
+        records.Sort((record1, record2) => record2.MaxAltitude.CompareTo(record1.MaxAltitude));
         for (int i = 0; i < records.Count; i++)
         {
             Record record = records[i];
-            record.Place = records.Count - i;
+            Debug.Log($"GameStateHandler: {record.MaxAltitude} {i + 1}");
+            record.Place = i + 1;
             records[i] = record;
         }
         changed.Behaviour.RaceFinished?.Invoke(records);
