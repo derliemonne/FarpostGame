@@ -44,7 +44,7 @@ public class FoxScript : Character
         else
         {
             Debug.LogError("No spawnpoints left");
-        }    
+        }
 
         return spawnPointPosition;
     }

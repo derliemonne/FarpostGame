@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5604320746320237474}
   - component: {fileID: 805276349311086753}
   - component: {fileID: 7504253040304481061}
-  m_Layer: 7
+  m_Layer: 11
   m_Name: GroundChecker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,7 +180,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 2070341091
-  m_SortingLayer: -2
+  m_SortingLayer: -3
   m_SortingOrder: 0
   m_Sprite: {fileID: 1977486991, guid: 7304439a25ce40c4781ca29902091789, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -494,23 +494,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _PlayerId: -1
+  _AltitudeRecord: 0
   _moveSpeed: 3
   _moveSpeedInAir: 2.6
   _jumpSpeed: 9.6
   _pushPlatformDist: 1
+  _pushPlatformCooldown: 5
+  _jumpCoolDown: 0.5
+  _crateStunDuration: 5
   _groundLayer:
     serializedVersion: 2
     m_Bits: 64
   _groundChecker: {fileID: 7504253040304481061}
   _networkAnimator: {fileID: 3449911026789150380}
   _spriteRenderer: {fileID: 3449911026789150370}
-  _playerGameObject: {fileID: 0}
   _spriteTransform: {fileID: 3449911026789150371}
-  _cameraTransform: {fileID: 0}
   _effectManager: {fileID: 3359650623361282684}
   _iceBoots: {fileID: 2184237730639455262}
   _resistSphere: {fileID: 2420789418854854280}
-  _jumpCoolDown: 0.5
 --- !u!50 &6106127211538603472
 Rigidbody2D:
   serializedVersion: 4

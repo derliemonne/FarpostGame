@@ -27,7 +27,7 @@ public class EffectsGenerator : MonoBehaviour
         switch (effectNum)
         {
             case 0:
-                Player randomPlayer = NetworkManager.Instance.GetRandomActivePlayerWithException(effectManager.Character.PlayerId);
+                Player randomPlayer = NetworkManager.Instance.GetRandomAlivePlayerWithException(effectManager.Character.PlayerId);
                 if (randomPlayer == null)
                 {
                     Debug.LogError("One player only, tp to himself");

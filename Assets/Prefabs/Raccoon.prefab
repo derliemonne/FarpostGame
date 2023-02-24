@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 5055417216232432683}
   - component: {fileID: 5942847681717627265}
   - component: {fileID: 6538329869023575007}
-  m_Layer: 7
+  m_Layer: 11
   m_Name: GroundChecker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -643,6 +643,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
   _PlayerId: -1
+  _AltitudeRecord: 0
   _moveSpeed: 3
   _moveSpeedInAir: 2.6
   _jumpSpeed: 9.6
@@ -656,9 +657,7 @@ MonoBehaviour:
   _groundChecker: {fileID: 6538329869023575007}
   _networkAnimator: {fileID: 8053354760274978161}
   _spriteRenderer: {fileID: 2579205464722682854}
-  _playerGameObject: {fileID: 0}
   _spriteTransform: {fileID: 350916066817613827}
-  _cameraTransform: {fileID: 0}
   _effectManager: {fileID: 5831630722998564441}
   _iceBoots: {fileID: 2110004824411326676}
   _resistSphere: {fileID: 6061032707126683485}

@@ -281,8 +281,8 @@ public abstract class Character : NetworkBehaviour
     {
         if (Runner.IsServer)
         {
-            if(collision.TryGetComponent(out Darkness darkness))
-            {
+            if (collision.TryGetComponent(out Darkness darkness))
+            {              
                 TakeDamage();
             }
 
@@ -307,11 +307,6 @@ public abstract class Character : NetworkBehaviour
             if (collision.TryGetComponent(out Crate crate) && !_groundChecker.LandOnTopOfCrate() && !_resistSphere.IsActive)
             {
                 CrateStun(_crateStunDuration);
-            }
-
-            if (collision.TryGetComponent(out DeleteZone deleteZone))
-            {
-                gameObject.SetActive(false);
             }
         }  
     }
