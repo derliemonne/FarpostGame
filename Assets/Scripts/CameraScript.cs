@@ -1,4 +1,5 @@
 using IngameDebugConsole;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
@@ -7,7 +8,21 @@ public class CameraScript : MonoBehaviour
     private const float DefaultCameraSize = 9.6f;
 
     public Character Character => _character;
-    
+
+    private Vector3 Pivot 
+    {
+        get
+        {
+            if(_character == null)
+            {
+                Debug.Log("No binded player");
+            }
+            return new Vector3(transform.position.x, _player.transform.position.y + _verticalShift, transform.position.z);
+        }
+            
+    }
+        
+    [SerializeField] private float _verticalShift = 2;
     [SerializeField] private float _distToMove = 3;
     [SerializeField] private float _distToStop = 3;
     [SerializeField] private float _distToTpCamera = 3;
@@ -19,7 +34,7 @@ public class CameraScript : MonoBehaviour
     private Character _character;
     private Rigidbody2D _playerRb;
     private Camera _camera;
-    private float _playerLastYCoord;
+    private float _pivotLastYCoord;
     
     private Camera Camera
     {
@@ -55,27 +70,22 @@ public class CameraScript : MonoBehaviour
         _player = player;
         _playerRb = playerRb;
         _character = character;
-        _playerLastYCoord = _player.position.y;
-        Vector3 newCameraPos = transform.position;
-        newCameraPos.y = _player.transform.position.y;
-        transform.position = newCameraPos;
+        _pivotLastYCoord = Pivot.y;
+        TpCameraToPivot();
     }
-
     
     public void MoveCamera()
     {
-        float playerMove = Mathf.Abs(_playerLastYCoord - _player.position.y);
-        bool needTp = playerMove > _distToTpCamera;
+        float pivotMove = Mathf.Abs(_pivotLastYCoord - Pivot.y);
+        bool needTp = pivotMove > _distToTpCamera;
 
         if (needTp)
         {
-            Vector3 newCameraPos = transform.position;
-            newCameraPos.y = _player.position.y;
-            transform.position = newCameraPos;
+            TpCameraToPivot();
         }
         else
         {
-            float dist = _player.position.y - transform.position.y;
+            float dist = Pivot.y - transform.position.y;
             if(Mathf.Abs(dist) > _distToMove)
             {
                 _isMove = true;
@@ -110,9 +120,14 @@ public class CameraScript : MonoBehaviour
             }
         }
 
-        _playerLastYCoord = _player.position.y;
+        _pivotLastYCoord = Pivot.y;
     }
     
+    private void TpCameraToPivot()
+    {
+        transform.position = Pivot;
+    }
+
     private void OnValidate()
     {
         ResetCameraSize();

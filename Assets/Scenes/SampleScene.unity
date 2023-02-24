@@ -221,9 +221,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc1bf7ea81652c44a06cd6aa9de8bbd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _distToMove: 4.43
-  _distToStop: 4.3
-  _distToTpCamera: 4.43
+  _verticalShift: 3.4
+  _distToMove: 1.5
+  _distToStop: 1.4
+  _distToTpCamera: 1.5
   _cameraAdjustSpeed: 2
   _chunkWidth: 10.8
 --- !u!114 &519420034
@@ -693,6 +694,10 @@ PrefabInstance:
     - target: {fileID: 3235455960613276806, guid: d2b9f11a09e34014da92a58baa55ea08, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3391222531881580854, guid: d2b9f11a09e34014da92a58baa55ea08, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 117.74707
       objectReference: {fileID: 0}
     - target: {fileID: 4177588459459581252, guid: d2b9f11a09e34014da92a58baa55ea08, type: 3}
       propertyPath: m_AnchorMax.y

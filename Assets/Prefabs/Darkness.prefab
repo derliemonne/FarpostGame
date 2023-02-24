@@ -48,8 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interpolationDataSource: 0
-  _Altitude: -40
-  _speed: 0.5
+  _Altitude: -60
+  _speed: 1.2
 --- !u!114 &7684343275789999072
 MonoBehaviour:
   m_ObjectHideFlags: 0
