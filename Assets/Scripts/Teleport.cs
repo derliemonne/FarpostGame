@@ -1,16 +1,40 @@
 using Fusion;
-using System.Collections;
-using System.Collections.Generic;
+using System.Data.SqlTypes;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class Teleport : NetworkBehaviour
 {
-    [SerializeField] private Transform _anotherTp;
+    public bool IsActive { get; private set; } = false;
+    public float Altitude => transform.position.y;
 
-    public Vector3 GetPosition()
+    private Teleport _anotherTp;
+    private Animator _animator;
+
+    private void Awake()
     {
-        return _anotherTp.transform.position;
+        _animator = GetComponent<Animator>();
     }
 
-    public bool IsActive => _anotherTp != null;
+    public void SetNextTp(Teleport teleport)
+    {
+        IsActive = true;
+        _animator.enabled = true;
+        _anotherTp = teleport;
+    }
+
+    public Vector3? GetNextPosition()
+    {
+        if(!IsActive)
+        {
+            Debug.LogError("This teleport is not active");
+            return null;
+        }
+
+        if(_anotherTp != null)
+        {
+            return _anotherTp.transform.position;
+        }
+        return null;
+    }
 }

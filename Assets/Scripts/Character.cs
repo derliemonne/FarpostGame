@@ -310,7 +310,22 @@ public abstract class Character : NetworkBehaviour
 
             if (collision.TryGetComponent(out Teleport teleport) && teleport.IsActive && !_resistSphere.IsActive)
             {
-                TeleportTo(teleport.GetPosition());
+                Vector3? tpPosition = teleport.GetNextPosition();
+
+                if (!tpPosition.HasValue)
+                {
+                    Rpc_Death();
+                    return;
+                }
+
+                if(tpPosition.Value.y <= Darkness.Instance.Altitude)
+                {
+                    Rpc_Death();
+                    return;
+                }
+
+                _effectManager.Apply(new ResistEffect(_effectManager, 1));
+                TeleportTo((Vector3)tpPosition);
             }
 
             if (collision.TryGetComponent(out Crate crate) && !_groundChecker.LandOnTopOfCrate() && !_resistSphere.IsActive)
