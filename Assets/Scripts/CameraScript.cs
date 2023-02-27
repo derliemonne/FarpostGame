@@ -1,5 +1,4 @@
 using IngameDebugConsole;
-using System.Net.NetworkInformation;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
@@ -45,16 +44,20 @@ public class CameraScript : MonoBehaviour
         }
     }
 
-    private void Awake()
+    private void Start()
     {
         ResetCameraSize();
     }
-    
+
+    /// <summary>
+    /// Should be called only in runtime and not in editor.
+    /// Otherwise it can use the size of editor window instead of the size of the game window.
+    /// </summary>
     public void ResetCameraSize()
     {
-        //float ratio = (float)Screen.width / Screen.height;
-        //Camera.orthographicSize = _chunkWidth / (ratio * 2);
-        Camera.orthographicSize = DefaultCameraSize;
+        Debug.Log($"Set camera size. Screen is {Screen.width}x{Screen.height}");
+        float ratio = (float)Screen.width / Screen.height;
+        Camera.orthographicSize = _chunkWidth / (ratio * 2);
     }
     
     private void Update()
@@ -127,11 +130,7 @@ public class CameraScript : MonoBehaviour
     {
         transform.position = Pivot;
     }
-
-    private void OnValidate()
-    {
-        ResetCameraSize();
-    }
+    
     
     [ConsoleMethod("setcam", "Resets camera size to fit screen.")]
     public static void SetCameraSizeCommand()
