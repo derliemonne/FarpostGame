@@ -39,7 +39,7 @@ public abstract class Character : NetworkBehaviour
     public abstract CharacterType CharacterType { get; }
     public abstract string CharacterName { get; }
     public int Health { get; protected set; } = 1;
-
+    
     public bool IsDead
     {
         get => _isDead;
@@ -85,7 +85,7 @@ public abstract class Character : NetworkBehaviour
     protected float inputInter = 0;
     protected bool _isDead;
 
-    [Networked] protected bool _canJump { get; set; } = true;
+    [Networked] public bool CanJump { get; protected set; } = true;
     [Networked] protected bool _canPushPlatform { get; set; } = true;
 
     protected virtual void Awake()
@@ -244,7 +244,7 @@ public abstract class Character : NetworkBehaviour
     {
         if (isGrounded)
         {
-            if (jump && _canJump)
+            if (jump && CanJump)
             {
                 velocity.y = _jumpSpeed;
                 ResetJump(_jumpCoolDown);
@@ -259,14 +259,14 @@ public abstract class Character : NetworkBehaviour
 
     protected void ResetJump(float duration)
     {
-        _canJump = false;
+        CanJump = false;
         StartCoroutine(ResetJumpDelay(duration));
     }
 
     private IEnumerator ResetJumpDelay(float duration)
     {
         yield return new WaitForSeconds(duration);
-        _canJump = true;
+        CanJump = true;
     }
 
     private void Update()

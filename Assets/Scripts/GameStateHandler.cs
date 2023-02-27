@@ -37,6 +37,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     [Networked(OnChanged = nameof(OnRaceFinishedChanged))]
     public NetworkBool IsRaceFinished { get; private set; }
     
+    public Character LocalCharacter { get; private set; }
+    
     public ConnectionStatus ConnectionStatus
     {
         get => _connectionStatus;
@@ -316,19 +318,21 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             }
             Character character = _networkManager.NetworkRunner
                 .Spawn(chosenPrefab, _startCharacterPosition, inputAuthority: player.PlayerRef);
-            character.SetPlayerId(player.PlayerRef.PlayerId);
-            Rpc_MakePlayerObserver(player.PlayerRef.PlayerId, character);         
             if (character == null)
             {
-                Debug.LogError($"Character prefab is invalid.");
+                Debug.LogError("Character prefab is invalid.");
             }
+            character.SetPlayerId(player.PlayerRef.PlayerId);
+            Rpc_MakePlayerObserver(player.PlayerRef.PlayerId, character);      
             player.Character = character;
-            character.Died += OnCharacterDied;
-            
             Rpc_BindCamera(player.PlayerRef, character);
+            character.Died += OnCharacterDied;
+            if (player.PlayerRef.PlayerId == _networkManager.NetworkRunner.LocalPlayer.PlayerId)
+            {
+                LocalCharacter = character;
+            }
         }
 
-        // Darkness darkness = _networkManager.NetworkRunner.Spawn(_darknessPrefab, new Vector3(-100, -100, -100), Quaternion.identity);
         Darkness darkness = _networkManager.NetworkRunner.Spawn(_darknessPrefab);
         if (darkness == null)
         {

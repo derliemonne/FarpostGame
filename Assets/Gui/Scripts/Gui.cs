@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-    
+using BitStream = Fusion.Protocol.BitStream;
+
 public class Gui : MonoBehaviour
 {
     public static Gui Instance { get; private set; }
@@ -111,8 +112,14 @@ public class Gui : MonoBehaviour
     {
         GameStateHandler gameStateHandler = GameStateHandler.Instance;
         NetworkManager networkManager = NetworkManager.Instance;
-        if (networkManager != null && gameStateHandler != null && gameStateHandler.Object != null && 
-            gameStateHandler.ConnectionStatus == ConnectionStatus.InSession && !gameStateHandler.RaceStarted)
+        if (networkManager == null || gameStateHandler == null || gameStateHandler.Object == null) return;
+        if (gameStateHandler.ConnectionStatus != ConnectionStatus.InSession) return;
+        if (gameStateHandler.RaceStarted)
+        {
+            Character localCharacter = gameStateHandler.LocalCharacter;
+            if (localCharacter != null) _upInputInputButton.interactable = localCharacter.CanJump;
+        }
+        else
         {
             int connectedPlayersCount = networkManager.NetworkRunner.SessionInfo.PlayerCount;
             if (connectedPlayersCount != _connectedPlayersCount)
@@ -229,6 +236,7 @@ public class Gui : MonoBehaviour
         if (raceStarted)
         {
             ShowMenu(null);
+            _controlsParent.SetActive(true);
         }
     }
 
@@ -240,6 +248,7 @@ public class Gui : MonoBehaviour
         {
             _guiRecords[i].Record = records[i];
         }
+        _controlsParent.SetActive(false);
     }
 
     private void OnDestroy()

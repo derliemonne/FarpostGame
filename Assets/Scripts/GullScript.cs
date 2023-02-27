@@ -24,7 +24,7 @@ public class GullScript : Character
 
         if(isGrounded)
         {
-            if (jump && _canJump)
+            if (jump && CanJump)
             {
                 velocity.y = _jumpSpeed;
                 ResetJump(_jumpCoolDown);
