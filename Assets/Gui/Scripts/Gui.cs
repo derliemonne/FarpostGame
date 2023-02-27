@@ -15,6 +15,9 @@ public class Gui : MonoBehaviour
     public event Action<CharacterType> CharacterChosenAction;
 
     public CharacterType ChosenCharacter { get; private set; }
+    public InputButton UpInputButton => _upInputInputButton;
+    public InputButton LeftInputButton => _leftInputButton;
+    public InputButton RightInputButton => _rightInputButton;
 
     [Header("Menus")]
     [SerializeField] private RectTransform _mainMenu;
@@ -50,6 +53,9 @@ public class Gui : MonoBehaviour
     [Header("MessageBoxes")]
     [SerializeField] private MessageBox _connectingMessageBox;
     [SerializeField] private MessageBox _badInputMessageBox;
+    [Header("Input")]
+    [SerializeField] private GameObject _controlsParent;
+    [SerializeField] private InputButton _leftInputButton, _upInputInputButton, _rightInputButton;
     
 
     private List<RectTransform> _menus;
@@ -220,7 +226,10 @@ public class Gui : MonoBehaviour
 
     private void OnRaceStartedChanged(bool raceStarted)
     {
-        if (raceStarted) ShowMenu(null);
+        if (raceStarted)
+        {
+            ShowMenu(null);
+        }
     }
 
     private void OnRaceFinished(List<Record> records)

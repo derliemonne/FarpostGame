@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Fusion;
 using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 public enum ConnectionStatus {
@@ -53,6 +55,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private LevelManager _levelManagerPrefab;
     [SerializeField] private Darkness _darknessPrefab;
     [SerializeField] private CrateSpawner _crateSpawnerPrefab;
+    [SerializeField] private float _jumpThresholdInputY = 0.5f;
     [SerializeField] private Vector2 _startCharacterPosition = new(0, 0);
     [SerializeField] private CameraScript _cs;
     [SerializeField] private Gui _gui;
@@ -63,8 +66,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     private string _inputSessionName;
     private ConnectionStatus _connectionStatus = ConnectionStatus.NotInSession;
 
-    private bool jumpPressed = false;
-    private bool pushPlatformPressed = false;
+    private bool _pushPlatformPressed;
+    private float _prevInputMoveY;
 
     private void Awake()
     {
@@ -154,17 +157,21 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             runner.Despawn(player.Object);
         }
     }
-
+    
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
+        bool jumped = false;
+        jumped = _gui.UpInputButton.IsPressed;
+        int moveDirection = 0;
+        if (_gui.RightInputButton.IsPressed) moveDirection = 1;
+        if (_gui.LeftInputButton.IsPressed) moveDirection = -1;
         input.Set(new NetworkInputData
         {
-            Direction = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxis("Vertical")),
-            Jumped = jumpPressed,
-            PushedPlatform = pushPlatformPressed
+            Direction = moveDirection,
+            Jumped = jumped, 
+            PushedPlatform = _pushPlatformPressed,
         });
-        jumpPressed = false;
-        pushPlatformPressed = false;
+        _pushPlatformPressed = false;
     }
     
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
@@ -217,8 +224,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
 
     private void Update()
     {
-        jumpPressed |= Input.GetButtonDown("Jump");
-        pushPlatformPressed |= Input.GetButtonDown("PushPlatform");
+        _pushPlatformPressed |= Input.GetButtonDown("PushPlatform");
     }
 
     private async void ConnectToRoom(GameMode mode, string sessionName="TestRoom")

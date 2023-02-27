@@ -159,14 +159,15 @@ public abstract class Character : NetworkBehaviour
     {
         if (GetInput(out NetworkInputData inputData))
         {
-            Vector2 input = inputData.Direction.normalized;
+            int moveDirection = inputData.Direction;
             bool jump = inputData.Jumped;
             bool pushPlatform = inputData.PushedPlatform;
+            if (pushPlatform) print("PUSH PLATFORM");
             Vector2 velocity = _networkRb.Rigidbody.velocity;
 
             if(IsStunned)
             {
-                input = Vector3.zero;
+                moveDirection = 0;
                 jump = false;
             }
 
@@ -177,7 +178,7 @@ public abstract class Character : NetworkBehaviour
                 StartCoroutine(CooldownPushPlatform());
             }
 
-            Move(input, velocity, jump);
+            Move(moveDirection, velocity, jump);
             AltitudeRecord = Mathf.Max(AltitudeRecord, Altitude);
         }
     }
@@ -200,14 +201,14 @@ public abstract class Character : NetworkBehaviour
         }  
     }
 
-    protected virtual void Move(Vector3 input, Vector3 velocity, bool jump)
+    protected virtual void Move(int moveDirection, Vector3 velocity, bool jump)
     {
         List<Platform> standOnPlatforms;
         bool isGrounded = _groundChecker.GetGroundPlatforms(out standOnPlatforms);
 
         Jump(jump, ref velocity, isGrounded);
 
-        _networkAnimator.Animator.SetBool(_isRunning, Math.Abs(input.x) > HorizontalSpeedConsideredNotMoving);
+        _networkAnimator.Animator.SetBool(_isRunning, Math.Abs(moveDirection) > HorizontalSpeedConsideredNotMoving);
 
         Platform firstFrozenPlatform = null;
         foreach (Platform platform in standOnPlatforms)
@@ -221,14 +222,17 @@ public abstract class Character : NetworkBehaviour
 
         if (firstFrozenPlatform != null && firstFrozenPlatform.IsFrozen && !IceBoots.IsActive)
         {
-            inputInter += input.x * firstFrozenPlatform.SkiCoefficient;
+            float inpX = 0;
+            if (moveDirection > 0.01f) inpX = 1;
+            else if (moveDirection < -0.01f) inpX = -1;
+            inputInter += moveDirection * firstFrozenPlatform.SkiCoefficient;
             inputInter -= 0.1f * firstFrozenPlatform.SkiCoefficient * Math.Sign(inputInter);
             inputInter = Math.Min(1, inputInter);
             inputInter = Math.Max(-1, inputInter);
         }
         else
         {
-            inputInter = input.x;
+            inputInter = moveDirection;
         }
 
         velocity.x = inputInter * (isGrounded ? _moveSpeed : _moveSpeedInAir);
