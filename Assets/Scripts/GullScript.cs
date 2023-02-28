@@ -27,16 +27,15 @@ public class GullScript : Character
             if (jump && CanJump)
             {
                 velocity.y = _jumpSpeed;
+                _playerSound.Play_Jump();
                 ResetJump(_jumpCoolDown);
             }
         }
-        else
+        else if (jump && _canDoubleJump)
         {
-            if (jump && _canDoubleJump)
-            {
-                velocity.y = _jumpSpeed;
-                ResetDoubleJump(_doubleJumpCoolDown);
-            }
+            velocity.y = _jumpSpeed;
+            _playerSound.Play_Jump();
+            ResetDoubleJump(_doubleJumpCoolDown);
         }
     }
 

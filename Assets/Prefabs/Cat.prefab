@@ -193,6 +193,8 @@ MonoBehaviour:
   _effectManager: {fileID: 4091216202324084813}
   _iceBoots: {fileID: 6740442872462743836}
   _resistSphere: {fileID: 3234555987660047667}
+  _deathSound: {fileID: 8300000, guid: cf5abc87044eef944bf0a578d25b1406, type: 3}
+  _jumpSound: {fileID: 8300000, guid: 44d291fd45dd9ac45aa72c2cf3a65212, type: 3}
 --- !u!114 &716921804432128068
 MonoBehaviour:
   m_ObjectHideFlags: 0

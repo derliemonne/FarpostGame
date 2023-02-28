@@ -81,9 +81,15 @@ public abstract class Character : NetworkBehaviour
     [SerializeField] protected IceBoots _iceBoots;
     [SerializeField] protected ResistSphere _resistSphere;
 
+    [Header("Звуки")]
+    [SerializeField] protected AudioClip _deathSound;
+    [SerializeField] protected AudioClip _jumpSound;
+
     protected NetworkRigidbody2D _networkRb;
+    protected AudioSource _audioSource;
     protected float inputInter = 0;
     protected bool _isDead;
+    protected PlayerSound _playerSound;
 
     [Networked] public bool CanJump { get; protected set; } = true;
     [Networked] protected bool _canPushPlatform { get; set; } = true;
@@ -91,6 +97,7 @@ public abstract class Character : NetworkBehaviour
     protected virtual void Awake()
     {
         _networkRb = GetComponent<NetworkRigidbody2D>();  
+        _audioSource = GetComponent<AudioSource>();
     }
 
     public void SetPlayerId(int playerId)
@@ -115,7 +122,7 @@ public abstract class Character : NetworkBehaviour
         Health--;
         if(Health <= 0)
         {
-            Rpc_Death();
+            Death();
         }
     }
 
@@ -130,9 +137,20 @@ public abstract class Character : NetworkBehaviour
         Rpc_SetActiveStun(true);
     }
 
+    public void BindPlayerSound(PlayerSound playerSound)
+    {
+        _playerSound = playerSound;
+    }
+
     protected virtual void CrateStun(float duration)
     {
         Stun(duration);
+    }
+
+    private void Death()
+    {
+        Rpc_Death();
+        _playerSound.Play_Death();
     }
 
     [Rpc(sources: RpcSources.All, targets: RpcTargets.All)]
@@ -244,6 +262,7 @@ public abstract class Character : NetworkBehaviour
             if (jump && CanJump)
             {
                 velocity.y = _jumpSpeed;
+                _playerSound.Play_Jump();
                 ResetJump(_jumpCoolDown);
             }
             _networkAnimator.Animator.SetBool(_isJumping, false);
@@ -298,7 +317,8 @@ public abstract class Character : NetworkBehaviour
             if (collision.TryGetComponent(out BuffScript buffScript))
             {
                 Effect buff = buffScript.GetBuff(_effectManager);
-                if(buff is InstantEffect)
+                _playerSound.Play_Buff();
+                if (buff is InstantEffect)
                 {
                     _effectManager.Apply((InstantEffect)buff);
                 }
@@ -314,13 +334,13 @@ public abstract class Character : NetworkBehaviour
 
                 if (!tpPosition.HasValue)
                 {
-                    Rpc_Death();
+                    TakeDamage();
                     return;
                 }
 
                 if(tpPosition.Value.y <= Darkness.Instance.Altitude)
                 {
-                    Rpc_Death();
+                    TakeDamage();
                     return;
                 }
 
