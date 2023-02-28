@@ -1,20 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Fusion;
 using Fusion.Sockets;
+using IngameDebugConsole;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
+
 
 public enum ConnectionStatus {
     NotInSession,
     ConnectingToSession,
     InSession,
 }
+
 
 public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
 {
@@ -49,15 +50,15 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         }
     }
 
-    public ReadOnlyCollection<Character> CharacterPrefabs => _characterPrefabs.Values.ToList().AsReadOnly(); 
-    
+    public ReadOnlyCollection<Character> CharacterPrefabs => _characterPrefabs.Values.ToList().AsReadOnly();
+
+    [SerializeField] private GameStateHandler _gameStateHandlerPrefab;
     [SerializeField] private NetworkManager _networkManagerPrefab;
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private SerializableDictionary<CharacterType, Character> _characterPrefabs;
     [SerializeField] private LevelManager _levelManagerPrefab;
     [SerializeField] private Darkness _darknessPrefab;
     [SerializeField] private CrateSpawner _crateSpawnerPrefab;
-    [SerializeField] private float _jumpThresholdInputY = 0.5f;
     [SerializeField] private Vector2 _startCharacterPosition = new(0, 0);
     [SerializeField] private CameraScript _cs;
     [SerializeField] private Gui _gui;
@@ -88,6 +89,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         _gui.StartHost += OnGuiStartHost;
         _gui.CharacterChosenAction += OnGuiChosenCharacter;
         _gui.ReadyToStartRaceChanged += OnGuiChangedReadyToStartRace;
+        _gui.LeaveSession += OnGuiLeaveSession;
     }
     
     public static void OnRaceStartedChanged(Changed<GameStateHandler> changed)
@@ -126,8 +128,16 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef joinedPlayerRef)
     {
         Debug.Log("> OnPlayerJoined");
+        
         if (runner.IsServer)
         {
+            bool canConnect = _networkManager.NetworkRunner.ActivePlayers.Count() < MaxPlayersInSession && !RaceStarted;
+            if (!canConnect)
+            {
+                Rpc_SendMessageToClient(joinedPlayerRef, NetworkMessage.ServerKickedRaceStarted);
+                _networkManager.NetworkRunner.Disconnect(joinedPlayerRef);
+            }
+            
             Player player = runner.Spawn(_playerPrefab, inputAuthority: joinedPlayerRef);
             if (player == null)
             {
@@ -155,8 +165,15 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         Debug.Log("> OnPlayerLeft");
         if (_networkManager.TryGetPlayerObject(playerRef, out Player player))
         {
-            runner.Despawn(player.Character.Object);
-            runner.Despawn(player.Object);
+            if (player.Character != null && player.Character.Object != null)
+            {
+                runner.Despawn(player.Character.Object);
+            }
+
+            if (player.Object != null)
+            {
+                runner.Despawn(player.Object);
+            }
         }
     }
     
@@ -180,18 +197,21 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
 
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
     {
-        Debug.Log("> OnNetworkRunnerShutdown");
+        Debug.Log($"> OnNetworkRunnerShutdown: {nameof(shutdownReason)}: {shutdownReason}");
         ConnectionStatus = ConnectionStatus.NotInSession;
     }
 
     public void OnConnectedToServer(NetworkRunner runner)
     {
-        Debug.Log("> OnConnectedToServer");
+        Debug.Log($"> OnConnectedToServer: playerId {runner.LocalPlayer.PlayerId}.");
     }
 
     public void OnDisconnectedFromServer(NetworkRunner runner)
     {
         Debug.Log("> OnDisconnectedFromServer");
+        _gui.ShowMessageBox(NetworkManager.NetworkMessages.GetValueOrDefault(
+            NetworkMessage.ServerKickedRaceStarted, "Потеряно соединение с сервером."));
+        ConnectionStatus = ConnectionStatus.NotInSession;
     }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
@@ -293,6 +313,33 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         ObserverScript.Instance.BindToCharacter(character);
     }
 
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    public void Rpc_SendMessageToClient([RpcTarget] PlayerRef playerRef, NetworkMessage networkMessage)
+    {
+        string message = NetworkManager.NetworkMessages.GetValueOrDefault(networkMessage, "undefined network message");
+        Debug.Log($"> NetworkMessage: {message}.");
+        if (_gui != null) _gui.ShowMessageBox(message);
+    }
+
+    public void DebugConsoleCommand_SendMessageToClient(int playerId, NetworkMessage message)
+    {
+        if (!_networkManager.NetworkRunner.IsServer)
+        {
+            Debug.LogError("This is server-only command.");
+            return;
+        }
+        Rpc_SendMessageToClient(playerId, message);
+    }
+
+    private void Start()
+    {
+        DebugLogConsole.AddCommandInstance(
+            "send",
+            "sends message from host to client via rpc",
+            nameof(DebugConsoleCommand_SendMessageToClient),
+            this);
+    }
+
     /// <summary>
     /// Executes on host.
     /// </summary>
@@ -341,6 +388,11 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         darkness.SetActive(true);
     }
 
+    private void LeaveSession()
+    {
+        // TODO
+    }
+
     /// <summary>
     /// Server-only.
     /// </summary>
@@ -378,6 +430,11 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     {
         _readyToStartRace = readyToStartRace;
         Rpc_OnPlayerChangedReadyToStartRace(readyToStartRace);
+    }
+
+    private void OnGuiLeaveSession()
+    {
+        LeaveSession();
     }
 
     // This GUI should be replaced to normal GUI with assets in future.

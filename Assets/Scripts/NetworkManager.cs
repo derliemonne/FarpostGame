@@ -5,11 +5,26 @@ using Fusion;
 using JetBrains.Annotations;
 using UnityEngine;
 
+
+public enum NetworkMessage
+{
+    ServerKickedRaceStarted
+}
+
+
 [RequireComponent(typeof(NetworkRunner))]
 public class NetworkManager : MonoBehaviour
 {
     public static NetworkManager Instance { get; private set; }
-    
+
+    public static Dictionary<NetworkMessage, string> NetworkMessages = new()
+    {
+        {
+            NetworkMessage.ServerKickedRaceStarted,
+            "В этой комнате игра уже началась. Попробуйте подключиться к другой."
+        }
+    };
+
     private NetworkRunner _networkRunner;
 
     private void Awake()

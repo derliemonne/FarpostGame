@@ -14,6 +14,7 @@ public class Gui : MonoBehaviour
     public event Action StartHost;
     public event Action<bool> ReadyToStartRaceChanged;
     public event Action<CharacterType> CharacterChosenAction;
+    public event Action LeaveSession;
 
     public CharacterType ChosenCharacter { get; private set; }
     public InputButton UpInputButton => _upInputInputButton;
@@ -45,6 +46,7 @@ public class Gui : MonoBehaviour
     [SerializeField] private ChooseCharacterButton _choosePirsikButton;
     [SerializeField] private ChooseCharacterButton _chooseMarsikButton;
     [SerializeField] private ChooseCharacterButton _chooseGullButton;
+    [SerializeField] private Button _leaveSessionButton;
     [SerializeField] private Button _readyButton;
     [Header("Leaders menu")] 
     [SerializeField] private GuiRecord _record1st;
@@ -54,6 +56,7 @@ public class Gui : MonoBehaviour
     [Header("MessageBoxes")]
     [SerializeField] private MessageBox _connectingMessageBox;
     [SerializeField] private MessageBox _badInputMessageBox;
+    [SerializeField] private MessageBox _messageBox;
     [Header("Input")]
     [SerializeField] private GameObject _controlsParent;
     [SerializeField] private InputButton _leftInputButton, _upInputInputButton, _rightInputButton;
@@ -63,6 +66,18 @@ public class Gui : MonoBehaviour
     private Dictionary<CharacterType, Animator> _characterAnimators;
     private List<GuiRecord> _guiRecords;
     private int _connectedPlayersCount;
+
+    public void ShowMessageBox(string message)
+    {
+        if (_messageBox == null)
+        {
+            Debug.LogError($"{nameof(_messageBox)} is null.");
+            return;
+        }
+        
+        _messageBox.SetText(message);
+        _messageBox.SetActive(true);
+    }
     
     private void Awake()
     {
@@ -91,6 +106,7 @@ public class Gui : MonoBehaviour
         _choosePirsikButton.Button.onClick.AddListener(OnChoosePirsikButtonClicked);
         _chooseMarsikButton.Button.onClick.AddListener(OnChooseMarsikButtonClicked);
         _chooseGullButton.Button.onClick.AddListener(OnChooseGullButtonClicked);
+        _leaveSessionButton.onClick.AddListener(OnLeaveSessionButtonClicked);
         _readyButton.onClick.AddListener(OnReadyButtonClicked);
         
         foreach (Button button in _buttonsToOpenMenu)
@@ -200,6 +216,11 @@ public class Gui : MonoBehaviour
     {
         CharacterChosenAction?.Invoke(CharacterType.Firsik);
         SpotlightCharacter(CharacterType.Firsik);
+    }
+
+    private void OnLeaveSessionButtonClicked()
+    {
+        LeaveSession?.Invoke();
     }
 
     private void OnReadyButtonClicked()
