@@ -222,9 +222,6 @@ public abstract class Character : NetworkBehaviour
 
         if (firstFrozenPlatform != null && firstFrozenPlatform.IsFrozen && !IceBoots.IsActive)
         {
-            float inpX = 0;
-            if (moveDirection > 0.01f) inpX = 1;
-            else if (moveDirection < -0.01f) inpX = -1;
             inputInter += moveDirection * firstFrozenPlatform.SkiCoefficient;
             inputInter -= 0.1f * firstFrozenPlatform.SkiCoefficient * Math.Sign(inputInter);
             inputInter = Math.Min(1, inputInter);
