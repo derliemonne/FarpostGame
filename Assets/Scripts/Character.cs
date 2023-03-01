@@ -89,7 +89,7 @@ public abstract class Character : NetworkBehaviour
     protected AudioSource _audioSource;
     protected float inputInter = 0;
     protected bool _isDead;
-    protected PlayerSound _playerSound;
+    [SerializeField] protected PlayerSound _playerSound;
 
     [Networked] public bool CanJump { get; protected set; } = true;
     [Networked] protected bool _canPushPlatform { get; set; } = true;
@@ -150,7 +150,14 @@ public abstract class Character : NetworkBehaviour
     private void Death()
     {
         Rpc_Death();
-        _playerSound.Play_Death();
+        if(_playerSound != null)
+        {
+            _playerSound.Play_Death();
+        }
+        else
+        {
+            Debug.LogError("_playerSound is null");
+        }      
     }
 
     [Rpc(sources: RpcSources.All, targets: RpcTargets.All)]
@@ -262,7 +269,19 @@ public abstract class Character : NetworkBehaviour
             if (jump && CanJump)
             {
                 velocity.y = _jumpSpeed;
-                _playerSound.Play_Jump();
+
+                if (Runner.IsServer)
+                {
+                    if (_playerSound != null)
+                    {
+                        _playerSound.Play_Jump();
+                    }
+                    else
+                    {
+                        Debug.LogError("_playerSound is null");
+                    }
+                }              
+                
                 ResetJump(_jumpCoolDown);
             }
             _networkAnimator.Animator.SetBool(_isJumping, false);
@@ -317,7 +336,16 @@ public abstract class Character : NetworkBehaviour
             if (collision.TryGetComponent(out BuffScript buffScript))
             {
                 Effect buff = buffScript.GetBuff(_effectManager);
-                _playerSound.Play_Buff();
+                
+                if (_playerSound != null)
+                {
+                    _playerSound.Play_Buff();
+                }
+                else
+                {
+                    Debug.LogError("_playerSound is null");
+                }
+
                 if (buff is InstantEffect)
                 {
                     _effectManager.Apply((InstantEffect)buff);

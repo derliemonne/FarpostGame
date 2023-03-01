@@ -1,10 +1,12 @@
 using IngameDebugConsole;
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
 public class CameraScript : MonoBehaviour
 {
     private const float DefaultCameraSize = 9.6f;
+    private const float LerpDuration = 1f;
 
     public Character Character => _character;
 
@@ -84,7 +86,7 @@ public class CameraScript : MonoBehaviour
 
         if (needTp)
         {
-            TpCameraToPivot();
+            LerpCameraToPivot();
         }
         else
         {
@@ -130,8 +132,25 @@ public class CameraScript : MonoBehaviour
     {
         transform.position = Pivot;
     }
-    
-    
+
+    private void LerpCameraToPivot()
+    {
+        StartCoroutine(LerpCameraToPoint(transform.position, Pivot));
+    }
+
+    private IEnumerator LerpCameraToPoint(Vector3 startPoint, Vector3 endPoint)
+    {
+        float elapsedTime = 0;
+        while (elapsedTime < LerpDuration)
+        {
+            float delta = elapsedTime / LerpDuration;
+            transform.position = Vector3.Lerp(startPoint, endPoint, delta);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = endPoint;
+    }
+
     [ConsoleMethod("setcam", "Resets camera size to fit screen.")]
     public static void SetCameraSizeCommand()
     {

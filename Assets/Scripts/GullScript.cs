@@ -27,14 +27,34 @@ public class GullScript : Character
             if (jump && CanJump)
             {
                 velocity.y = _jumpSpeed;
-                _playerSound.Play_Jump();
+                if (Runner.IsServer)
+                {
+                    if (_playerSound != null)
+                    {
+                        _playerSound.Play_Jump();
+                    }
+                    else
+                    {
+                        Debug.LogError("_playerSound is null");
+                    }
+                }
                 ResetJump(_jumpCoolDown);
             }
         }
         else if (jump && _canDoubleJump)
         {
             velocity.y = _jumpSpeed;
-            _playerSound.Play_Jump();
+            if (Runner.IsServer)
+            {
+                if (_playerSound != null)
+                {
+                    _playerSound.Play_Jump();
+                }
+                else
+                {
+                    Debug.LogError("_playerSound is null");
+                }
+            }
             ResetDoubleJump(_doubleJumpCoolDown);
         }
     }

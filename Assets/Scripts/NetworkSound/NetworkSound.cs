@@ -15,13 +15,29 @@ public abstract class NetworkSound : NetworkBehaviour
         _soundMap = MakeSoundMap();
     }
 
+    /// <summary>
+    /// Server-only.
+    /// </summary>
     protected void PlayToOne(PlayerRef playerRef, string soundName)
     {
+        if(!Runner.IsServer)
+        {
+            Debug.LogError("Server-only method execute on client");
+            return;
+        }
         Rpc_PlayToOne(playerRef, soundName);
     }
 
+    /// <summary>
+    /// Server-only.
+    /// </summary>
     protected void PlayToAll(string soundName)
     {
+        if (!Runner.IsServer)
+        {
+            Debug.LogError("Server-only method execute on client");
+            return;
+        }
         Rpc_PlayToAll(soundName);
     }
 
