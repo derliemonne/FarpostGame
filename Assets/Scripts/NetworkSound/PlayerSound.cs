@@ -1,22 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerSound : NetworkSound
+[RequireComponent(typeof(AudioSource))]
+public class PlayerSound : MonoBehaviour
 {
     [SerializeField] private AudioClip _jumpSound;
     [SerializeField] private AudioClip _deathSound;
     [SerializeField] private AudioClip _buffSound;
 
     private Character _character;
+    private AudioSource _audioSource;
 
-    protected override Dictionary<string, AudioClip> MakeSoundMap()
+    private void Awake()
     {
-        return new Dictionary<string, AudioClip>()
-        {
-            {"jump", _jumpSound},
-            {"death", _deathSound},
-            {"buff", _buffSound},
-        };
+        _audioSource = GetComponent<AudioSource>();
     }
 
     public void BindPlayer(Character character)
@@ -27,16 +24,22 @@ public class PlayerSound : NetworkSound
 
     public void Play_Death()
     {
-        PlayToOne(_character.PlayerId, "death");
+        Play(_deathSound);
     }
 
     public void Play_Jump()
     {
-        PlayToOne(_character.PlayerId, "jump");
+        Play(_jumpSound);
     }
 
     public void Play_Buff()
     {
-        PlayToOne(_character.PlayerId, "buff");
+        Play(_buffSound);
+    }
+
+    private void Play(AudioClip clip)
+    {
+        _audioSource.clip = clip;
+        _audioSource.Play();
     }
 }

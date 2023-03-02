@@ -142,7 +142,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cc658628bd3a7749b10752bf9cdcb9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _interpolationDataSource: 0
   _jumpSound: {fileID: 8300000, guid: 44d291fd45dd9ac45aa72c2cf3a65212, type: 3}
   _deathSound: {fileID: 8300000, guid: cf5abc87044eef944bf0a578d25b1406, type: 3}
   _buffSound: {fileID: 8300000, guid: b2494e4984ec88f45b5792b2110354f2, type: 3}
@@ -167,6 +166,5 @@ MonoBehaviour:
   NetworkGuid:
     RawGuidValue: 3ebe6595e7d65d94cab20792e2ac7bf0
   NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 6118917765527347266}
+  NetworkedBehaviours: []
   SimulationBehaviours: []

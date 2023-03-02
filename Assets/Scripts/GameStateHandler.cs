@@ -386,7 +386,6 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
                 LocalCharacter = character;
             }
             Rpc_BindPlayerSound(player.PlayerRef, character);
-            Rpc_BindPlayerSound(Runner.LocalPlayer, character);
         }
 
         Darkness darkness = _networkManager.NetworkRunner.Spawn(_darknessPrefab);

@@ -31,7 +31,7 @@ public class GullScript : Character
                 {
                     if (_playerSound != null)
                     {
-                        _playerSound.Play_Jump();
+                        Rpc_PlayJump(PlayerId);
                     }
                     else
                     {
@@ -48,7 +48,7 @@ public class GullScript : Character
             {
                 if (_playerSound != null)
                 {
-                    _playerSound.Play_Jump();
+                    Rpc_PlayJump(PlayerId);
                 }
                 else
                 {

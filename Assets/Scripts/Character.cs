@@ -152,7 +152,7 @@ public abstract class Character : NetworkBehaviour
         Rpc_Death();
         if(_playerSound != null)
         {
-            _playerSound.Play_Death();
+            Rpc_PlayDeath(PlayerId);
         }
         else
         {
@@ -274,7 +274,7 @@ public abstract class Character : NetworkBehaviour
                 {
                     if (_playerSound != null)
                     {
-                        _playerSound.Play_Jump();
+                        Rpc_PlayJump(PlayerId);
                     }
                     else
                     {
@@ -339,7 +339,7 @@ public abstract class Character : NetworkBehaviour
                 
                 if (_playerSound != null)
                 {
-                    _playerSound.Play_Buff();
+                    Rpc_PlayBuff(PlayerId);
                 }
                 else
                 {
@@ -381,5 +381,23 @@ public abstract class Character : NetworkBehaviour
                 CrateStun(_crateStunDuration);
             }
         }  
+    }
+   
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+    protected void Rpc_PlayDeath([RpcTarget] PlayerRef player)
+    {
+        _playerSound.Play_Death();
+    }
+
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+    protected void Rpc_PlayBuff([RpcTarget] PlayerRef player)
+    {
+        _playerSound.Play_Buff();
+    }
+
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+    protected void Rpc_PlayJump([RpcTarget] PlayerRef player)
+    {
+        _playerSound.Play_Jump();
     }
 }
