@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using BitStream = Fusion.Protocol.BitStream;
 
 public class Gui : MonoBehaviour
 {
@@ -17,7 +16,7 @@ public class Gui : MonoBehaviour
     public event Action LeaveSession;
 
     public CharacterType ChosenCharacter { get; private set; }
-    public InputButton UpInputButton => _upInputInputButton;
+    public InputButton UpInputButton => _upInputButton;
     public InputButton LeftInputButton => _leftInputButton;
     public InputButton RightInputButton => _rightInputButton;
 
@@ -59,8 +58,10 @@ public class Gui : MonoBehaviour
     [SerializeField] private MessageBox _messageBox;
     [Header("Input")]
     [SerializeField] private GameObject _controlsParent;
-    [SerializeField] private InputButton _leftInputButton, _upInputInputButton, _rightInputButton;
-    
+    [SerializeField] private InputButton _leftInputButton;
+    [SerializeField] private InputButton _rightInputButton;
+    [SerializeField] private InputButton _upInputButton;
+    [SerializeField] private InputButtonUp _upInputButtonChanger;
 
     private List<RectTransform> _menus;
     private Dictionary<CharacterType, Animator> _characterAnimators;
@@ -122,6 +123,8 @@ public class Gui : MonoBehaviour
         gameStateHandler.ConnectionStatusChanged += OnConnectionStatusChanged;
         gameStateHandler.RaceStartedChanged += OnRaceStartedChanged;
         gameStateHandler.RaceFinished += OnRaceFinished;
+        gameStateHandler.LocalGullCharacterDoubleJumpChanged += OnLocalGullCharacterDoubleJumpChanged;
+        gameStateHandler.LocalCharacterCanJumpChanged += OnLocalCharacterCanJumpChanged;
     }
     
     private void Update()
@@ -133,7 +136,7 @@ public class Gui : MonoBehaviour
         if (gameStateHandler.RaceStarted)
         {
             Character localCharacter = gameStateHandler.LocalCharacter;
-            if (localCharacter != null) _upInputInputButton.interactable = localCharacter.CanJump;
+            if (localCharacter != null) _upInputButton.interactable = localCharacter.CanJump;
         }
         else
         {
@@ -270,6 +273,52 @@ public class Gui : MonoBehaviour
             _guiRecords[i].Record = records[i];
         }
         _controlsParent.SetActive(false);
+    }
+
+    private void OnLocalGullCharacterDoubleJumpChanged(bool isDoubleJumpActive)
+    {
+        if (_upInputButtonChanger == null)
+        {
+            Debug.LogError($"{nameof(_upInputButtonChanger)} is null.");
+            return;
+        }
+        GameStateHandler gameStateHandler = GameStateHandler.Instance;
+        if (gameStateHandler == null)
+        {
+            Debug.LogWarning($"{nameof(gameStateHandler)} is null");
+            return;
+        }
+        Character localCharacter = gameStateHandler.LocalCharacter;
+        if (localCharacter == null || localCharacter.Object == null)
+        {
+            Debug.LogWarning($"{nameof(localCharacter)} is null");
+            return;
+        }
+        _upInputButtonChanger.SetButtonImage(localCharacter.CanJump, isDoubleJumpActive);
+    }
+
+    private void OnLocalCharacterCanJumpChanged(bool canJump)
+    {
+        if (_upInputButtonChanger == null)
+        {
+            Debug.LogError($"{nameof(_upInputButtonChanger)} is null.");
+            return;
+        }
+        GameStateHandler gameStateHandler = GameStateHandler.Instance;
+        if (gameStateHandler == null)
+        {
+            Debug.LogWarning($"{nameof(gameStateHandler)} is null");
+            return;
+        }
+        Character localCharacter = gameStateHandler.LocalCharacter;
+        if (localCharacter == null || localCharacter.Object == null)
+        {
+            Debug.LogWarning($"{nameof(localCharacter)} is null");
+            return;
+        }
+
+        bool isDoubleJumpActive = localCharacter is GullScript { DoubleJump: true };
+        _upInputButtonChanger.SetButtonImage(canJump, isDoubleJumpActive);
     }
 
     private void OnDestroy()
