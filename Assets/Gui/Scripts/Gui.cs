@@ -123,8 +123,6 @@ public class Gui : MonoBehaviour
         gameStateHandler.ConnectionStatusChanged += OnConnectionStatusChanged;
         gameStateHandler.RaceStartedChanged += OnRaceStartedChanged;
         gameStateHandler.RaceFinished += OnRaceFinished;
-        gameStateHandler.LocalGullCharacterDoubleJumpChanged += OnLocalGullCharacterDoubleJumpChanged;
-        gameStateHandler.LocalCharacterCanJumpChanged += OnLocalCharacterCanJumpChanged;
     }
     
     private void Update()
@@ -136,7 +134,11 @@ public class Gui : MonoBehaviour
         if (gameStateHandler.RaceStarted)
         {
             Character localCharacter = gameStateHandler.LocalCharacter;
-            if (localCharacter != null) _upInputButton.interactable = localCharacter.CanJump;
+            if (localCharacter != null && localCharacter.Object != null)
+            {
+                bool isDoubleJumpActive = localCharacter is GullScript gull && gull.DoubleJump;
+                _upInputButtonChanger.SetButtonImage(localCharacter.CanJump, isDoubleJumpActive);
+            }
         }
         else
         {
@@ -273,52 +275,6 @@ public class Gui : MonoBehaviour
             _guiRecords[i].Record = records[i];
         }
         _controlsParent.SetActive(false);
-    }
-
-    private void OnLocalGullCharacterDoubleJumpChanged(bool isDoubleJumpActive)
-    {
-        if (_upInputButtonChanger == null)
-        {
-            Debug.LogError($"{nameof(_upInputButtonChanger)} is null.");
-            return;
-        }
-        GameStateHandler gameStateHandler = GameStateHandler.Instance;
-        if (gameStateHandler == null)
-        {
-            Debug.LogWarning($"{nameof(gameStateHandler)} is null");
-            return;
-        }
-        Character localCharacter = gameStateHandler.LocalCharacter;
-        if (localCharacter == null || localCharacter.Object == null)
-        {
-            Debug.LogWarning($"{nameof(localCharacter)} is null");
-            return;
-        }
-        _upInputButtonChanger.SetButtonImage(localCharacter.CanJump, isDoubleJumpActive);
-    }
-
-    private void OnLocalCharacterCanJumpChanged(bool canJump)
-    {
-        if (_upInputButtonChanger == null)
-        {
-            Debug.LogError($"{nameof(_upInputButtonChanger)} is null.");
-            return;
-        }
-        GameStateHandler gameStateHandler = GameStateHandler.Instance;
-        if (gameStateHandler == null)
-        {
-            Debug.LogWarning($"{nameof(gameStateHandler)} is null");
-            return;
-        }
-        Character localCharacter = gameStateHandler.LocalCharacter;
-        if (localCharacter == null || localCharacter.Object == null)
-        {
-            Debug.LogWarning($"{nameof(localCharacter)} is null");
-            return;
-        }
-
-        bool isDoubleJumpActive = localCharacter is GullScript { DoubleJump: true };
-        _upInputButtonChanger.SetButtonImage(canJump, isDoubleJumpActive);
     }
 
     private void OnDestroy()

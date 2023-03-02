@@ -17,9 +17,8 @@ public class InputButtonUp : MonoBehaviour
             Debug.LogError($"InputButtonUp is broken. {_targetImage} is null.");
             return;
         }
-        _targetImage.sprite = isDoubleJumpActive ? 
-            _doubleJumpActiveSprite :
-            (canJump ? _canJumpSprite : _canNotJumpSprite);
-
+        _targetImage.sprite = canJump ?
+            (isDoubleJumpActive ? _doubleJumpActiveSprite : _canJumpSprite) :
+            _canNotJumpSprite;
     }
 }

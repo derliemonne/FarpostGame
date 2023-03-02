@@ -21,14 +21,7 @@ public class GullScript : Character
     
     protected override void Jump(bool jump, ref Vector3 velocity, bool isGrounded)
     {
-        if (isGrounded)
-        {
-            _networkAnimator.Animator.SetBool(_isJumping, false);
-        }
-        else
-        {
-            _networkAnimator.Animator.SetBool(_isJumping, true);
-        }
+        _networkAnimator.Animator.SetBool(_isJumping, !isGrounded);
 
         if(isGrounded)
         {
@@ -49,7 +42,7 @@ public class GullScript : Character
                 ResetJump(_jumpCoolDown);
             }
         }
-        else if (jump && DoubleJump)
+        else if (jump && DoubleJump && CanJump)
         {
             velocity.y = _jumpSpeed;
             if (Runner.IsServer)
