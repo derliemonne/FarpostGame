@@ -61,6 +61,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private CrateSpawner _crateSpawnerPrefab;
     [SerializeField] private Vector2 _startCharacterPosition = new(0, 0);
     [SerializeField] private CameraScript _cs;
+    [SerializeField] private PlayerSound _playerSound;
     [SerializeField] private Gui _gui;
     [SerializeField] private bool _drawDebugGui;
 
@@ -308,6 +309,12 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     }
 
     [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+    public void Rpc_BindPlayerSound([RpcTarget] PlayerRef player, Character character)
+    {
+        _playerSound.BindPlayer(character);
+    }
+
+    [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
     public void Rpc_MakePlayerObserver([RpcTarget] PlayerRef player, Character character)
     {
         ObserverScript.Instance.BindToCharacter(character);
@@ -378,6 +385,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             {
                 LocalCharacter = character;
             }
+            Rpc_BindPlayerSound(player.PlayerRef, character);
+            Rpc_BindPlayerSound(Runner.LocalPlayer, character);
         }
 
         Darkness darkness = _networkManager.NetworkRunner.Spawn(_darknessPrefab);

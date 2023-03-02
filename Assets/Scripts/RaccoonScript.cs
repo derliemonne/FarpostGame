@@ -7,6 +7,7 @@ public class RaccoonScript : Character
     public override CharacterType CharacterType => CharacterType.Marsik;
     public override string CharacterName => "Марсик";
 
+    [Header("Енот")]
     [SerializeField] private Collider2DEventSender eventSender;
     [SerializeField] private float _raccoonStunDuration = 2f;
 

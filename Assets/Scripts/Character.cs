@@ -81,9 +81,15 @@ public abstract class Character : NetworkBehaviour
     [SerializeField] protected IceBoots _iceBoots;
     [SerializeField] protected ResistSphere _resistSphere;
 
+    [Header("Звуки")]
+    [SerializeField] protected AudioClip _deathSound;
+    [SerializeField] protected AudioClip _jumpSound;
+
     protected NetworkRigidbody2D _networkRb;
+    protected AudioSource _audioSource;
     protected float inputInter = 0;
     protected bool _isDead;
+    [SerializeField] protected PlayerSound _playerSound;
 
     [Networked] public bool CanJump { get; protected set; } = true;
     [Networked] protected bool _canPushPlatform { get; set; } = true;
@@ -91,6 +97,7 @@ public abstract class Character : NetworkBehaviour
     protected virtual void Awake()
     {
         _networkRb = GetComponent<NetworkRigidbody2D>();  
+        _audioSource = GetComponent<AudioSource>();
     }
 
     public void SetPlayerId(int playerId)
@@ -115,7 +122,7 @@ public abstract class Character : NetworkBehaviour
         Health--;
         if(Health <= 0)
         {
-            Rpc_Death();
+            Death();
         }
     }
 
@@ -130,9 +137,27 @@ public abstract class Character : NetworkBehaviour
         Rpc_SetActiveStun(true);
     }
 
+    public void BindPlayerSound(PlayerSound playerSound)
+    {
+        _playerSound = playerSound;
+    }
+
     protected virtual void CrateStun(float duration)
     {
         Stun(duration);
+    }
+
+    private void Death()
+    {
+        Rpc_Death();
+        if(_playerSound != null)
+        {
+            _playerSound.Play_Death();
+        }
+        else
+        {
+            Debug.LogError("_playerSound is null");
+        }      
     }
 
     [Rpc(sources: RpcSources.All, targets: RpcTargets.All)]
@@ -244,6 +269,19 @@ public abstract class Character : NetworkBehaviour
             if (jump && CanJump)
             {
                 velocity.y = _jumpSpeed;
+
+                if (Runner.IsServer)
+                {
+                    if (_playerSound != null)
+                    {
+                        _playerSound.Play_Jump();
+                    }
+                    else
+                    {
+                        Debug.LogError("_playerSound is null");
+                    }
+                }              
+                
                 ResetJump(_jumpCoolDown);
             }
             _networkAnimator.Animator.SetBool(_isJumping, false);
@@ -298,7 +336,17 @@ public abstract class Character : NetworkBehaviour
             if (collision.TryGetComponent(out BuffScript buffScript))
             {
                 Effect buff = buffScript.GetBuff(_effectManager);
-                if(buff is InstantEffect)
+                
+                if (_playerSound != null)
+                {
+                    _playerSound.Play_Buff();
+                }
+                else
+                {
+                    Debug.LogError("_playerSound is null");
+                }
+
+                if (buff is InstantEffect)
                 {
                     _effectManager.Apply((InstantEffect)buff);
                 }
@@ -310,7 +358,22 @@ public abstract class Character : NetworkBehaviour
 
             if (collision.TryGetComponent(out Teleport teleport) && teleport.IsActive && !_resistSphere.IsActive)
             {
-                TeleportTo(teleport.GetPosition());
+                Vector3? tpPosition = teleport.GetNextPosition();
+
+                if (!tpPosition.HasValue)
+                {
+                    TakeDamage();
+                    return;
+                }
+
+                if(tpPosition.Value.y <= Darkness.Instance.Altitude)
+                {
+                    TakeDamage();
+                    return;
+                }
+
+                _effectManager.Apply(new ResistEffect(_effectManager, 1));
+                TeleportTo((Vector3)tpPosition);
             }
 
             if (collision.TryGetComponent(out Crate crate) && !_groundChecker.LandOnTopOfCrate() && !_resistSphere.IsActive)

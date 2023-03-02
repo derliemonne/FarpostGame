@@ -72,6 +72,9 @@ MonoBehaviour:
   _interpolationDataSource: 0
   _RaceStarted:
     _value: 0
+  _IsRaceFinished:
+    _value: 0
+  _gameStateHandlerPrefab: {fileID: 0}
   _networkManagerPrefab: {fileID: 4250659297839280982, guid: e3d50e1cf0b756346bcce47fbce67e51, type: 3}
   _playerPrefab: {fileID: 8964825870254139747, guid: 9e8a8de876bbb1a40a457a5962b9c26a, type: 3}
   _characterPrefabs:
@@ -89,5 +92,6 @@ MonoBehaviour:
   _crateSpawnerPrefab: {fileID: 7392630106753805379, guid: 31f8ac3bf24bf7343b8f1d95a463a9ae, type: 3}
   _startCharacterPosition: {x: 3, y: 5}
   _cs: {fileID: 0}
+  _playerSound: {fileID: 0}
   _gui: {fileID: 0}
   _drawDebugGui: 0

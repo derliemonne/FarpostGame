@@ -9,6 +9,7 @@ public class IceBoots : NetworkBehaviour
 
     [SerializeField] private SpriteRenderer _iceBootsRenderer;
     [SerializeField] private BoxCollider2D _iceBootsCollider;
+    [SerializeField] private Animator _iceBootsAnimator;
 
     public void SetActive(bool value)
     {
@@ -32,6 +33,7 @@ public class IceBoots : NetworkBehaviour
     {
         _iceBootsRenderer.enabled = value;
         _iceBootsCollider.enabled = value;
+        _iceBootsAnimator.enabled = value;
         IsActive = value;
     }
 }

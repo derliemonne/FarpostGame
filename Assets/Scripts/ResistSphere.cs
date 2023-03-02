@@ -8,6 +8,7 @@ public class ResistSphere : NetworkBehaviour
     public bool IsActive { get; private set; }
 
     [SerializeField] private SpriteRenderer _resistSphereRenderer;
+    [SerializeField] private Animator _resistSphereAnimator;
 
     public void SetActive(bool value)
     {
@@ -18,6 +19,7 @@ public class ResistSphere : NetworkBehaviour
     private void Rpc_SetActiveForAll(bool value)
     {
         _resistSphereRenderer.enabled = value;
+        _resistSphereAnimator.enabled = value;
         IsActive = value;
     }
 }

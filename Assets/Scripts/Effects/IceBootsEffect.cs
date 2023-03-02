@@ -6,9 +6,9 @@ public class IceBootsEffect : ContinuousEffect
 {
     public override string EffectName => "Ice boots";
     public override int EffectId => 1;
-    public override float Duration => 10;
+    public override float Duration { get; protected set; } = 10;
 
-    public IceBootsEffect(EffectManager effectManager) : base(effectManager)
+    public IceBootsEffect(EffectManager effectManager, float? duration = null) : base(effectManager, duration)
     {
         
     }

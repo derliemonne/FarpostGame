@@ -22,7 +22,7 @@ public class LevelManager : NetworkBehaviour
     [SerializeField] private List<Chunk> _chunkPrefabs;
     [SerializeField] private float _firstChunkAltitude = Chunk.ChunkHalfHeight;
     
-    [Networked]
+    [Networked] 
     private ref ChunksList Chunks => ref MakeRef<ChunksList>();
     
     public override void Spawned()

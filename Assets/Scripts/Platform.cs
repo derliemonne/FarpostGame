@@ -34,7 +34,14 @@ public class Platform : NetworkBehaviour
         yield return new WaitForSeconds(_animDuration);
         _platformAnim.enabled = false;
         _platformCollider.enabled = true;
-        _platformRenderer.sprite = _idlePlatform;
+        if(_isFrozen)
+        {
+            _platformRenderer.sprite = _frozenPlatformSprite;
+        }
+        else
+        {
+            _platformRenderer.sprite = _idlePlatform;
+        }    
     }
 
     private void _pushPlatform()

@@ -18,6 +18,7 @@ public class Darkness : NetworkBehaviour
     [SerializeField] private float _speed = 1;
     
     private SpriteRenderer _spriteRenderer;
+    private BoxCollider2D _boxCollider2D;
     private Transform _transform;
 
     public void SetActive(bool value)
@@ -43,6 +44,7 @@ public class Darkness : NetworkBehaviour
         
         _transform = gameObject.GetComponent<Transform>();
         _spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        _boxCollider2D = gameObject.GetComponent<BoxCollider2D>();
     }
 
     public override void FixedUpdateNetwork()
@@ -51,7 +53,7 @@ public class Darkness : NetworkBehaviour
         {
             Move(Runner.DeltaTime);
         }
-        _transform.position = new Vector3(0, Altitude, 0);
+        _transform.position = new Vector3(0, Altitude - _boxCollider2D.size.y / 2, 0);
         // Debug.Log(IsActive + " : " + _deathZoneRenderer.enabled + " : " + _deathZoneTr.position.y);
     }
 
