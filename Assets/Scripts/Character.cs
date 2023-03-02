@@ -32,7 +32,8 @@ public abstract class Character : NetworkBehaviour
     /// Returns this character and altitude record.
     /// </summary>
     public event Action<Character, float> Died;
-    
+    public event Action<bool> CanJumpChanged;
+
     /// <summary>
     /// Need override in each subclass.
     /// </summary>
@@ -91,13 +92,20 @@ public abstract class Character : NetworkBehaviour
     protected bool _isDead;
     [SerializeField] protected PlayerSound _playerSound;
 
-    [Networked] public bool CanJump { get; protected set; } = true;
+    [Networked(OnChanged = nameof(OnCanJumpChanged))]
+    public bool CanJump { get; protected set; } = true;
     [Networked] protected bool _canPushPlatform { get; set; } = true;
 
     protected virtual void Awake()
     {
         _networkRb = GetComponent<NetworkRigidbody2D>();  
         _audioSource = GetComponent<AudioSource>();
+    }
+
+    public static void OnCanJumpChanged(Changed<Character> changed)
+    {
+        Character character = changed.Behaviour;
+        character.CanJumpChanged?.Invoke(character.CanJump);
     }
 
     public void SetPlayerId(int playerId)

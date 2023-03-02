@@ -1,3 +1,4 @@
+using System;
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
@@ -5,12 +6,19 @@ using UnityEngine;
 
 public class GullScript : Character
 {
+    public event Action<bool> DoubleJumpChanged;
     public override CharacterType CharacterType => CharacterType.Gull;
     public override string CharacterName => "Чайка";
 
-    [Networked] private bool _canDoubleJump { get; set; } = true;
+    [Networked(OnChanged = nameof(OnDoubleJumpChanged))]
+    public bool DoubleJump { get; private set; } = true;
     private float _doubleJumpCoolDown = 5f;
 
+    public static void OnDoubleJumpChanged(Changed<GullScript> changed)
+    {
+        changed.Behaviour.DoubleJumpChanged?.Invoke(changed.Behaviour.DoubleJump);
+    }
+    
     protected override void Jump(bool jump, ref Vector3 velocity, bool isGrounded)
     {
         if (isGrounded)
@@ -41,7 +49,7 @@ public class GullScript : Character
                 ResetJump(_jumpCoolDown);
             }
         }
-        else if (jump && _canDoubleJump)
+        else if (jump && DoubleJump)
         {
             velocity.y = _jumpSpeed;
             if (Runner.IsServer)
@@ -61,13 +69,13 @@ public class GullScript : Character
 
     private void ResetDoubleJump(float duration)
     {
-        _canDoubleJump = false;
+        DoubleJump = false;
         StartCoroutine(DoubleJumpDelay(duration));
     }
 
     private IEnumerator DoubleJumpDelay(float duration)
     {
         yield return new WaitForSeconds(duration);
-        _canDoubleJump = true;
+        DoubleJump = true;
     }
 }
