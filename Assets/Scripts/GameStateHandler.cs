@@ -101,6 +101,12 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         GameStateHandler gameStateHandler = changed.Behaviour;
         gameStateHandler.RaceStartedChanged?.Invoke(gameStateHandler.RaceStarted);
 
+        if (gameStateHandler.RaceStarted)
+        {
+            PlayerRef localPlayerRef = NetworkManager.Instance.NetworkRunner.LocalPlayer;
+            Player player = NetworkManager.Instance.GetPlayerObject(localPlayerRef);
+            if (player != null) gameStateHandler.LocalCharacter = player.Character;
+        }
         Character localCharacter = gameStateHandler.LocalCharacter;
         if (localCharacter != null)
         {
@@ -395,10 +401,6 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             player.Character = character;
             Rpc_BindCamera(player.PlayerRef, character);
             character.Died += OnCharacterDied;
-            if (player.PlayerRef.PlayerId == _networkManager.NetworkRunner.LocalPlayer.PlayerId)
-            {
-                LocalCharacter = character;
-            }
             Rpc_BindPlayerSound(player.PlayerRef, character);
             character.BindPlayerSound(_playerSound);
         }
