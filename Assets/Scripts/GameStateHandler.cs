@@ -31,6 +31,9 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     public event Action<ConnectionStatus, ConnectionStatus> ConnectionStatusChanged;
     public event Action<bool> RaceStartedChanged;
     public event Action<List<Record>> RaceFinished;
+
+    public event Action<bool> LocalCharacterCanJumpChanged;
+    public event Action<bool> LocalGullCharacterDoubleJumpChanged;
     
     [Networked(OnChanged = nameof(OnRaceStartedChanged))] 
     public NetworkBool RaceStarted { get; private set; }
@@ -95,7 +98,18 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     
     public static void OnRaceStartedChanged(Changed<GameStateHandler> changed)
     {
-        changed.Behaviour.RaceStartedChanged?.Invoke(changed.Behaviour.RaceStarted);
+        GameStateHandler gameStateHandler = changed.Behaviour;
+        gameStateHandler.RaceStartedChanged?.Invoke(gameStateHandler.RaceStarted);
+
+        Character localCharacter = gameStateHandler.LocalCharacter;
+        if (localCharacter != null)
+        {
+            localCharacter.CanJumpChanged += gameStateHandler.LocalCharacterCanJumpChanged;
+            if (localCharacter is GullScript gull)
+            {
+                gull.DoubleJumpChanged += gameStateHandler.LocalGullCharacterDoubleJumpChanged;
+            }
+        }
     }
 
     public static void OnRaceFinishedChanged(Changed<GameStateHandler> changed)
