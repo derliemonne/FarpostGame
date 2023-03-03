@@ -274,8 +274,8 @@ MonoBehaviour:
   _jumpSpeed: 9.6
   _pushPlatformDist: 1
   _pushPlatformCooldown: 5
-  _jumpCoolDown: 0.2
-  _crateStunDuration: 5
+  _jumpCoolDown: 0.5
+  _crateStunDuration: 3
   _groundLayer:
     serializedVersion: 2
     m_Bits: 64
