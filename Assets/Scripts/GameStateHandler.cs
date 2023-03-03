@@ -152,7 +152,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         
         if (runner.IsServer)
         {
-            bool canConnect = _networkManager.NetworkRunner.ActivePlayers.Count() < MaxPlayersInSession && !RaceStarted;
+            bool canConnect = _networkManager.NetworkRunner.ActivePlayers.Count() < MaxPlayersInSession + 1 && !RaceStarted;
             if (!canConnect)
             {
                 Rpc_SendMessageToClient(joinedPlayerRef, NetworkMessage.ServerKickedRaceStarted);
