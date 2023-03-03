@@ -202,6 +202,15 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     {
         bool jumped = false;
         jumped = _gui.UpInputButton.IsPressed;
+        bool pushedPlatform = false;
+        if (_gui.PushPlatformButton == null)
+        {
+            Debug.LogError("PushPlatformButton is null");
+        }
+        else
+        {
+            pushedPlatform = _gui.PushPlatformButton.IsPressed;
+        }
         int moveDirection = 0;
         if (_gui.RightInputButton.IsPressed) moveDirection = 1;
         if (_gui.LeftInputButton.IsPressed) moveDirection = -1;
@@ -209,7 +218,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         {
             Direction = moveDirection,
             Jumped = jumped, 
-            PushedPlatform = _pushPlatformPressed,
+            PushedPlatform = pushedPlatform,
         });
         _pushPlatformPressed = false;
     }

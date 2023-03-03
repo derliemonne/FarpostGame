@@ -94,7 +94,7 @@ public abstract class Character : NetworkBehaviour
 
     [Networked(OnChanged = nameof(OnCanJumpChanged))]
     public bool CanJump { get; protected set; } = true;
-    [Networked] protected bool _canPushPlatform { get; set; } = true;
+    [Networked] public bool _canPushPlatform { get; protected set; } = true;
 
     protected virtual void Awake()
     {

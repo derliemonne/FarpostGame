@@ -20,6 +20,8 @@ public class Gui : MonoBehaviour
     public InputButton LeftInputButton => _leftInputButton;
     public InputButton RightInputButton => _rightInputButton;
 
+    public InputButton PushPlatformButton => _pushPlatformButton;
+
     [Header("Menus")]
     [SerializeField] private RectTransform _mainMenu;
     [SerializeField] private RectTransform _connectMenu;
@@ -62,6 +64,8 @@ public class Gui : MonoBehaviour
     [SerializeField] private InputButton _rightInputButton;
     [SerializeField] private InputButton _upInputButton;
     [SerializeField] private InputButtonUp _upInputButtonChanger;
+    [SerializeField] private InputButton _pushPlatformButton;
+    [SerializeField] private PushPlatformButton _pushPlatformButtonChanger;
 
     private List<RectTransform> _menus;
     private Dictionary<CharacterType, Animator> _characterAnimators;
@@ -109,7 +113,7 @@ public class Gui : MonoBehaviour
         _chooseGullButton.Button.onClick.AddListener(OnChooseGullButtonClicked);
         _leaveSessionButton.onClick.AddListener(OnLeaveSessionButtonClicked);
         _readyButton.onClick.AddListener(OnReadyButtonClicked);
-        
+
         foreach (Button button in _buttonsToOpenMenu)
         {
             button.onClick.AddListener(OnButtonToOpenMainMenuClicked);
@@ -138,6 +142,7 @@ public class Gui : MonoBehaviour
             {
                 bool isDoubleJumpActive = localCharacter is GullScript gull && gull.DoubleJump;
                 _upInputButtonChanger.SetButtonImage(localCharacter.CanJump, isDoubleJumpActive);
+                _pushPlatformButtonChanger.SetButtonImage(localCharacter._canPushPlatform);
             }
         }
         else
