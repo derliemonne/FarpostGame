@@ -274,7 +274,7 @@ MonoBehaviour:
   _jumpSpeed: 9.6
   _pushPlatformDist: 1
   _pushPlatformCooldown: 5
-  _jumpCoolDown: 0.5
+  _jumpCoolDown: 0.2
   _crateStunDuration: 5
   _groundLayer:
     serializedVersion: 2
@@ -288,6 +288,7 @@ MonoBehaviour:
   _resistSphere: {fileID: 7359504443166455565}
   _deathSound: {fileID: 8300000, guid: cf5abc87044eef944bf0a578d25b1406, type: 3}
   _jumpSound: {fileID: 8300000, guid: 44d291fd45dd9ac45aa72c2cf3a65212, type: 3}
+  _playerSound: {fileID: 0}
   _CanJump: 1
 --- !u!50 &6106127211538603472
 Rigidbody2D:
