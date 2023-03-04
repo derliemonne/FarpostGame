@@ -119,22 +119,38 @@ public class Gui : MonoBehaviour
             button.onClick.AddListener(OnButtonToOpenMainMenuClicked);
         }
 
+
+        
+        GameRunner gameRunner = GameRunner.Instance;
+        Debug.Assert(gameRunner != null);
+        if (gameRunner != null)
+        {
+            gameRunner.GameStateHandlerSpawnedLocally += OnGameStateHandlerSpawnedLocally;
+            gameRunner.ConnectionStatusChanged += OnConnectionStatusChanged;
+        }
+    }
+
+    private void OnGameStateHandlerSpawnedLocally()
+    {
         GameStateHandler gameStateHandler = GameStateHandler.Instance;
         if (gameStateHandler == null)
         {
             Debug.LogError("GameStateHandler is null.");
         }
-        gameStateHandler.ConnectionStatusChanged += OnConnectionStatusChanged;
         gameStateHandler.RaceStartedChanged += OnRaceStartedChanged;
         gameStateHandler.RaceFinished += OnRaceFinished;
     }
     
     private void Update()
     {
+        GameRunner gameRunner = GameRunner.Instance;
         GameStateHandler gameStateHandler = GameStateHandler.Instance;
         NetworkManager networkManager = NetworkManager.Instance;
-        if (networkManager == null || gameStateHandler == null || gameStateHandler.Object == null) return;
-        if (gameStateHandler.ConnectionStatus != ConnectionStatus.InSession) return;
+        
+        if (gameRunner == null || networkManager == null || gameStateHandler == null || gameStateHandler.Object == null)
+            return;
+        if (gameRunner.ConnectionStatus != ConnectionStatus.InSession) return;
+        
         if (gameStateHandler.RaceStarted)
         {
             Character localCharacter = gameStateHandler.LocalCharacter;
@@ -286,6 +302,20 @@ public class Gui : MonoBehaviour
     {
         _mainMenuButtonHost.onClick.RemoveAllListeners();
         // TODO: remove all other listeners
+        
+        GameRunner gameRunner = GameRunner.Instance;
+        if (gameRunner)
+        {
+            gameRunner.GameStateHandlerSpawnedLocally -= OnGameStateHandlerSpawnedLocally;
+            gameRunner.ConnectionStatusChanged -= OnConnectionStatusChanged;
+        }
+        
+        GameStateHandler gameStateHandler = GameStateHandler.Instance;
+        if (gameStateHandler)
+        {
+            gameStateHandler.RaceStartedChanged -= OnRaceStartedChanged;
+            gameStateHandler.RaceFinished -= OnRaceFinished;
+        }
     }
 
     private void OnApplicationQuit()

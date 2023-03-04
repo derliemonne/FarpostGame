@@ -24,6 +24,16 @@ public class CrateSpawner : MonoBehaviour
 
     private void Awake()
     {
+        GameRunner gameRunner = GameRunner.Instance;
+        Debug.Assert(gameRunner != null);
+        if (gameRunner != null)
+        {
+            gameRunner.GameStateHandlerSpawnedLocally += OnGameStateHandlerSpawnedLocally;
+        }
+    }
+    
+    private void OnGameStateHandlerSpawnedLocally()
+    {
         GameStateHandler.Instance.RaceStartedChanged += OnRaceStartedChanged;
     }
     
@@ -88,7 +98,16 @@ public class CrateSpawner : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (GameStateHandler.Instance != null)
-            GameStateHandler.Instance.RaceStartedChanged -= OnRaceStartedChanged;
+        GameRunner gameRunner = GameRunner.Instance;
+        if (gameRunner)
+        {
+            gameRunner.GameStateHandlerSpawnedLocally -= OnGameStateHandlerSpawnedLocally;
+        }
+        
+        GameStateHandler gameStateHandler = GameStateHandler.Instance;
+        if (gameStateHandler != null)
+        {
+            gameStateHandler.RaceStartedChanged -= OnRaceStartedChanged;
+        }
     }
 }
