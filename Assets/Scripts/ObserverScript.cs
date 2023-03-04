@@ -20,6 +20,7 @@ public class ObserverScript : MonoBehaviour
         {
             Debug.LogError("Instance already exists");
             Destroy(gameObject);
+            return;
         }
         Instance = this;
         _cameraScript = GetComponent<CameraScript>();
