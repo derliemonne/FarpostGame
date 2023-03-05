@@ -36,7 +36,6 @@ public partial class GameRunner : MonoBehaviour
         }
     }
     
-    public PlayerSound PlayerSound => _playerSound;
     [Header("Prefabs")]
     [SerializeField] private NetworkManager _networkManagerPrefab;
     [SerializeField] private GameStateHandler _gameStateHandlerPrefab;
@@ -47,11 +46,9 @@ public partial class GameRunner : MonoBehaviour
     [Space]
     [SerializeField] private Gui _gui;
     [SerializeField] private CameraScript _cameraScript;
-
     
     private NetworkManager _networkManager;
     private ConnectionStatus _connectionStatus = ConnectionStatus.NotInSession;
-    private PlayerSound _playerSound;
 
     public void NotifyGameStateHandlerSpawnedLocally()
     {
@@ -94,14 +91,13 @@ public partial class GameRunner : MonoBehaviour
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
             PlayerCount = GameStateHandler.MaxPlayersInSession
         });
-        Debug.Log("StartGameResult:\n" +
-                  $"    {nameof(result.Ok)}: {result.Ok}\n" +
-                  $"    {nameof(result.ErrorMessage)}: {result.ErrorMessage}\n," +
-                  $"    {nameof(result.ShutdownReason)}: {result.ShutdownReason}.");
+        Debug.Log("StartGameResult: " +
+                  $"{nameof(result.Ok)}: {result.Ok}, " +
+                  $"{nameof(result.ErrorMessage)}: {result.ErrorMessage}, " +
+                  $"{nameof(result.ShutdownReason)}: {result.ShutdownReason}.");
         if (!result.Ok)
         {
             ConnectionStatus = ConnectionStatus.NotInSession;
-            Destroy(_networkManager.gameObject);
             return;
         }
         
@@ -115,23 +111,6 @@ public partial class GameRunner : MonoBehaviour
             }
         }
 
-        _playerSound = _networkManager.NetworkRunner.Spawn(_playerSoundPrefab);
-        if (_playerSound == null)
-        {
-            Debug.LogError($"{nameof(_playerSound)} is null.");
-        }
-        else
-        {
-            if (_cameraScript == null)
-            {
-                Debug.LogError($"{nameof(_cameraScript)} is null.");
-            }
-            else
-            {
-                _playerSound.transform.parent = _cameraScript.transform;
-            }
-        }
-        
         ConnectionStatus = ConnectionStatus.InSession;
     }
     

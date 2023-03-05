@@ -370,6 +370,7 @@ MonoBehaviour:
   - {fileID: 5124769538434136147}
   _inputRoomId: {fileID: 5546407096153378206}
   _connectMenuButtonConnect: {fileID: 1840266774254715971}
+  _abortConnectToRoomButton: {fileID: 7410909091901509184}
   _roomIdText: {fileID: 5896327182356511840}
   _playersConnectedCountText: {fileID: 3900166733245380801}
   _firsikAnimator: {fileID: 8728151141892885831}
@@ -3018,6 +3019,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1241157816133824670}
     m_Modifications:
+    - target: {fileID: 1998472589968615248, guid: 73f195703ed3e22468555386e7cd50fb, type: 3}
+      propertyPath: m_Name
+      value: AbortConnectToRoomButton
+      objectReference: {fileID: 0}
     - target: {fileID: 6877192357893524661, guid: 73f195703ed3e22468555386e7cd50fb, type: 3}
       propertyPath: m_text
       value: "\u0418\u0449\u0435\u043C \u043A\u043E\u043C\u043D\u0430\u0442\u0443..."
@@ -3138,6 +3143,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73907ccb400a2f6418fbcb4758e3b2ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7410909091901509184 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3412964822456978199, guid: 73f195703ed3e22468555386e7cd50fb, type: 3}
+  m_PrefabInstance: {fileID: 5297816327752467799}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &5386742651189009140

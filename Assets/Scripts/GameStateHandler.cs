@@ -152,7 +152,7 @@ public class GameStateHandler : NetworkBehaviour
     [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
     public void Rpc_BindPlayerSound([RpcTarget] PlayerRef player, Character character)
     {
-        PlayerSound playerSound = GameRunner.Instance.PlayerSound;
+        PlayerSound playerSound = PlayerSound.Instance;
         if (playerSound == null)
         {
             Debug.LogWarning($"{nameof(playerSound)} is null");
@@ -235,8 +235,17 @@ public class GameStateHandler : NetworkBehaviour
             player.Character = character;
             Rpc_BindCamera(player.PlayerRef, character);
             character.Died += OnCharacterDied;
+            
             Rpc_BindPlayerSound(player.PlayerRef, character);
-            character.BindPlayerSound(GameRunner.Instance.PlayerSound);
+            PlayerSound playerSound = PlayerSound.Instance;
+            if (playerSound == null)
+            {
+                Debug.LogWarning($"{nameof(playerSound)} is null");
+            }
+            else
+            {
+                character.BindPlayerSound(PlayerSound.Instance);
+            }
         }
 
         Darkness darkness = Runner.Spawn(_darknessPrefab);

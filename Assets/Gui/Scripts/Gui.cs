@@ -36,6 +36,7 @@ public class Gui : MonoBehaviour
     [Header("Connect menu")] 
     [SerializeField] private TMP_InputField _inputRoomId;
     [SerializeField] private Button _connectMenuButtonConnect;
+    [SerializeField] private Button _abortConnectToRoomButton;
     [Header("Room menu")] 
     [SerializeField] private TMP_Text _roomIdText;
     [SerializeField] private TMP_Text _playersConnectedCountText;
@@ -118,6 +119,7 @@ public class Gui : MonoBehaviour
         _readyButton.onClick.AddListener(OnReadyButtonClicked);
         _leadersMenuLeaveSessionButton.onClick.AddListener(OnLeadersMenuLeaveSessionButtonClicked);
         _exitRaceButton.onClick.AddListener(OnExitRaceButtonClicked);
+        _abortConnectToRoomButton.onClick.AddListener(OnAbortConnectToRoomButtonClicked);
 
         foreach (Button button in _buttonsToOpenMenu)
         {
@@ -271,6 +273,11 @@ public class Gui : MonoBehaviour
     }
 
     private void OnExitRaceButtonClicked()
+    {
+        LeaveSession();
+    }
+
+    private void OnAbortConnectToRoomButtonClicked()
     {
         LeaveSession();
     }
