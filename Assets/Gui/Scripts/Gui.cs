@@ -66,6 +66,8 @@ public class Gui : MonoBehaviour
     [SerializeField] private InputButtonUp _upInputButtonChanger;
     [SerializeField] private InputButton _pushPlatformButton;
     [SerializeField] private PushPlatformButton _pushPlatformButtonChanger;
+    [Header("New input")]
+    [SerializeField] private MoveController _moveController;
 
     private List<RectTransform> _menus;
     private Dictionary<CharacterType, Animator> _characterAnimators;
