@@ -7,32 +7,31 @@ public class MoveController : MonoBehaviour
 {
     public int HorizontalInput { get; private set; } = 0;
 
-    private bool _jumpState = false;
-    private bool _pushPlatformState = false;
-
     [Header("Touch zones")]
     [SerializeField] private RectTransform _leftTouchZone;
     [SerializeField] private RectTransform _rightTouchZone;
 
     [Header("Jump input")]
-    [SerializeField] private GameObject _sliderBackgroundGameObject;
-    [SerializeField] private TouchButton _jumpSliderButton;
-    [SerializeField] private Slider _jumpSlider;
+    [SerializeField] private TouchButton _jumpButton;
+    [SerializeField] private RectTransform _jumpButtonRect;
+    [SerializeField] private RectTransform _jumpButtonStartPosition;
 
     [Header("Push platform")]
     [SerializeField] private TouchButton _pushPlatformButton;
 
+    private bool _jumpState = false;
+    private bool _pushPlatformState = false;
+
     private void Start()
     {
-        _jumpSliderButton.GetButtonDown += () =>
+        _jumpButton.GetButtonDown += () =>
         {
-            SetActiveSliderJumpMode(true);
             _jumpState = true;
         };
 
-        _jumpSliderButton.GetButtonUp += () =>
+        _jumpButton.GetButtonUp += () =>
         {
-            SetActiveSliderJumpMode(false);
+            _jumpButtonRect.position = _jumpButtonStartPosition.position;
         };
 
         _pushPlatformButton.GetButtonDown += () =>
@@ -45,8 +44,14 @@ public class MoveController : MonoBehaviour
     {
         bool onLeft = Input.touches.Any(touch => _leftTouchZone.rect.Contains(touch.position - (Vector2)_leftTouchZone.position));
         bool onRight = Input.touches.Any(touch => _rightTouchZone.rect.Contains(touch.position - (Vector2)_rightTouchZone.position));
-        
-        if(onLeft)
+
+        if(_jumpButton.IsPressed)
+        {
+            Vector2 jumpButtonTouchPos = Input.touches.Where(touch => _jumpButtonRect.rect.Contains(touch.position - (Vector2)_jumpButtonRect.position)).First().position;
+            _jumpButtonRect.position = jumpButtonTouchPos;
+        }
+
+        if (onLeft)
         {
             HorizontalInput = -1;
         }
@@ -58,9 +63,6 @@ public class MoveController : MonoBehaviour
         {
             HorizontalInput = 0;
         }
-
-        //move slider to the mid when users's finger doesnt above it
-        if (!_jumpSliderButton.IsPressed) _jumpSlider.value = 0;
 
         print(this);
     }
@@ -78,15 +80,6 @@ public class MoveController : MonoBehaviour
     public bool ReadPushPlatformState()
     {
         return ReadState(ref _pushPlatformState);
-    }
-
-    private void SetActiveSliderJumpMode(bool value)
-    {
-        _sliderBackgroundGameObject.SetActive(value);
-        if(!value)
-        {
-            _jumpSlider.value = 0;
-        }
     }
 
     private bool ReadState(ref bool state)
