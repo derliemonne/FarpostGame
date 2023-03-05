@@ -3,39 +3,34 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class TouchButton : MonoBehaviour
+public class TouchButton : Button
 {
     public event Action GetButtonDown;
     public event Action GetButtonUp;
 
-    public bool IsPressed { get; private set; } = false;
+    public new bool IsPressed => IsPressed();
 
-    //indicates if user touched the screen anywhere at last frame
-    private bool _wasTouchingScreen = false;
-    private RectTransform _touchButtonRect;
+    private bool _wasTouchingButton = false;
 
-    private void Awake()
+    protected override void Awake()
     {
-        _touchButtonRect = GetComponent<RectTransform>();
+        base.Awake();
     }
 
     private void Update()
-    {
-        bool isTouchingButton = Input.touches.Any(touch => _touchButtonRect.rect.Contains(touch.position - (Vector2)_touchButtonRect.position));
-        
-        if (isTouchingButton && !_wasTouchingScreen)
+    {   
+        if (IsPressed && !_wasTouchingButton)
         {
-            IsPressed = true;
             GetButtonDown?.Invoke();
         }
 
-        if(IsPressed && !isTouchingButton)
+        if(!IsPressed && _wasTouchingButton)
         {
-            IsPressed = false;
             GetButtonUp?.Invoke();
         }
 
-        _wasTouchingScreen = Input.touchCount != 0;
+        _wasTouchingButton = IsPressed;
     }
 }
