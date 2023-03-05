@@ -16,11 +16,14 @@ public class Gui : MonoBehaviour
     public event Action LeaveSession;
 
     public CharacterType ChosenCharacter { get; private set; }
+    /*
     public InputButton UpInputButton => _upInputButton;
     public InputButton LeftInputButton => _leftInputButton;
     public InputButton RightInputButton => _rightInputButton;
 
     public InputButton PushPlatformButton => _pushPlatformButton;
+    */
+    public MoveController MoveController => _moveController;
 
     [Header("Menus")]
     [SerializeField] private RectTransform _mainMenu;
@@ -58,6 +61,7 @@ public class Gui : MonoBehaviour
     [SerializeField] private MessageBox _connectingMessageBox;
     [SerializeField] private MessageBox _badInputMessageBox;
     [SerializeField] private MessageBox _messageBox;
+    /*
     [Header("Input")]
     [SerializeField] private GameObject _controlsParent;
     [SerializeField] private InputButton _leftInputButton;
@@ -66,8 +70,12 @@ public class Gui : MonoBehaviour
     [SerializeField] private InputButtonUp _upInputButtonChanger;
     [SerializeField] private InputButton _pushPlatformButton;
     [SerializeField] private PushPlatformButton _pushPlatformButtonChanger;
+    */
     [Header("New input")]
+    [SerializeField] private GameObject _controlsParent;
     [SerializeField] private MoveController _moveController;
+    [SerializeField] private InputButtonUp _upInputButtonChanger;
+    [SerializeField] private PushPlatformButton _pushPlatformButtonChanger;
 
     private List<RectTransform> _menus;
     private Dictionary<CharacterType, Animator> _characterAnimators;

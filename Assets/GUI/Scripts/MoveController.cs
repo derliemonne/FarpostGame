@@ -5,7 +5,7 @@ using System.Linq;
 
 public class MoveController : MonoBehaviour
 {
-    public float HorizontalInput { get; private set; } = 0;
+    public int HorizontalInput { get; private set; } = 0;
     public bool IsJumping { get; private set; } = false;
     public bool IsPushingPlatform { get; private set; } = false;
 
@@ -17,6 +17,9 @@ public class MoveController : MonoBehaviour
     [SerializeField] private GameObject _sliderBackgroundGameObject;
     [SerializeField] private JumpSliderButton _jumpSliderButton;
     [SerializeField] private Slider _jumpSlider;
+
+    [Header("Push platform")]
+    [SerializeField] private InputButton _pushPlatformButton;
 
     private void Start()
     {
@@ -51,7 +54,9 @@ public class MoveController : MonoBehaviour
             HorizontalInput = 0;
         }
 
-        //move slider to the mid when uses's finger doesnt above it
+        IsPushingPlatform = _pushPlatformButton.IsPressed;
+
+        //move slider to the mid when users's finger doesnt above it
         if (!IsJumping) _jumpSlider.value = 0;
 
         print(this);

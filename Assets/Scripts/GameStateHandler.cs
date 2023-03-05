@@ -6,6 +6,7 @@ using Fusion;
 using Fusion.Sockets;
 using IngameDebugConsole;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
@@ -198,7 +199,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         }
     }
     
-    public void OnInput(NetworkRunner runner, NetworkInput input)
+    /*public void OnInput(NetworkRunner runner, NetworkInput input)
     {
         bool jumped = false;
         jumped = _gui.UpInputButton.IsPressed;
@@ -221,12 +222,18 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             PushedPlatform = pushedPlatform,
         });
         _pushPlatformPressed = false;
-    }
-
-    /*public void OnInput(NetworkRunner runner, NetworkInput input)
-    {
-
     }*/
+
+    public void OnInput(NetworkRunner runner, NetworkInput input)
+    {
+        MoveController controller = _gui.MoveController;
+        input.Set(new NetworkInputData
+        {
+            Direction = controller.HorizontalInput,
+            Jumped = controller.IsJumping,
+            PushedPlatform = false,
+        });
+    }
     
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
 
