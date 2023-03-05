@@ -16,7 +16,7 @@ public enum ConnectionStatus {
 }
 
 
-public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
+public partial class GameRunner : MonoBehaviour
 {
     public static GameRunner Instance { get; private set; }
 
@@ -43,13 +43,15 @@ public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private LevelManager _levelManagerPrefab;
     [SerializeField] private CrateSpawner _crateSpawnerPrefab;
+    [SerializeField] private PlayerSound _playerSoundPrefab;
     [Space]
-    [SerializeField] private PlayerSound _playerSound;
     [SerializeField] private Gui _gui;
+    [SerializeField] private CameraScript _cameraScript;
 
     
     private NetworkManager _networkManager;
     private ConnectionStatus _connectionStatus = ConnectionStatus.NotInSession;
+    private PlayerSound _playerSound;
 
     public void NotifyGameStateHandlerSpawnedLocally()
     {
@@ -72,7 +74,7 @@ public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
 
         _gui.StartHost += OnGuiStartHost;
         _gui.ConnectToRoomWithId += OnGuiConnectToRoom;
-        _gui.LeaveSession += OnGuiLeaveSession;
+        _gui.LeavedSession += OnGuiLeavedSession;
     }
     
     private async void ConnectToRoom(GameMode gameMode, string sessionName)
@@ -84,7 +86,7 @@ public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
         _networkManager.NetworkRunner.ProvideInput = true;
         _networkManager.NetworkRunner.AddCallbacks(this);
 
-        await _networkManager.NetworkRunner.StartGame(new StartGameArgs
+        StartGameResult result = await _networkManager.NetworkRunner.StartGame(new StartGameArgs
         {
             GameMode = gameMode,
             SessionName = sessionName,
@@ -92,6 +94,16 @@ public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
             PlayerCount = GameStateHandler.MaxPlayersInSession
         });
+        Debug.Log("StartGameResult:\n" +
+                  $"    {nameof(result.Ok)}: {result.Ok}\n" +
+                  $"    {nameof(result.ErrorMessage)}: {result.ErrorMessage}\n," +
+                  $"    {nameof(result.ShutdownReason)}: {result.ShutdownReason}.");
+        if (!result.Ok)
+        {
+            ConnectionStatus = ConnectionStatus.NotInSession;
+            Destroy(_networkManager.gameObject);
+            return;
+        }
         
         if (gameMode == GameMode.Host)
         {
@@ -102,6 +114,23 @@ public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
                 return;
             }
         }
+
+        _playerSound = _networkManager.NetworkRunner.Spawn(_playerSoundPrefab);
+        if (_playerSound == null)
+        {
+            Debug.LogError($"{nameof(_playerSound)} is null.");
+        }
+        else
+        {
+            if (_cameraScript == null)
+            {
+                Debug.LogError($"{nameof(_cameraScript)} is null.");
+            }
+            else
+            {
+                _playerSound.transform.parent = _cameraScript.transform;
+            }
+        }
         
         ConnectionStatus = ConnectionStatus.InSession;
     }
@@ -109,17 +138,45 @@ public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
     private void OnGuiStartHost()
     {
         string sessionName = Random.Range(0, 100).ToString();
-        ConnectToRoom(GameMode.Host, sessionName);
+        if (_networkManager == null)
+        {
+            ConnectToRoom(GameMode.Host, sessionName);
+        }
+        else
+        {
+            GuiMessageLocalUser("Network error. Try again.");
+            Debug.LogError($"NetworkError. Can not start host. {nameof(_networkManager)} already exists.");
+        }
     }
     
     private void OnGuiConnectToRoom(int roomId)
     {
-        ConnectToRoom(GameMode.Client, sessionName: roomId.ToString());
+        if (_networkManager == null)
+        {
+            ConnectToRoom(GameMode.Client, sessionName: roomId.ToString());
+        }
+        else
+        {
+            GuiMessageLocalUser("Network error. Try again.");
+            Debug.LogError($"NetworkError. Can not connect to room. {nameof(_networkManager)} already exists.");
+        }
     }
     
-    private void OnGuiLeaveSession()
+    private void OnGuiLeavedSession()
     {
-        // TODO
+        _networkManager.NetworkRunner.Shutdown();
+    }
+
+    private void GuiMessageLocalUser(string message)
+    {
+        if (_gui == null)
+        {
+            Debug.LogWarning($"{nameof(_gui)} is null.");
+        }
+        else
+        {
+            _gui.ShowMessageBox(message);
+        }
     }
 
     private void OnDestroy()
@@ -137,7 +194,10 @@ public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
         Instance = null;
         Destroy(gameObject);
     }
-    
+}
+
+public partial class GameRunner :  INetworkRunnerCallbacks
+{
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef joinedPlayerRef)
     {
         Debug.Log("> OnPlayerJoined");
@@ -170,7 +230,7 @@ public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
         { 
             LevelManager levelManager = runner.Spawn(_levelManagerPrefab);
 
-            CrateSpawner crateSpawner = Instantiate(_crateSpawnerPrefab);
+            CrateSpawner crateSpawner = runner.Spawn(_crateSpawnerPrefab);
             if (crateSpawner == null)
             {
                 Debug.LogError($"{nameof(_crateSpawnerPrefab)} is invalid.");
@@ -231,6 +291,7 @@ public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
     {
         Debug.Log($"> OnNetworkRunnerShutdown: {nameof(shutdownReason)}: {shutdownReason}");
         ConnectionStatus = ConnectionStatus.NotInSession;
+        Destroy(_networkManager.gameObject);
     }
 
     public void OnConnectedToServer(NetworkRunner runner)
@@ -285,8 +346,3 @@ public class GameRunner : MonoBehaviour, INetworkRunnerCallbacks
         Debug.Log("> OnSceneLoadStart");
     }
 }
-
-// public partial class :  INetworkRunnerCallbacks
-// {
-//     
-// }

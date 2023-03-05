@@ -13,7 +13,7 @@ public class Gui : MonoBehaviour
     public event Action StartHost;
     public event Action<bool> ReadyToStartRaceChanged;
     public event Action<CharacterType> CharacterChosenAction;
-    public event Action LeaveSession;
+    public event Action LeavedSession;
 
     public CharacterType ChosenCharacter { get; private set; }
     public InputButton UpInputButton => _upInputButton;
@@ -49,7 +49,9 @@ public class Gui : MonoBehaviour
     [SerializeField] private ChooseCharacterButton _chooseGullButton;
     [SerializeField] private Button _leaveSessionButton;
     [SerializeField] private Button _readyButton;
+
     [Header("Leaders menu")] 
+    [SerializeField] private Button _leadersMenuLeaveSessionButton;
     [SerializeField] private GuiRecord _record1st;
     [SerializeField] private GuiRecord _record2nd;
     [SerializeField] private GuiRecord _record3rd;
@@ -66,6 +68,7 @@ public class Gui : MonoBehaviour
     [SerializeField] private InputButtonUp _upInputButtonChanger;
     [SerializeField] private InputButton _pushPlatformButton;
     [SerializeField] private PushPlatformButton _pushPlatformButtonChanger;
+    [SerializeField] private Button _exitRaceButton;
 
     private List<RectTransform> _menus;
     private Dictionary<CharacterType, Animator> _characterAnimators;
@@ -113,6 +116,8 @@ public class Gui : MonoBehaviour
         _chooseGullButton.Button.onClick.AddListener(OnChooseGullButtonClicked);
         _leaveSessionButton.onClick.AddListener(OnLeaveSessionButtonClicked);
         _readyButton.onClick.AddListener(OnReadyButtonClicked);
+        _leadersMenuLeaveSessionButton.onClick.AddListener(OnLeadersMenuLeaveSessionButtonClicked);
+        _exitRaceButton.onClick.AddListener(OnExitRaceButtonClicked);
 
         foreach (Button button in _buttonsToOpenMenu)
         {
@@ -197,6 +202,12 @@ public class Gui : MonoBehaviour
         }
     }
 
+    private void LeaveSession()
+    {
+        LeavedSession?.Invoke();
+        _controlsParent.SetActive(false);
+    }
+
     private void OnMainMenuButtonHostClicked()
     {
         StartHost?.Invoke();
@@ -246,12 +257,22 @@ public class Gui : MonoBehaviour
 
     private void OnLeaveSessionButtonClicked()
     {
-        LeaveSession?.Invoke();
+        LeaveSession();
     }
 
     private void OnReadyButtonClicked()
     {
         ReadyToStartRaceChanged?.Invoke(true);
+    }
+
+    private void OnLeadersMenuLeaveSessionButtonClicked()
+    {
+        LeaveSession();
+    }
+
+    private void OnExitRaceButtonClicked()
+    {
+        LeaveSession();
     }
 
     private void OnConnectionStatusChanged(ConnectionStatus previousStatus, ConnectionStatus newStatus)

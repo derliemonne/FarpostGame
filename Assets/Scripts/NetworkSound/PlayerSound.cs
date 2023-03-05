@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
-public class PlayerSound : MonoBehaviour
+public class PlayerSound : NetworkBehaviour
 {
     [SerializeField] private AudioClip _jumpSound;
     [SerializeField] private AudioClip _deathSound;

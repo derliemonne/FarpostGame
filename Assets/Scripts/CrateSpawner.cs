@@ -1,16 +1,17 @@
 using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 /// <summary>
 /// Need to be only on host machine.
 /// </summary>
-public class CrateSpawner : MonoBehaviour
+public class CrateSpawner : NetworkBehaviour
 { 
     private float Altitude { get; set; }
 
-    public static readonly float CrateSize = 1.28f;
-    public static readonly float CrateHalfSize = CrateSize / 2;
+    public const float CrateSize = 1.28f;
+    public const float CrateHalfSize = CrateSize / 2;
 
     /// <summary>
     /// How many units above the topChunk the boxes will be spawned.
@@ -22,7 +23,7 @@ public class CrateSpawner : MonoBehaviour
     private bool _isSpawningCrates;
     private float _lastTimeCrateSpawned;
 
-    private void Awake()
+    public override void Spawned()
     {
         GameRunner gameRunner = GameRunner.Instance;
         Debug.Assert(gameRunner != null);
@@ -31,7 +32,7 @@ public class CrateSpawner : MonoBehaviour
             gameRunner.GameStateHandlerSpawnedLocally += OnGameStateHandlerSpawnedLocally;
         }
     }
-    
+
     private void OnGameStateHandlerSpawnedLocally()
     {
         GameStateHandler.Instance.RaceStartedChanged += OnRaceStartedChanged;
@@ -85,6 +86,8 @@ public class CrateSpawner : MonoBehaviour
     
     private void FixedUpdate()
     {
+        if (!Runner.IsServer) return;
+        
         if (!_isSpawningCrates) return;
         float timeNow = Time.time;
         if (timeNow - _lastTimeCrateSpawned > _cratesSpawnInterval)
