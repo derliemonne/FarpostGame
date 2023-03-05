@@ -281,18 +281,10 @@ public partial class GameRunner :  INetworkRunnerCallbacks
     public void OnDisconnectedFromServer(NetworkRunner runner)
     {
         Debug.Log("> OnDisconnectedFromServer");
-
-        Gui gui = Gui.Instance;
-        if (gui == null)
-        {
-            Debug.LogError($"{nameof(gui)} is null");
-        }
-        else
-        {
-            gui.ShowMessageBox(NetworkManager.NetworkMessages.GetValueOrDefault(
-                NetworkMessage.ServerKickedRaceStarted, "Потеряно соединение с сервером."));
-        }
-
+        
+        GuiMessageLocalUser(NetworkManager.NetworkMessages.GetValueOrDefault(
+            NetworkMessage.ServerKickedRaceStarted, "Потеряно соединение с сервером."));
+        _networkManager.NetworkRunner.Shutdown(true, ShutdownReason.DisconnectedByPluginLogic);
     }
 
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
