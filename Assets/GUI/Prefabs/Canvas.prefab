@@ -166,8 +166,8 @@ RectTransform:
   m_Father: {fileID: 114706953981756881}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -354,7 +354,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8471714745755422219
 RectTransform:
   m_ObjectHideFlags: 0
@@ -858,7 +858,7 @@ MonoBehaviour:
   _sliderBackgroundGameObject: {fileID: 1719663074618478882}
   _jumpSliderButton: {fileID: 8134795412837569086}
   _jumpSlider: {fileID: 8691894853819789348}
-  _pushPlatformButton: {fileID: 7873186391687454996}
+  _pushPlatformButton: {fileID: 729879095609311351}
 --- !u!1 &6313969002418725562
 GameObject:
   m_ObjectHideFlags: 0
@@ -1016,7 +1016,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: -50.559998}
   m_SizeDelta: {x: 320, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8691894853819789348
@@ -1251,6 +1251,7 @@ GameObject:
   - component: {fileID: 3231536206299082449}
   - component: {fileID: 7873186391687454996}
   - component: {fileID: 8314142159444441304}
+  - component: {fileID: 729879095609311351}
   m_Layer: 5
   m_Name: PushPlatform
   m_TagString: Untagged
@@ -1275,7 +1276,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 247.03998}
+  m_AnchoredPosition: {x: 0, y: 196.47998}
   m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3368814047308450173
@@ -1375,6 +1376,18 @@ MonoBehaviour:
   _targetImage: {fileID: 3231536206299082449}
   _activeButton: {fileID: 1595138881, guid: 73140b2f84e46994093f2ed7c5104e86, type: 3}
   _inactiveButton: {fileID: 953908657, guid: 73140b2f84e46994093f2ed7c5104e86, type: 3}
+--- !u!114 &729879095609311351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7945370398888755817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ab93c744484ce64789629fe0e1c3d68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8262566943144380789
 GameObject:
   m_ObjectHideFlags: 0
@@ -1428,7 +1441,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8262566943144380789}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -1504,7 +1517,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8317347786748869957}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 

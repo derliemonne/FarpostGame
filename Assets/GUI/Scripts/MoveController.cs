@@ -6,8 +6,9 @@ using System.Linq;
 public class MoveController : MonoBehaviour
 {
     public int HorizontalInput { get; private set; } = 0;
-    public bool IsJumping { get; private set; } = false;
-    public bool IsPushingPlatform { get; private set; } = false;
+
+    private bool _jumpState = false;
+    private bool _pushPlatformState = false;
 
     [Header("Touch zones")]
     [SerializeField] private RectTransform _leftTouchZone;
@@ -15,24 +16,28 @@ public class MoveController : MonoBehaviour
 
     [Header("Jump input")]
     [SerializeField] private GameObject _sliderBackgroundGameObject;
-    [SerializeField] private JumpSliderButton _jumpSliderButton;
+    [SerializeField] private TouchButton _jumpSliderButton;
     [SerializeField] private Slider _jumpSlider;
 
     [Header("Push platform")]
-    [SerializeField] private InputButton _pushPlatformButton;
+    [SerializeField] private TouchButton _pushPlatformButton;
 
     private void Start()
     {
         _jumpSliderButton.GetButtonDown += () =>
         {
             SetActiveSliderJumpMode(true);
-            IsJumping = true;
+            _jumpState = true;
         };
 
         _jumpSliderButton.GetButtonUp += () =>
         {
             SetActiveSliderJumpMode(false);
-            IsJumping = false;
+        };
+
+        _pushPlatformButton.GetButtonDown += () =>
+        {
+            _pushPlatformState = true;
         };
     }
 
@@ -54,12 +59,25 @@ public class MoveController : MonoBehaviour
             HorizontalInput = 0;
         }
 
-        IsPushingPlatform = _pushPlatformButton.IsPressed;
-
         //move slider to the mid when users's finger doesnt above it
-        if (!IsJumping) _jumpSlider.value = 0;
+        if (!_jumpSliderButton.IsPressed) _jumpSlider.value = 0;
 
         print(this);
+    }
+
+    public override string ToString()
+    {
+        return $"HI : {HorizontalInput} | _jumpState : {_jumpState} | _pushPlatformState : {_pushPlatformState}";
+    }
+
+    public bool ReadJumpState()
+    {
+        return ReadState(ref _jumpState);
+    }
+
+    public bool ReadPushPlatformState()
+    {
+        return ReadState(ref _pushPlatformState);
     }
 
     private void SetActiveSliderJumpMode(bool value)
@@ -71,8 +89,16 @@ public class MoveController : MonoBehaviour
         }
     }
 
-    public override string ToString()
+    private bool ReadState(ref bool state)
     {
-        return $"HI : {HorizontalInput} | IsJumping : {IsJumping} | IsPushingPlatform : {IsPushingPlatform}";
+        if (state)
+        {
+            state = false;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class JumpSliderButton : MonoBehaviour
+public class TouchButton : MonoBehaviour
 {
     public event Action GetButtonDown;
     public event Action GetButtonUp;
@@ -13,24 +13,24 @@ public class JumpSliderButton : MonoBehaviour
 
     //indicates if user touched the screen anywhere at last frame
     private bool _wasTouchingScreen = false;
-    private RectTransform _jumpButtonRect;
+    private RectTransform _touchButtonRect;
 
     private void Awake()
     {
-        _jumpButtonRect = GetComponent<RectTransform>();
+        _touchButtonRect = GetComponent<RectTransform>();
     }
 
     private void Update()
     {
-        bool isTouchingJumpButton = Input.touches.Any(touch => _jumpButtonRect.rect.Contains(touch.position - (Vector2)_jumpButtonRect.position));
+        bool isTouchingButton = Input.touches.Any(touch => _touchButtonRect.rect.Contains(touch.position - (Vector2)_touchButtonRect.position));
         
-        if (isTouchingJumpButton && !_wasTouchingScreen)
+        if (isTouchingButton && !_wasTouchingScreen)
         {
             IsPressed = true;
             GetButtonDown?.Invoke();
         }
 
-        if(IsPressed && !isTouchingJumpButton)
+        if(IsPressed && !isTouchingButton)
         {
             IsPressed = false;
             GetButtonUp?.Invoke();

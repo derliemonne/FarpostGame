@@ -198,31 +198,6 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
             }
         }
     }
-    
-    /*public void OnInput(NetworkRunner runner, NetworkInput input)
-    {
-        bool jumped = false;
-        jumped = _gui.UpInputButton.IsPressed;
-        bool pushedPlatform = false;
-        if (_gui.PushPlatformButton == null)
-        {
-            Debug.LogError("PushPlatformButton is null");
-        }
-        else
-        {
-            pushedPlatform = _gui.PushPlatformButton.IsPressed;
-        }
-        int moveDirection = 0;
-        if (_gui.RightInputButton.IsPressed) moveDirection = 1;
-        if (_gui.LeftInputButton.IsPressed) moveDirection = -1;
-        input.Set(new NetworkInputData
-        {
-            Direction = moveDirection,
-            Jumped = jumped, 
-            PushedPlatform = pushedPlatform,
-        });
-        _pushPlatformPressed = false;
-    }*/
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
@@ -230,8 +205,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
         input.Set(new NetworkInputData
         {
             Direction = controller.HorizontalInput,
-            Jumped = controller.IsJumping,
-            PushedPlatform = false,
+            Jumped = controller.ReadJumpState(),
+            PushedPlatform = controller.ReadPushPlatformState(),
         });
     }
     
