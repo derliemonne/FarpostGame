@@ -72,7 +72,7 @@ public class NetworkManager : MonoBehaviour
         return false;
     }
 
-    [Pure]
+    [Pure, ItemNotNull]
     public IEnumerable<Player> GetActivePlayers()
     {
         return NetworkRunner.ActivePlayers

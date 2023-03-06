@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -73,6 +74,7 @@ public class Gui : MonoBehaviour
 
     private List<RectTransform> _menus;
     private Dictionary<CharacterType, Animator> _characterAnimators;
+    private Dictionary<CharacterType, ChooseCharacterButton> _charactersChooseButtons;
     private List<GuiRecord> _guiRecords;
     private int _connectedPlayersCount;
 
@@ -105,6 +107,14 @@ public class Gui : MonoBehaviour
             { CharacterType.Marsik, _marsikAnimator },
             { CharacterType.Gull, _gullAnimator }
         };
+        _charactersChooseButtons = new Dictionary<CharacterType, ChooseCharacterButton>
+        {
+            { CharacterType.Pirsik, _choosePirsikButton },
+            { CharacterType.Firsik, _chooseFirsikButton },
+            { CharacterType.Marsik, _chooseMarsikButton },
+            { CharacterType.Gull, _chooseGullButton }
+        };
+            
         _guiRecords = new List<GuiRecord> { _record1st, _record2nd, _record3rd, _record4th };
         
         _mainMenuButtonExit.onClick.AddListener(OnMainMenuButtonExitClicked);
@@ -177,6 +187,18 @@ public class Gui : MonoBehaviour
                     $"В комнату вошли {connectedPlayersCount} игроков. Максимум {GameStateHandler.MaxPlayersInSession} игроков.";
             }
             _connectedPlayersCount = connectedPlayersCount;
+            
+            Player[] players = NetworkManager.Instance.GetActivePlayers().ToArray();
+            foreach (CharacterType character in Enum.GetValues(typeof(CharacterType)))
+            {
+                if (!_charactersChooseButtons.ContainsKey(character))
+                {
+                    continue;
+                }
+                // If no one have chosen character then it will be able to be chosen.
+                bool canBeChosen = players.All(player => player.ChosenCharacter != character);
+                _charactersChooseButtons[character].Button.interactable = canBeChosen;
+            }
         }
     }
     
