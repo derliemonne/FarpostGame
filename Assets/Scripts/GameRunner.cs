@@ -236,31 +236,22 @@ public partial class GameRunner :  INetworkRunnerCallbacks
     
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        bool jumped = false;
-        bool pushedPlatform = false;
-        int moveDirection = 0;
-        
-        Gui gui = Gui.Instance;
-        if (gui != null)
+        if (_gui == null)
         {
-            jumped = gui.UpInputButton.IsPressed;
-            if (gui.PushPlatformButton == null)
-            {
-                Debug.LogError("PushPlatformButton is null");
-            }
-            else
-            {
-                pushedPlatform = gui.PushPlatformButton.IsPressed;
-            }
-            if (gui.RightInputButton.IsPressed) moveDirection = 1;
-            if (gui.LeftInputButton.IsPressed) moveDirection = -1;
+            Debug.LogError($"{nameof(_gui)} is null.");
+            return;
         }
-        
+        MoveController controller = _gui.MoveController;
+        if (controller == null)
+        {
+            Debug.LogError($"{nameof(controller)} is null.");
+            return;
+        }
         input.Set(new NetworkInputData
         {
-            Direction = moveDirection,
-            Jumped = jumped, 
-            PushedPlatform = pushedPlatform,
+            Direction = controller.HorizontalInput,
+            Jumped = controller.ReadJumpState(),
+            PushedPlatform = controller.ReadPushPlatformState(),
         });
     }
     
