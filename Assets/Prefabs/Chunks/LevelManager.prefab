@@ -57,7 +57,7 @@ MonoBehaviour:
   - {fileID: 1037430759707369049, guid: 864012718a47207468cd04e88402c84e, type: 3}
   - {fileID: 1037430759707369049, guid: 0e009c40f69dc3f4f9c836113cc32c48, type: 3}
   - {fileID: 1037430759707369049, guid: f60655a18abcaad4692347d53ef6b9cf, type: 3}
-  _firstChunkAltitude: 19.2
+  _firstChunkAltitude: 57.6
 --- !u!114 &6655799028415939626
 MonoBehaviour:
   m_ObjectHideFlags: 0
