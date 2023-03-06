@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Fusion;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using CanvasGroup = UnityEngine.CanvasGroup;
 
 public class Gui : MonoBehaviour
 {
@@ -51,7 +53,8 @@ public class Gui : MonoBehaviour
     [SerializeField] private ChooseCharacterButton _chooseGullButton;
     [SerializeField] private Button _leaveSessionButton;
     [SerializeField] private Button _readyButton;
-
+    [SerializeField] private SerializableDictionary<CharacterType, CanvasGroup> _characterCanvasGroups;
+    [SerializeField, Range(0, 1)] private float _unchosenCharacterSpriteAlphaChannel = 0.8f;
     [Header("Leaders menu")] 
     [SerializeField] private Button _leadersMenuLeaveSessionButton;
     [SerializeField] private GuiRecord _record1st;
@@ -156,6 +159,13 @@ public class Gui : MonoBehaviour
         }
         gameStateHandler.RaceStartedChanged += OnRaceStartedChanged;
         gameStateHandler.RaceFinished += OnRaceFinished;
+
+        Player player = NetworkManager.Instance.GetLocalPlayer();
+        Debug.Assert(player != null);
+        if (player != null)
+        {
+            player.ChosenCharacterChanged += OnLocalPlayerChosenCharacterChanged;
+        }
     }
     
     private void Update()
@@ -213,7 +223,7 @@ public class Gui : MonoBehaviour
         }
         if (menuToShow != null) menuToShow.gameObject.SetActive(true);
     }
-
+    
     private void SpotlightCharacter(CharacterType character)
     {
         foreach (Animator characterAnimator in _characterAnimators.Values)
@@ -223,6 +233,21 @@ public class Gui : MonoBehaviour
         if (_characterAnimators.TryGetValue(character, out Animator animator))
         {
             animator.enabled = true;
+        }
+
+        Debug.Assert(_characterCanvasGroups.Values.Count == 4);
+        foreach (CanvasGroup canvasGroup in _characterCanvasGroups.Values)
+        {
+            canvasGroup.alpha = _unchosenCharacterSpriteAlphaChannel;
+        }
+        foreach (CharacterType characterType in _characterCanvasGroups.Keys)
+        {
+            CanvasGroup canvasGroup = _characterCanvasGroups[characterType];
+            canvasGroup.alpha = _unchosenCharacterSpriteAlphaChannel;
+        }
+        if (_characterCanvasGroups.ContainsKey(character))
+        {
+            _characterCanvasGroups[character].alpha = 1;
         }
     }
 
@@ -258,25 +283,21 @@ public class Gui : MonoBehaviour
     private void OnChoosePirsikButtonClicked()
     {
         CharacterChosenAction?.Invoke(CharacterType.Pirsik);
-        SpotlightCharacter(CharacterType.Pirsik);
     }
 
     private void OnChooseGullButtonClicked()
     {
         CharacterChosenAction?.Invoke(CharacterType.Gull);
-        SpotlightCharacter(CharacterType.Gull);
     }
 
     private void OnChooseMarsikButtonClicked()
     {
         CharacterChosenAction?.Invoke(CharacterType.Marsik);
-        SpotlightCharacter(CharacterType.Marsik);
     }
 
     private void OnChooseFirsikButtonClicked()
     {
         CharacterChosenAction?.Invoke(CharacterType.Firsik);
-        SpotlightCharacter(CharacterType.Firsik);
     }
 
     private void OnLeaveSessionButtonClicked()
@@ -304,6 +325,21 @@ public class Gui : MonoBehaviour
         LeaveSession();
     }
 
+    private void OnLocalPlayerChosenCharacterChanged(Player localPlayer, CharacterType characterType)
+    {
+        GameRunner gameRunner = GameRunner.Instance;
+        Debug.Assert(gameRunner != null);
+        if (gameRunner == null) return;
+        
+        GameStateHandler gameStateHandler = GameStateHandler.Instance;
+        if (gameStateHandler == null) return;
+
+        if (!gameStateHandler.RaceStarted)
+        {
+            SpotlightCharacter(characterType);
+        }
+    }
+
     private void OnConnectionStatusChanged(ConnectionStatus previousStatus, ConnectionStatus newStatus)
     {
         if (newStatus == ConnectionStatus.NotInSession) ShowMenu(_mainMenu);
@@ -317,6 +353,12 @@ public class Gui : MonoBehaviour
                 return;
             }
             _roomIdText.text = $"Номер комнаты: {NetworkManager.Instance.NetworkRunner.SessionInfo.Name}";
+            
+            Player localPlayer = networkManager.GetLocalPlayer();
+            if (localPlayer != null)
+            {
+                SpotlightCharacter(localPlayer.ChosenCharacter);
+            }
         }
         if (newStatus == ConnectionStatus.ConnectingToSession)
         {

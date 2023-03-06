@@ -5,7 +5,7 @@ using Fusion;
 
 public class Player : NetworkBehaviour
 {
-    public event Action<CharacterType> ChosenCharacterChanged;
+    public event Action<Player, CharacterType> ChosenCharacterChanged;
     
     [Networked] public PlayerRef PlayerRef { get; set; }
     [Networked] public NetworkBool IsReadyToStartRace { get; set; }
@@ -19,6 +19,6 @@ public class Player : NetworkBehaviour
     public static void OnChosenCharacterChanged(Changed<Player> changed)
     {
         Player player = changed.Behaviour;
-        player.ChosenCharacterChanged?.Invoke(player.ChosenCharacter);
+        player.ChosenCharacterChanged?.Invoke(player, player.ChosenCharacter);
     }
 }
