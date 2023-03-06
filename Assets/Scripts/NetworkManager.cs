@@ -56,7 +56,13 @@ public class NetworkManager : MonoBehaviour
     [CanBeNull, Pure]
     public Player GetPlayerObject(PlayerRef playerRef)
     {
-        return NetworkRunner.GetPlayerObject(playerRef).GetComponent<Player>();
+        NetworkObject playerObject = NetworkRunner.GetPlayerObject(playerRef);
+        if (playerObject == null) return null;
+        if (playerObject.TryGetComponent(out Player player))
+        {
+            return player;
+        }
+        return null;
     }
 
     [CanBeNull, Pure]

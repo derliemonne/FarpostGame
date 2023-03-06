@@ -28,6 +28,7 @@ public class Gui : MonoBehaviour
     */
     public MoveController MoveController => _moveController;
 
+    [SerializeField] private bool _drawDebugInfo;
     [Header("Menus")]
     [SerializeField] private RectTransform _mainMenu;
     [SerializeField] private RectTransform _connectMenu;
@@ -148,8 +149,6 @@ public class Gui : MonoBehaviour
         {
             button.onClick.AddListener(OnButtonToOpenMainMenuClicked);
         }
-
-
         
         GameRunner gameRunner = GameRunner.Instance;
         Debug.Assert(gameRunner != null);
@@ -418,6 +417,17 @@ public class Gui : MonoBehaviour
             gameStateHandler.RaceStartedChanged -= OnRaceStartedChanged;
             gameStateHandler.RaceFinished -= OnRaceFinished;
         }
+    }
+
+    private void OnGUI()
+    {
+        if (!_drawDebugInfo) return;
+        GameRunner gameRunner = GameRunner.Instance;
+        if (gameRunner == null) return;
+        // Scale GUI for phones.
+        float scaleFactor = 4;
+        GUI.matrix = Matrix4x4.TRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(scaleFactor, scaleFactor, 1));
+        GUILayout.Label($"ConnectionStatus: {gameRunner.ConnectionStatus}");
     }
 
     private void OnApplicationQuit()

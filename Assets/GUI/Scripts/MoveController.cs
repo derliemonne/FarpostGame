@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
@@ -47,24 +48,23 @@ public class MoveController : MonoBehaviour
 
         if(_jumpButton.IsPressed)
         {
-            Vector2 jumpButtonTouchPos = Input.touches.Where(touch => _jumpButtonRect.rect.Contains(touch.position - (Vector2)_jumpButtonRect.position)).First().position;
-            _jumpButtonRect.position = jumpButtonTouchPos;
+            var touches = Input.touches
+                .Where(touch => _jumpButtonRect.rect.Contains(touch.position - (Vector2)_jumpButtonRect.position));
+            if (touches.Any())
+            {
+                _jumpButtonRect.position = touches.First().position;
+            }
         }
 
+        HorizontalInput = 0;
         if (onLeft)
         {
             HorizontalInput = -1;
         }
-        else if(onRight)
+        else if (onRight)
         {
             HorizontalInput = 1;
         }
-        else
-        {
-            HorizontalInput = 0;
-        }
-
-        print(this);
     }
 
     public override string ToString()

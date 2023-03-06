@@ -45,7 +45,6 @@ public partial class GameRunner : MonoBehaviour
     [SerializeField] private PlayerSound _playerSoundPrefab;
     [Space]
     [SerializeField] private Gui _gui;
-    [SerializeField] private CameraScript _cameraScript;
     
     private NetworkManager _networkManager;
     private ConnectionStatus _connectionStatus = ConnectionStatus.NotInSession;
