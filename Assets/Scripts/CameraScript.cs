@@ -1,3 +1,4 @@
+using System;
 using IngameDebugConsole;
 using System.Collections;
 using UnityEngine;
@@ -8,6 +9,8 @@ public class CameraScript : MonoBehaviour
     private const float DefaultCameraSize = 9.6f;
     private const float LerpDuration = 1f;
 
+    public static CameraScript Instance { get; private set; }
+    
     public Character Character => _character;
 
     private Vector3 Pivot 
@@ -44,6 +47,17 @@ public class CameraScript : MonoBehaviour
             if (_camera == null) _camera = GetComponent<Camera>();
             return _camera;
         }
+    }
+
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            Debug.LogError("Trying to create another instance of singleton class.");
+            return;
+        }
+        Instance = this;
     }
 
     private void Start()
@@ -155,5 +169,11 @@ public class CameraScript : MonoBehaviour
     public static void SetCameraSizeCommand()
     {
         Camera.main.GetComponent<CameraScript>().ResetCameraSize();
+    }
+
+    private void OnApplicationQuit()
+    {
+        Instance = null;
+        Destroy(gameObject);
     }
 }

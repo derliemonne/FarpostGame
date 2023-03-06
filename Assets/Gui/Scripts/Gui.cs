@@ -1,9 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Fusion;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using CanvasGroup = UnityEngine.CanvasGroup;
 
 public class Gui : MonoBehaviour
 {
@@ -13,7 +16,7 @@ public class Gui : MonoBehaviour
     public event Action StartHost;
     public event Action<bool> ReadyToStartRaceChanged;
     public event Action<CharacterType> CharacterChosenAction;
-    public event Action LeaveSession;
+    public event Action LeavedSession;
 
     public CharacterType ChosenCharacter { get; private set; }
     /*
@@ -39,6 +42,7 @@ public class Gui : MonoBehaviour
     [Header("Connect menu")] 
     [SerializeField] private TMP_InputField _inputRoomId;
     [SerializeField] private Button _connectMenuButtonConnect;
+    [SerializeField] private Button _abortConnectToRoomButton;
     [Header("Room menu")] 
     [SerializeField] private TMP_Text _roomIdText;
     [SerializeField] private TMP_Text _playersConnectedCountText;
@@ -52,7 +56,10 @@ public class Gui : MonoBehaviour
     [SerializeField] private ChooseCharacterButton _chooseGullButton;
     [SerializeField] private Button _leaveSessionButton;
     [SerializeField] private Button _readyButton;
+    [SerializeField] private SerializableDictionary<CharacterType, CanvasGroup> _characterCanvasGroups;
+    [SerializeField, Range(0, 1)] private float _unchosenCharacterSpriteAlphaChannel = 0.8f;
     [Header("Leaders menu")] 
+    [SerializeField] private Button _leadersMenuLeaveSessionButton;
     [SerializeField] private GuiRecord _record1st;
     [SerializeField] private GuiRecord _record2nd;
     [SerializeField] private GuiRecord _record3rd;
@@ -76,9 +83,11 @@ public class Gui : MonoBehaviour
     [SerializeField] private MoveController _moveController;
     [SerializeField] private InputButtonUp _upInputButtonChanger;
     [SerializeField] private PushPlatformButton _pushPlatformButtonChanger;
+    [SerializeField] private Button _exitRaceButton;
 
     private List<RectTransform> _menus;
     private Dictionary<CharacterType, Animator> _characterAnimators;
+    private Dictionary<CharacterType, ChooseCharacterButton> _charactersChooseButtons;
     private List<GuiRecord> _guiRecords;
     private int _connectedPlayersCount;
 
@@ -111,6 +120,14 @@ public class Gui : MonoBehaviour
             { CharacterType.Marsik, _marsikAnimator },
             { CharacterType.Gull, _gullAnimator }
         };
+        _charactersChooseButtons = new Dictionary<CharacterType, ChooseCharacterButton>
+        {
+            { CharacterType.Pirsik, _choosePirsikButton },
+            { CharacterType.Firsik, _chooseFirsikButton },
+            { CharacterType.Marsik, _chooseMarsikButton },
+            { CharacterType.Gull, _chooseGullButton }
+        };
+            
         _guiRecords = new List<GuiRecord> { _record1st, _record2nd, _record3rd, _record4th };
         
         _mainMenuButtonExit.onClick.AddListener(OnMainMenuButtonExitClicked);
@@ -123,28 +140,54 @@ public class Gui : MonoBehaviour
         _chooseGullButton.Button.onClick.AddListener(OnChooseGullButtonClicked);
         _leaveSessionButton.onClick.AddListener(OnLeaveSessionButtonClicked);
         _readyButton.onClick.AddListener(OnReadyButtonClicked);
+        _leadersMenuLeaveSessionButton.onClick.AddListener(OnLeadersMenuLeaveSessionButtonClicked);
+        _exitRaceButton.onClick.AddListener(OnExitRaceButtonClicked);
+        _abortConnectToRoomButton.onClick.AddListener(OnAbortConnectToRoomButtonClicked);
 
         foreach (Button button in _buttonsToOpenMenu)
         {
             button.onClick.AddListener(OnButtonToOpenMainMenuClicked);
         }
 
+
+        
+        GameRunner gameRunner = GameRunner.Instance;
+        Debug.Assert(gameRunner != null);
+        if (gameRunner != null)
+        {
+            gameRunner.GameStateHandlerSpawnedLocally += OnGameStateHandlerSpawnedLocally;
+            gameRunner.ConnectionStatusChanged += OnConnectionStatusChanged;
+        }
+    }
+
+    private void OnGameStateHandlerSpawnedLocally()
+    {
         GameStateHandler gameStateHandler = GameStateHandler.Instance;
         if (gameStateHandler == null)
         {
             Debug.LogError("GameStateHandler is null.");
         }
-        gameStateHandler.ConnectionStatusChanged += OnConnectionStatusChanged;
         gameStateHandler.RaceStartedChanged += OnRaceStartedChanged;
         gameStateHandler.RaceFinished += OnRaceFinished;
+
+        Player player = NetworkManager.Instance.GetLocalPlayer();
+        Debug.Assert(player != null);
+        if (player != null)
+        {
+            player.ChosenCharacterChanged += OnLocalPlayerChosenCharacterChanged;
+        }
     }
     
     private void Update()
     {
+        GameRunner gameRunner = GameRunner.Instance;
         GameStateHandler gameStateHandler = GameStateHandler.Instance;
         NetworkManager networkManager = NetworkManager.Instance;
-        if (networkManager == null || gameStateHandler == null || gameStateHandler.Object == null) return;
-        if (gameStateHandler.ConnectionStatus != ConnectionStatus.InSession) return;
+        
+        if (gameRunner == null || networkManager == null || gameStateHandler == null || gameStateHandler.Object == null)
+            return;
+        if (gameRunner.ConnectionStatus != ConnectionStatus.InSession) return;
+        
         if (gameStateHandler.RaceStarted)
         {
             Character localCharacter = gameStateHandler.LocalCharacter;
@@ -164,6 +207,18 @@ public class Gui : MonoBehaviour
                     $"В комнату вошли {connectedPlayersCount} игроков. Максимум {GameStateHandler.MaxPlayersInSession} игроков.";
             }
             _connectedPlayersCount = connectedPlayersCount;
+            
+            Player[] players = NetworkManager.Instance.GetActivePlayers().ToArray();
+            foreach (CharacterType character in Enum.GetValues(typeof(CharacterType)))
+            {
+                if (!_charactersChooseButtons.ContainsKey(character))
+                {
+                    continue;
+                }
+                // If no one have chosen character then it will be able to be chosen.
+                bool canBeChosen = players.All(player => player.ChosenCharacter != character);
+                _charactersChooseButtons[character].Button.interactable = canBeChosen;
+            }
         }
     }
     
@@ -178,7 +233,7 @@ public class Gui : MonoBehaviour
         }
         if (menuToShow != null) menuToShow.gameObject.SetActive(true);
     }
-
+    
     private void SpotlightCharacter(CharacterType character)
     {
         foreach (Animator characterAnimator in _characterAnimators.Values)
@@ -189,6 +244,27 @@ public class Gui : MonoBehaviour
         {
             animator.enabled = true;
         }
+
+        Debug.Assert(_characterCanvasGroups.Values.Count == 4);
+        foreach (CanvasGroup canvasGroup in _characterCanvasGroups.Values)
+        {
+            canvasGroup.alpha = _unchosenCharacterSpriteAlphaChannel;
+        }
+        foreach (CharacterType characterType in _characterCanvasGroups.Keys)
+        {
+            CanvasGroup canvasGroup = _characterCanvasGroups[characterType];
+            canvasGroup.alpha = _unchosenCharacterSpriteAlphaChannel;
+        }
+        if (_characterCanvasGroups.ContainsKey(character))
+        {
+            _characterCanvasGroups[character].alpha = 1;
+        }
+    }
+
+    private void LeaveSession()
+    {
+        LeavedSession?.Invoke();
+        _controlsParent.SetActive(false);
     }
 
     private void OnMainMenuButtonHostClicked()
@@ -217,35 +293,61 @@ public class Gui : MonoBehaviour
     private void OnChoosePirsikButtonClicked()
     {
         CharacterChosenAction?.Invoke(CharacterType.Pirsik);
-        SpotlightCharacter(CharacterType.Pirsik);
     }
 
     private void OnChooseGullButtonClicked()
     {
         CharacterChosenAction?.Invoke(CharacterType.Gull);
-        SpotlightCharacter(CharacterType.Gull);
     }
 
     private void OnChooseMarsikButtonClicked()
     {
         CharacterChosenAction?.Invoke(CharacterType.Marsik);
-        SpotlightCharacter(CharacterType.Marsik);
     }
 
     private void OnChooseFirsikButtonClicked()
     {
         CharacterChosenAction?.Invoke(CharacterType.Firsik);
-        SpotlightCharacter(CharacterType.Firsik);
     }
 
     private void OnLeaveSessionButtonClicked()
     {
-        LeaveSession?.Invoke();
+        LeaveSession();
     }
 
     private void OnReadyButtonClicked()
     {
         ReadyToStartRaceChanged?.Invoke(true);
+    }
+
+    private void OnLeadersMenuLeaveSessionButtonClicked()
+    {
+        LeaveSession();
+    }
+
+    private void OnExitRaceButtonClicked()
+    {
+        LeaveSession();
+    }
+
+    private void OnAbortConnectToRoomButtonClicked()
+    {
+        LeaveSession();
+    }
+
+    private void OnLocalPlayerChosenCharacterChanged(Player localPlayer, CharacterType characterType)
+    {
+        GameRunner gameRunner = GameRunner.Instance;
+        Debug.Assert(gameRunner != null);
+        if (gameRunner == null) return;
+        
+        GameStateHandler gameStateHandler = GameStateHandler.Instance;
+        if (gameStateHandler == null) return;
+
+        if (!gameStateHandler.RaceStarted)
+        {
+            SpotlightCharacter(characterType);
+        }
     }
 
     private void OnConnectionStatusChanged(ConnectionStatus previousStatus, ConnectionStatus newStatus)
@@ -261,6 +363,12 @@ public class Gui : MonoBehaviour
                 return;
             }
             _roomIdText.text = $"Номер комнаты: {NetworkManager.Instance.NetworkRunner.SessionInfo.Name}";
+            
+            Player localPlayer = networkManager.GetLocalPlayer();
+            if (localPlayer != null)
+            {
+                SpotlightCharacter(localPlayer.ChosenCharacter);
+            }
         }
         if (newStatus == ConnectionStatus.ConnectingToSession)
         {
@@ -296,6 +404,20 @@ public class Gui : MonoBehaviour
     {
         _mainMenuButtonHost.onClick.RemoveAllListeners();
         // TODO: remove all other listeners
+        
+        GameRunner gameRunner = GameRunner.Instance;
+        if (gameRunner)
+        {
+            gameRunner.GameStateHandlerSpawnedLocally -= OnGameStateHandlerSpawnedLocally;
+            gameRunner.ConnectionStatusChanged -= OnConnectionStatusChanged;
+        }
+        
+        GameStateHandler gameStateHandler = GameStateHandler.Instance;
+        if (gameStateHandler)
+        {
+            gameStateHandler.RaceStartedChanged -= OnRaceStartedChanged;
+            gameStateHandler.RaceFinished -= OnRaceFinished;
+        }
     }
 
     private void OnApplicationQuit()

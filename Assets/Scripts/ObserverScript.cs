@@ -23,10 +23,16 @@ public class ObserverScript : MonoBehaviour
             return;
         }
         Instance = this;
+        
         _cameraScript = GetComponent<CameraScript>();
+        
+        GameRunner gameRunner = GameRunner.Instance;
+        Debug.Assert(gameRunner != null);
+        if (gameRunner == null) return;
+        gameRunner.GameStateHandlerSpawnedLocally += OnGameStateHandlerSpawnedLocally;
     }
-
-    private void Start()
+    
+    private void OnGameStateHandlerSpawnedLocally()
     {
         GameStateHandler.Instance.RaceFinished += EndObserv;
     }
@@ -82,5 +88,12 @@ public class ObserverScript : MonoBehaviour
         int activePlayersCount = activePlayer.Count;
         int randomPlayerIndex = Random.Range(0, activePlayersCount);
         return activePlayer[randomPlayerIndex];
+    }
+
+    private void OnDestroy()
+    {
+        GameRunner gameRunner = GameRunner.Instance;
+        if (gameRunner == null) return;
+        gameRunner.GameStateHandlerSpawnedLocally -= OnGameStateHandlerSpawnedLocally;
     }
 }

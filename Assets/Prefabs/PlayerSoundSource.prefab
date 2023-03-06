@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6141605432821494404}
   - component: {fileID: 1189616113281042979}
   - component: {fileID: 6118917765527347266}
-  - component: {fileID: 5979058438218783254}
   m_Layer: 0
   m_Name: PlayerSoundSource
   m_TagString: Untagged
@@ -145,26 +144,3 @@ MonoBehaviour:
   _jumpSound: {fileID: 8300000, guid: 44d291fd45dd9ac45aa72c2cf3a65212, type: 3}
   _deathSound: {fileID: 8300000, guid: cf5abc87044eef944bf0a578d25b1406, type: 3}
   _buffSound: {fileID: 8300000, guid: b2494e4984ec88f45b5792b2110354f2, type: 3}
---- !u!114 &5979058438218783254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6883277885751934464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObjectInterest: 1
-  DefaultInterestGroups: []
-  DestroyWhenStateAuthorityLeaves: 0
-  AllowStateAuthorityOverride: 1
-  AoiPositionSource: {fileID: 0}
-  Flags: 2305
-  NetworkGuid:
-    RawGuidValue: 3ebe6595e7d65d94cab20792e2ac7bf0
-  NestedObjects: []
-  NetworkedBehaviours: []
-  SimulationBehaviours: []

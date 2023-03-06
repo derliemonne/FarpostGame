@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 845156865645966875}
   - component: {fileID: 4693829230735609221}
   - component: {fileID: 4563611678099479538}
+  - component: {fileID: 6947071618833427672}
   m_Layer: 5
   m_Name: PirsikImage
   m_TagString: Untagged
@@ -97,6 +98,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!225 &6947071618833427672
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423814881827517204}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &4681850658451973246
 GameObject:
   m_ObjectHideFlags: 0

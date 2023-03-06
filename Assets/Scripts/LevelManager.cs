@@ -33,8 +33,11 @@ public class LevelManager : NetworkBehaviour
         }
         Instance = this;
 
-        IsSpawningChunksAutomatically = GameStateHandler.Instance.RaceStarted;
-        GameStateHandler.Instance.RaceStartedChanged += OnRaceStartedChanged;
+        GameRunner gameRunner = GameRunner.Instance;
+        Debug.Assert(gameRunner != null);
+        if (gameRunner == null) return;
+
+        gameRunner.GameStateHandlerSpawnedLocally += OnGameStateHandlerSpawnedLocally;
     }
 
     public void SpawnChunkOnTop()
@@ -104,6 +107,16 @@ public class LevelManager : NetworkBehaviour
         return spawnPointsList;
     }
 
+    private void OnGameStateHandlerSpawnedLocally()
+    {
+        GameStateHandler gameStateHandler = GameStateHandler.Instance;
+        Debug.Assert(gameStateHandler != null);
+        if (gameStateHandler == null) return;
+        
+        IsSpawningChunksAutomatically = gameStateHandler.RaceStarted;
+        gameStateHandler.RaceStartedChanged += OnRaceStartedChanged;
+    }
+
     private void OnRaceStartedChanged(bool raceStarted)
     {
         IsSpawningChunksAutomatically = raceStarted;
@@ -171,6 +184,21 @@ public class LevelManager : NetworkBehaviour
             }
         }
         return maxAltitude;
+    }
+
+    private void OnDestroy()
+    {
+        GameRunner gameRunner = GameRunner.Instance;
+        if (gameRunner != null)
+        {
+            gameRunner.GameStateHandlerSpawnedLocally -= OnGameStateHandlerSpawnedLocally;
+        }
+        
+        GameStateHandler gameStateHandler = GameStateHandler.Instance;
+        if (gameStateHandler != null)
+        {
+            gameStateHandler.RaceStartedChanged -= OnRaceStartedChanged;
+        }
     }
 
     private void OnApplicationQuit()

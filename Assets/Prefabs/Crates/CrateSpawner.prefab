@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5830019367233603661}
   - component: {fileID: 7392630106753805379}
+  - component: {fileID: 2010896159}
   m_Layer: 0
   m_Name: CrateSpawner
   m_TagString: Untagged
@@ -44,8 +45,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5bebbc78732e5841bddca2f689e8356, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
   _altitudeShiftAboveTopChunk: 19.2
-  _cratesPerSecond: 0.4
+  _cratesSpawnInterval: 4
   _cratePrefabs:
   - {fileID: 1483061654991374791, guid: 8097a3b8954f6c946ae4e2a6db2312e1, type: 3}
   - {fileID: 1975277987504233460, guid: 6c0135674e2a30c4b970905eb74dde98, type: 3}
+--- !u!114 &2010896159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5830019367233603660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectInterest: 1
+  DefaultInterestGroups: []
+  DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 1
+  AoiPositionSource: {fileID: 0}
+  Flags: 2305
+  NetworkGuid:
+    RawGuidValue: 31f8ac3bf24bf7343b8f1d95a463a9ae
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 7392630106753805379}
+  SimulationBehaviours: []
