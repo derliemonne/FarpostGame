@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -23,7 +24,10 @@ public class PlayerSound : MonoBehaviour
         Instance = this;
         
         _audioSource = GetComponent<AudioSource>();
-        
+    }
+
+    private void Start()
+    {
         CameraScript cameraScript = CameraScript.Instance;
         if (CameraScript.Instance == null)
         {
