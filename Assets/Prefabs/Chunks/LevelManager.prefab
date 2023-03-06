@@ -48,6 +48,7 @@ MonoBehaviour:
   _interpolationDataSource: 0
   _IsSpawningChunksAutomatically:
     _value: 0
+  _chunkZeroPrefab: {fileID: 1037430759707369049, guid: a7f2e301d8c57b147b9170d53bcb3474, type: 3}
   _chunkPrefabs:
   - {fileID: 1037430759707369049, guid: c393bbf1ce12b2144af701d6d22ce880, type: 3}
   - {fileID: 1037430759707369049, guid: 3cc2a41bb670fd34e9b0a3236777381f, type: 3}
@@ -57,7 +58,7 @@ MonoBehaviour:
   - {fileID: 1037430759707369049, guid: 864012718a47207468cd04e88402c84e, type: 3}
   - {fileID: 1037430759707369049, guid: 0e009c40f69dc3f4f9c836113cc32c48, type: 3}
   - {fileID: 1037430759707369049, guid: f60655a18abcaad4692347d53ef6b9cf, type: 3}
-  _firstChunkAltitude: 57.6
+  _firstChunkAltitude: 19.2
 --- !u!114 &6655799028415939626
 MonoBehaviour:
   m_ObjectHideFlags: 0

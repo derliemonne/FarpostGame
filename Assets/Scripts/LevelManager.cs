@@ -18,7 +18,8 @@ public class LevelManager : NetworkBehaviour
     
     [Networked]
     public NetworkBool IsSpawningChunksAutomatically { get; private set; }
-    
+
+    [SerializeField] private Chunk _chunkZeroPrefab;
     [SerializeField] private List<Chunk> _chunkPrefabs;
     [SerializeField] private float _firstChunkAltitude = Chunk.ChunkHalfHeight;
     
@@ -40,7 +41,7 @@ public class LevelManager : NetworkBehaviour
         gameRunner.GameStateHandlerSpawnedLocally += OnGameStateHandlerSpawnedLocally;
     }
 
-    public void SpawnChunkOnTop()
+    public void SpawnChunkOnTop(Chunk chunkPreafab)
     {
         if (!Runner.IsServer)
         {
@@ -56,7 +57,7 @@ public class LevelManager : NetworkBehaviour
         float newChunkAltitude = topChunk == null ? _firstChunkAltitude : topChunk.Altitude + Chunk.ChunkHeight;
         Vector3 newChunkPosition = new(0, newChunkAltitude, 0);
         Debug.Log($"SpawnChunk at altitude {newChunkPosition.y}");
-        Chunk chunk = NetworkManager.Instance.NetworkRunner.Spawn(_chunkPrefabs[Random.Range(0, ChunksCount)], newChunkPosition);
+        Chunk chunk = NetworkManager.Instance.NetworkRunner.Spawn(chunkPreafab, newChunkPosition);
         if (chunk == null)
         {
             Debug.LogError("Chunk prefab is invalid.");
@@ -119,6 +120,7 @@ public class LevelManager : NetworkBehaviour
 
     private void OnRaceStartedChanged(bool raceStarted)
     {
+        SpawnChunkOnTop(_chunkZeroPrefab);
         IsSpawningChunksAutomatically = raceStarted;
     }
 
@@ -133,7 +135,7 @@ public class LevelManager : NetworkBehaviour
         if (!Runner.IsServer || !IsSpawningChunksAutomatically) return;
         if (Chunks.Count == 0 && (Darkness.Instance == null || Darkness.Instance.Altitude < Chunk.ChunkHeight))
         {
-            SpawnChunkOnTop();
+            SpawnChunkOnTop(_chunkPrefabs[Random.Range(0, ChunksCount)]);
             return;
         }
         Chunk topChunk = GetChunk(Chunks.TopChunk);
@@ -142,7 +144,7 @@ public class LevelManager : NetworkBehaviour
         if (!charactersHighestAltitude.HasValue) return;
         if (topChunk.IsAltitudeFitsInChunk(charactersHighestAltitude.Value) && !DarknessAbsorbedChunk(topChunk))
         {
-            SpawnChunkOnTop();
+            SpawnChunkOnTop(_chunkPrefabs[Random.Range(0, ChunksCount)]);
         }
         
         while (Chunks.Count != 0)
