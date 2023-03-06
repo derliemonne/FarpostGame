@@ -273,7 +273,10 @@ public class Gui : MonoBehaviour
     
     private void OnMainMenuButtonConnectClicked() => ShowMenu(_connectMenu);
 
-    private void OnMainMenuButtonExitClicked() => Debug.Log("GUI: Exit game button.");
+    private void OnMainMenuButtonExitClicked()
+    {
+        Application.Quit();
+    }
 
     private void OnConnectMenuButtonConnectClicked()
     {
