@@ -1,18 +1,18 @@
-using System;
 using Fusion;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer), typeof(BoxCollider2D))]
 public class Darkness : NetworkBehaviour
 {
     public static Darkness Instance { get; private set; }
+
+    [SerializeField] private MoveScript _moveScript;
+    [SerializeField] private DamageZone _damageZoneScript;
     
     [Networked] public float Altitude { get; private set; }
     
     public bool IsActive { get; private set; }
-
+    
     public float Speed => _speed;
 
     [SerializeField] private float _speed = 1;

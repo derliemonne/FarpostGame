@@ -8,10 +8,12 @@ public abstract class Effect
     public abstract int EffectId { get; }
 
     protected EffectManager effectManager;
+    protected EffectAssets effectAssets;
 
     public Effect(EffectManager effectManager)
     {
         this.effectManager = effectManager;
+        this.effectAssets = EffectAssets.Instance;
     }
 
     public abstract void Apply();

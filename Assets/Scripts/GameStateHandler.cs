@@ -69,6 +69,8 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
     [SerializeField] private Gui _gui;
     [SerializeField] private bool _drawDebugGui;
 
+    [SerializeField] private IPlayerActionsSetter _playerActions;
+
     private bool _readyToStartRace;
     private NetworkManager _networkManager;
     private string _inputSessionName;
@@ -201,6 +203,7 @@ public class GameStateHandler : NetworkBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
+        Debug.Log("OnInput " + LocalCharacter?.PlayerId);
         MoveController controller = _gui.MoveController;
         input.Set(new NetworkInputData
         {

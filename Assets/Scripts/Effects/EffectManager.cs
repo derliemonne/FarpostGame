@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 using UnityEngine;
-using Fusion;
-using UnityEngine.Analytics;
 
 public class EffectManager : MonoBehaviour
 {
@@ -44,6 +44,11 @@ public class EffectManager : MonoBehaviour
             Coroutine effectCoroutine = StartCoroutine(EffectDuration(effect));
             _effectsCoroutines[effect.EffectId] = effectCoroutine;
         }
+    }
+
+    public bool HasEffect(Type continuousEffectType)
+    {
+        return _effectsList.Where(contEffect => contEffect.GetType() == continuousEffectType).Count() > 0;
     }
 
     private void Remove(ContinuousEffect effect)

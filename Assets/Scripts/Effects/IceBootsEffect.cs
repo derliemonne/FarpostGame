@@ -8,6 +8,8 @@ public class IceBootsEffect : ContinuousEffect
     public override int EffectId => 1;
     public override float Duration { get; protected set; } = 10;
 
+    private GameObject _iceBootsGameObject;
+
     public IceBootsEffect(EffectManager effectManager, float? duration = null) : base(effectManager, duration)
     {
         
@@ -15,11 +17,18 @@ public class IceBootsEffect : ContinuousEffect
 
     public override void Apply()
     {
-        effectManager.Character.IceBoots.SetActive(true);
+        _iceBootsGameObject = Object.Instantiate(effectAssets.IceBoots, effectManager.Character.PlayersLegsTransform.position, new Quaternion());
     }
 
     public override void Remove()
     {
-        effectManager.Character.IceBoots.SetActive(false);
+        if(_iceBootsGameObject != null)
+        {
+            Object.Destroy(_iceBootsGameObject);
+        }
+        else
+        {
+            Debug.LogError("At the moment of removing IceBoots effect there were no ice boots");
+        }    
     }
 }

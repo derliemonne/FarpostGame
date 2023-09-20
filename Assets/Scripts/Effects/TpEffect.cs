@@ -1,25 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TpEffect : InstantEffect
 {
-    private Character first;
-    private Character second;
+    private Transform tpedTransform;
+    private Vector3 tpPoint;
 
     public override string EffectName => "Tp";
     public override int EffectId => 0;
 
-    public TpEffect(EffectManager effectManager, Character first, Character second) : base(effectManager)
+    public TpEffect(EffectManager effectManager, Transform tpedTransform, Vector3 tpPoint) : base(effectManager)
     {
-        this.first = first; 
-        this.second = second;
+        this.tpedTransform = tpedTransform;
+        this.tpPoint = tpPoint;
     }
 
     public override void Apply()
     {
-        Vector3 firstPosition = first.transform.position;
-        first.transform.position = second.transform.position;
-        second.transform.position = firstPosition;
+        this.tpedTransform.position = this.tpPoint;
     }
 }
